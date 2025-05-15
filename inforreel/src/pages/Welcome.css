@@ -1,0 +1,70 @@
+.welcome-container {
+    text-align: center;
+    padding: 3rem 1rem;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .welcome-container h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtext {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+  
+  .roles-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  /* Role Card Styling */
+  .role-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    position: relative;
+  }
+  
+  /* Hover behavior only */
+  .role-card:hover {
+    border-color: #141414;
+  }
+  
+  /* Icon on the left */
+  .icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+  }
+  
+  /* Role label + description */
+  .role-info {
+    flex-grow: 1;
+    text-align: left;
+  }
+  
+  /* Arrow is hidden by default */
+  .arrow {
+    font-size: 1.2rem;
+    color: #141414;
+    opacity: 0;
+    transform: translateX(5px);
+    transition: all 0.25s ease;
+  }
+  
+  /* Arrow shows only on hover */
+  .role-card:hover .arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  
