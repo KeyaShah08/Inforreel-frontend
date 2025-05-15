@@ -42,13 +42,16 @@ export default function IdentityVerificationIntro() {
     const [sessionId, setSessionId] = useState(urlSessionId || sessionStorage.getItem("verificationSessionId") || localStorage.getItem("stripe_session_id"));
 
     useEffect(() => {
-        const runFlow = async () => {
-            if (sessionId) {
-                // Handle return from Stripe
+        const sessionAlreadyHandled = sessionStorage.getItem("session_verified");
+    
+        if (sessionId && !sessionAlreadyHandled) {
+            const runFlow = async () => {
                 try {
                     const response = await fetch(`http://54.236.192.13:8000/identity-complete?session_id=${sessionId}`);
                     const data = await response.json();
+    
                     if (data.redirectUrl) {
+                        sessionStorage.setItem("session_verified", "true"); 
                         window.location.href = data.redirectUrl;
                     } else {
                         setError("Invalid server response.");
@@ -56,16 +59,16 @@ export default function IdentityVerificationIntro() {
                 } catch (err) {
                     setError("Error verifying identity.");
                 }
-                return;
-            }
-        };
-
-        runFlow();
+            };
+    
+            runFlow();
+        }
     }, [sessionId]);
 
     const handleLetsVerifyClick = async () => {
         setError(null);
         setIsLoading(true);
+        sessionStorage.removeItem("session_verified");
 
         const apiEndpoint = "http://54.236.192.13:8000/create-session";
         const payload = {
