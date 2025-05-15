@@ -3,8 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-// Define the specific message to hide
+// Define specific messages to handle
 const MESSAGE_TO_HIDE = "OTP resent successfully";
+// Define the specific message to exclude from errors and display
+const MESSAGE_TO_EXCLUDE_FROM_ERROR = "Navigation source is missing. Cannot determine flow.";
+
 
 function VerifyAccount() {
   const [otp, setOtp] = useState("");
@@ -30,7 +33,7 @@ function VerifyAccount() {
     password: null,
     userType: null,
     username: null,
-    source: null, // 'signup' or 'login'
+    source: null, // 'signup', 'login', or 'forgot-password'
     next: null
   };
 
@@ -79,13 +82,13 @@ function VerifyAccount() {
         }
     };
 
-    // Function to handle the initial Resend OTP call (if coming from login)
+    // Function to handle the initial Resend OTP call (if coming from login or forgot-password)
     const handleInitialResend = async () => {
         setResendLoading(true);
         setResendError("");
 
         try {
-            console.log("Attempting initial resend OTP API call from VerifyAccount (from login)...");
+            console.log(`Attempting initial resend OTP API call from VerifyAccount (from ${source})...`);
             const resendApiUrl = "http://54.236.192.13:8000/api/users/resend-otp";
 
             const response = await fetch(resendApiUrl, {
@@ -104,6 +107,7 @@ function VerifyAccount() {
             if (response.ok && data.code === 200 && data.message === "OTP sent to your email for verification") {
                 console.log("Initial Resend OTP successful:", data);
                  setOtp(""); // Clear previous OTP input field
+                 // No success message needed for resend, the main text explains OTP sent.
             } else if (response.status === 400 && data.error === "User already verified") {
                 console.log("User already verified on initial resend attempt. Navigating.");
                 const authToken = data.data?.token || null;
@@ -116,7 +120,7 @@ function VerifyAccount() {
             }
         } catch (error) {
             console.error("Network error during initial resend:", error);
-            setResendError("An error occurred while sending OTP. Please try again.");
+            setResendError("An error occurred while resending OTP. Please try again.");
         } finally {
             setResendLoading(false);
         }
@@ -131,17 +135,22 @@ function VerifyAccount() {
          return;
     }
 
+    // If coming from signup, attempt initial registration API call
     if (source === 'signup' && password && userType && name && username) {
         console.log("Source is 'signup'. Initiating registration.");
         handleInitialRegistration();
     }
-    else if (source === 'login') {
-         console.log("Source is 'login'. Initiating OTP resend.");
+    // If coming from login or forgot-password, attempt initial resend OTP API call
+    else if (source === 'login' || source === 'forgot-password') {
+         console.log(`Source is '${source}'. Initiating OTP resend.`);
          handleInitialResend();
     }
     else if (!source) {
          console.warn("Source not specified in location state.");
-         setError("Navigation source is missing. Cannot determine flow.");
+         // Depending on desired behavior, you might want a default flow or an error here.
+         // For now, let's assume it might be a direct access with email, so we'll still try to resend.
+         console.log("Source is missing, defaulting to initial OTP resend.");
+         handleInitialResend();
     } else {
         console.error(`Source is '${source}' but required data is incomplete.`);
          setError(`Missing required data for the '${source}' flow.`);
@@ -165,6 +174,15 @@ function VerifyAccount() {
 
    const handleSuccessfulNavigation = (token, verifiedUserType) => {
     console.log("Navigating based on userType from verified response:", verifiedUserType);
+
+    // --- ADDED LOGIC FOR FORGOT PASSWORD REDIRECTION ---
+    if (source === 'forgot-password') {
+        console.log("Source is 'forgot-password'. Navigating to reset password page.");
+        // Pass email in state to the reset password page
+        navigate("/reset-password", { state: { email: email } });
+        return; // Stop here if coming from forgot password
+    }
+    // --- END OF ADDED LOGIC ---
 
     const stateToPass = {
       userType: verifiedUserType,
@@ -228,15 +246,11 @@ function VerifyAccount() {
       if (response.ok && data.code === 200) {
         console.log("OTP verification successful:", data);
         const authToken = data.data?.token;
-        const verifiedUserType = data.data?.userType || userType;
+        const verifiedUserType = data.data?.userType || userType; // Use userType from state as fallback
 
-        if (authToken) {
-           console.log("Successfully extracted Auth Token:", authToken);
-           handleSuccessfulNavigation(authToken, verifiedUserType);
-        } else {
-           console.error("OTP verification successful, but no token found in response data.", data);
-           setVerifyApiError("Verification successful, but failed to get authentication token. Please log in.");
-        }
+        // Call the navigation handler (which now includes the forgot password check)
+        handleSuccessfulNavigation(authToken, verifiedUserType);
+
 
       } else {
         console.error("OTP verification failed:", data);
@@ -286,11 +300,12 @@ function VerifyAccount() {
       if (response.ok && data.code === 200 && data.message === "OTP sent to your email for verification") {
         console.log("Manual Resend OTP successful:", data);
         setOtp("");
+        // No success message needed for resend
       } else if (response.status === 400 && data.error === "User already verified") {
            console.log("User already verified on manual resend attempt. Navigating.");
            const authToken = data.data?.token || null;
            const verifiedUserType = data.data?.userType || userType;
-           handleSuccessfulNavigation(authToken, verifiedUserType);
+           handleSuccessfulNavigation(authToken, verifiedUserType); // Navigate if already verified
       }
       else {
         console.error("Manual Resend OTP failed:", data);
@@ -318,8 +333,12 @@ function VerifyAccount() {
   const filteredVerifyApiError = verifyApiError === MESSAGE_TO_HIDE ? "" : verifyApiError;
   const filteredResendError = resendError === MESSAGE_TO_HIDE ? "" : resendError;
 
-  // Determine overall error state for highlighting fields etc.
-  const overallError = error || filteredVerifyApiError || filteredResendError;
+  // Determine overall error state for highlighting fields etc., excluding the specific message
+  // This is kept to control other error message displays if needed, but is no longer used for the border
+  const overallError = (error && error !== MESSAGE_TO_EXCLUDE_FROM_ERROR) ||
+                       (verifyApiError && verifyApiError !== MESSAGE_TO_EXCLUDE_FROM_ERROR) ||
+                       (resendError && resendError !== MESSAGE_TO_EXCLUDE_FROM_ERROR) ||
+                       (registrationError && registrationError !== MESSAGE_TO_EXCLUDE_FROM_ERROR);
 
 
   return (
@@ -363,23 +382,23 @@ function VerifyAccount() {
            <div style={{ textAlign: "center", marginBottom: "1rem", minHeight: "1.5em", color: "#ff4d4d" }}> {/* Added minHeight and default error color */}
                {/* Registration messages (Signup Flow) */}
                {source === 'signup' && registrationLoading && <p style={{ color: "#64b5f6" }}>Registering and sending OTP...</p>}
-               {source === 'signup' && registrationError && <p>{registrationError}</p>} {/* Inherits red color from parent div */}
+               {source === 'signup' && registrationError && registrationError !== MESSAGE_TO_EXCLUDE_FROM_ERROR && <p>{registrationError}</p>} {/* Inherits red color from parent div and excludes the specific message */}
                {source === 'signup' && registrationSuccessMessage && !registrationLoading && !registrationError && (
                  <p style={{ color: "#4CAF50" }}>{registrationSuccessMessage}</p>
                )}
                {/* Specific message for email exists error in signup flow (rendered here or below the main message) */}
-               {registrationError && registrationError.includes("Email already exists") && (
+               {registrationError && registrationError.includes("Email already exists") && (registrationError !== MESSAGE_TO_EXCLUDE_FROM_ERROR) && ( // Excludes the specific message
                    <p style={{ fontSize: "0.9rem", color: "#ccc", marginTop: "0.5rem" }}>
                        Already registered? <span onClick={() => navigate('/signin')} style={{ color: "#96105E", textDecoration: "underline", cursor: "pointer" }}>Sign in here.</span>
                    </p>
                )}
 
-               {/* Resend/Initial Load messages (Login Flow) */}
+               {/* Resend/Initial Load messages (Login/Forgot Password Flow) */}
                {/* Removed "Sending OTP..." message here */}
-               {source === 'login' && filteredResendError && !resendLoading && <p>{filteredResendError}</p>} {/* Inherits red color */}
+                {(source === 'login' || source === 'forgot-password') && filteredResendError && filteredResendError !== MESSAGE_TO_EXCLUDE_FROM_ERROR && !resendLoading && <p>{filteredResendError}</p>} {/* Inherits red color and excludes the specific message */}
 
                 {/* If none of the above messages are showing, render a space to maintain minHeight */}
-               {!( (source === 'signup' && (registrationLoading || registrationError || registrationSuccessMessage)) || (source === 'login' && (resendLoading || filteredResendError)) ) && (
+               {!( (source === 'signup' && (registrationLoading || (registrationError && registrationError !== MESSAGE_TO_EXCLUDE_FROM_ERROR) || registrationSuccessMessage)) || ((source === 'login' || source === 'forgot-password') && (resendLoading || (filteredResendError && filteredResendError !== MESSAGE_TO_EXCLUDE_FROM_ERROR))) ) && ( // Adjusted condition to exclude the specific message
                    <p>&nbsp;</p> // Non-breaking space to help maintain height
                )}
            </div>
@@ -402,7 +421,7 @@ function VerifyAccount() {
               style={{
                 marginTop: "0.3rem",
                 padding: "10px",
-                border: `1px solid ${overallError ? '#ff4d4d' : '#444'}`, // Use overallError for border
+                border: `1px solid #444`, // Changed to a fixed border color
                 borderRadius: "6px",
                 fontSize: "1rem",
                 backgroundColor: "#1d1d1d",
@@ -410,12 +429,12 @@ function VerifyAccount() {
               }}
               disabled={!isEmailAvailable || overallLoading}
             />
-            {/* Display client-side OTP error or main verification API error */}
-            {(error || filteredVerifyApiError) && ( // Check filtered error
+            {/* Display client-side OTP error or main verification API error, excluding the specific message */}
+            {((error && error !== MESSAGE_TO_EXCLUDE_FROM_ERROR) || (filteredVerifyApiError && filteredVerifyApiError !== MESSAGE_TO_EXCLUDE_FROM_ERROR)) ? (
               <span style={{ color: "#ff4d4d", fontSize: "0.9rem", textAlign: "center", marginTop: "0.3rem" }}>
-                {error || filteredVerifyApiError}
+                {(error && error !== MESSAGE_TO_EXCLUDE_FROM_ERROR) ? error : filteredVerifyApiError}
               </span>
-            )}
+            ) : null}
           </label>
 
           <button
@@ -454,7 +473,8 @@ function VerifyAccount() {
               {resendLoading ? "Resending..." : "Click to resend"}
             </span>
           </p>
-             {resendError && resendError !== MESSAGE_TO_HIDE && ( // Display resendError only if not the hidden message
+             {/* Display resendError only if not the hidden message and not the message to exclude */}
+             {resendError && resendError !== MESSAGE_TO_HIDE && resendError !== MESSAGE_TO_EXCLUDE_FROM_ERROR && (
                <span style={{ color: "#ff4d4d", fontSize: "0.9rem", textAlign: "center", marginTop: "0.5rem" }}>
                  {resendError}
                </span>
