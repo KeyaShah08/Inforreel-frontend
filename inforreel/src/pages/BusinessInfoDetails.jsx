@@ -1,3 +1,5 @@
+// BusinessInfoDetails.jsx - Second Page
+
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Select from "react-select";
@@ -30,6 +32,16 @@ const socialPlatforms = [
   { label: "Other", value: "Other" },
 ];
 
+// Helper function to extract file extension safely
+const getFileExtension = (fileName) => {
+   if (!fileName) return "";
+   const lastDotIndex = fileName.lastIndexOf('.');
+   return lastDotIndex !== -1 && lastDotIndex < fileName.length - 1
+       ? fileName.substring(lastDotIndex + 1) // Get substring AFTER the dot
+       : "";
+};
+
+
 function BusinessInfoDetails() {
   const navigate = useNavigate();
   const location = useLocation(); // Get the location object to access state
@@ -42,27 +54,16 @@ function BusinessInfoDetails() {
   useEffect(() => {
         console.log("Received data from BusinessInfo.jsx:", dataFromPrevPage);
 
-        // You can access specific pieces like this:
-        const personalInfo = dataFromPrevPage?.profile;
-        const residentialAddress = dataFromPrevPage?.profile?.address;
-        const identificationData = dataFromPrevPage?.profile?.identification; // Access identification from profile
-        const idFileMeta = dataFromPrevPage?.fileMeta; // Access fileMeta from top level
-        const idFiles = dataFromPrevPage?.files; // Access files (actual File objects) from top level
-
-
-        console.log("Received Personal Info (from profile):", personalInfo);
-        console.log("Received Residential Address:", residentialAddress);
-        console.log("Received Identification Data:", identificationData);
-        console.log("Received ID File Metadata (from fileMeta):", idFileMeta);
-        console.log("Received ID Files (actual File objects):", idFiles); // Log the actual File objects
-
-        if (!identificationData || !identificationData.stripeSessionId || !identificationData.status) {
-          console.error("Identification data (status or session ID) is missing in data received from BusinessInfo.jsx.");
+        // Check for critical data existence on mount
+        // Ensure profile and identification are present and valid
+        if (!dataFromPrevPage?.profile || !dataFromPrevPage.profile.identification || !dataFromPrevPage.profile.identification.stripeSessionId || dataFromPrevPage.profile.identification.status !== 'success') {
+          console.error("Critical: Identification data missing or not successful in data received from previous step.");
           // Handle this critical error - maybe redirect to an error page or the verification start
           // navigate('/signup/identity-intro', { state: { message: 'Verification data missing in flow.' } });
+           // You might want to set a state variable here to disable the form or show a message
         }
 
-    }, [dataFromPrevPage]); // Depend on dataFromPrevPage
+    }, [dataFromPrevPage]); // Depend on dataFromPrevPage to run once when state is received
 
 
   // State to hold the loaded country and state data from the library
@@ -99,6 +100,7 @@ function BusinessInfoDetails() {
     marginTop: "5px",
     marginBottom: "5px", // Adjusted margin to make space for errors
     width: "100%",
+    boxSizing: 'border-box', // Ensure padding doesn't add to width
   };
 
   const customSelectStyles = {
@@ -207,7 +209,7 @@ function BusinessInfoDetails() {
   const [socialLinks, setSocialLinks] = useState({});
 
 
-  // Still needed for conditional rendering of inputs
+  // Still needed for conditional rendering of inputs based on checkboxes
   const [showTrade, setShowTrade] = useState(false);
   const [showEIN, setShowEIN] = useState(false);
 
@@ -505,6 +507,20 @@ function BusinessInfoDetails() {
     // Specific validation for Country of Manufacture (must select one)
     if (!formData.manufactureCountry) { newErrors.manufactureCountry = 'Please select country of manufacture'; }
 
+     // Optional: Validate email format
+    if (formData.email?.trim() && !/\S+@\S+\.\S+/.test(formData.email.trim())) {
+        newErrors.email = "Please enter a valid email address";
+    }
+     // Optional: Basic phone number format validation (very simple, adjust regex as needed)
+    if (formData.phone?.trim() && !/^\+?\d[\d\s-]{7,}\d$/.test(formData.phone.trim())) {
+        newErrors.phone = "Please enter a valid phone number";
+    }
+     // Optional: Website URL format validation (very simple, adjust regex as needed)
+     if (formData.website?.trim() && !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/.test(formData.website.trim())) {
+          newErrors.website = "Please enter a valid website URL (e.g., https://example.com)";
+     }
+
+
     return newErrors;
   };
 
@@ -514,13 +530,16 @@ function BusinessInfoDetails() {
     const validationErrors = validateForm();
     setErrors(validationErrors);
 
-    // Check if identification data from the previous page is available before proceeding
+    // Check if identification data from the previous page is available and successful before proceeding
     const identificationData = dataFromPrevPage?.profile?.identification;
-    if (!identificationData || !identificationData.stripeSessionId || !identificationData.status) {
-        setErrors(prev => ({ ...prev, flowError: "Critical: Identification data missing from previous step." }));
-        console.error("Identification data missing. Cannot proceed.");
-        return; // Stop submission
-    }
+    if (!dataFromPrevPage || !identificationData || !identificationData.stripeSessionId || identificationData.status !== 'success') {
+        // This is a critical error that should ideally be handled on mount or earlier
+        // but we double-check here. Set a prominent error message if needed.
+         setErrors(prev => ({ ...prev, flowError: "Critical: Identification data missing or not successful from previous step." }));
+         console.error("Identification data missing or not successful. Cannot proceed with form submission.");
+         // You might want to redirect the user away from this page in the useEffect above if this data is missing.
+         return; // Stop submission
+     }
 
 
     if (Object.keys(validationErrors).length === 0) {
@@ -536,9 +555,9 @@ function BusinessInfoDetails() {
 
        // Combine ALL data from previous page and current page into the final desired structure
        const combinedDataForNextPage = {
-           // Start with the profile object from the previous page
+           // Start with the profile object from the previous page and merge new data into it
            profile: {
-               ...(dataFromPrevPage?.profile || {}), // Spread existing profile data (personal info, identification)
+               ...(dataFromPrevPage?.profile || {}), // Spread existing profile data (personal info, residential address, identification)
                // Add all business details collected on the current page INSIDE profile
                categories: selectedCategories.map(cat => cat.label), // Pass labels as in desired output
                businessName: formData.businessName,
@@ -585,6 +604,15 @@ function BusinessInfoDetails() {
 
 
        console.log("Combined data for next page (/signup/business/info-details-1):", combinedDataForNextPage);
+
+       // Check if the profile object is getting too large to reliably pass via state
+       // This is more of a precautionary measure for very large state objects,
+       // but File objects themselves are not fully serialized, only metadata might increase size significantly.
+       // const stateSize = JSON.stringify(combinedDataForNextPage).length;
+       // console.log("Combined data size (approx KB):", stateSize / 1024);
+       // if (stateSize > 500000) { // Example limit, adjust as needed
+       //     console.warn("Data size for state might be large, consider alternative passing methods if issues occur.");
+       // }
 
 
       // 5. Navigate to the next page (/signup/business/info-details-1) and pass the combined data in state
@@ -659,16 +687,17 @@ function BusinessInfoDetails() {
   });
 
     // Style for the file upload drag area - **NO RED BORDER ON ERROR**
-    const fileUploadAreaStyle = (hasError) => ({
-        border: `1px solid #888`, // <-- Always use the default border color
-        backgroundColor: "#1d1d1d",
+    const fileUploadAreaStyle = (hasError, isDisabled) => ({
+        border: `1px dashed ${hasError ? '#ff4d4f' : '#888'}`, // Dashed border, red on error
+        backgroundColor: isDisabled ? '#2d2d2d' : "#1d1d1d", // Dark background, slightly different when disabled
         padding: "2rem",
         borderRadius: "10px",
         textAlign: "center",
         marginTop: "0.5rem",
          // Adjusted margin based on error or presence of files below (error still affects layout)
         marginBottom: hasError || dbaDocuments.length > 0 ? '10px' : '20px',
-        cursor: "pointer",
+        cursor: isDisabled ? 'not-allowed' : "pointer",
+        opacity: isDisabled ? 0.7 : 1,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -722,412 +751,450 @@ function BusinessInfoDetails() {
           {/* Display flow error if critical data is missing */}
           {errors.flowError && <p style={errorStyle}>{errors.flowError}</p>}
 
-
-          <label style={{ color: "white" }}>
-            Business categories
-            <Select
-              className="select-input"
-              name="categories"
-              isMulti
-              value={selectedCategories}
-              options={categories}
-              onChange={(selectedOptions) => { setSelectedCategories(selectedOptions || []); setErrors({...errors, categories: ''}); }}
-              styles={customSelectStyles}
-               placeholder="Select categories"
-            />
-            {errors.categories && <span style={errorStyle}>{errors.categories}</span>}
-          </label>
-
-          <label style={{ color: "white" }}>
-            Registered business name
-            <input
-              type="text"
-               name="businessName"
-               style={inputStyle}
-               value={formData.businessName}
-               onChange={handleInputChange}
-               placeholder="Enter business name"
-            />
-             {errors.businessName && <span style={errorStyle}>{errors.businessName}</span>}
-          </label>
-
-          {/* Custom Checkbox for hasDBA */}
-          <div style={{ display: "flex", alignItems: "center", marginBottom: (errors.tradeName || errors.dbaDocuments) ? "5px" : "15px" }}>
-            <input type="checkbox" id="hasDBA" name="hasDBA" checked={formData.hasDBA} onChange={() => {}} style={{ display: 'none' }} />
-            <div style={customCheckboxStyle(formData.hasDBA)} onClick={() => handleCheckboxToggle("hasDBA")}>
-               {formData.hasDBA && (<span style={tickMarkStyle}>✓</span>)}
-            </div>
-            <label htmlFor="hasDBA" style={{ color: "white", margin: 0, cursor: 'pointer' }} onClick={() => handleCheckboxToggle("hasDBA")}>
-              My company has a DBA (Doing Business As) or an official name change
-            </label>
-          </div>
-
-          {showTrade && (
-            <>
-              <label style={{ color: "white" }}>
-                Trade name
-                 <input
-                   type="text"
-                    name="tradeName"
-                   style={inputStyle}
-                   value={formData.tradeName}
-                   onChange={handleInputChange}
-                    placeholder="Enter trade name"
-                 />
-                 {errors.tradeName && <span style={errorStyle}>{errors.tradeName}</span>}
-              </label>
-
-              {/* DBA Documents Upload Section */}
-               {/* Label includes max count hint */}
-              <label style={{ color: "white", fontSize: "0.95rem", display: 'block', marginBottom: dbaDocuments.length > 0 ? '0' : '1rem' }}>
-                 DBA and/or trade name documents (Max 3)
-                 {/* File Upload/Drop Area */}
-                 {/* Disable if max files reached */}
-                {(dbaDocuments.length < 3) ? (
-                  <div
-                       id="dbaDocumentsUploadArea"
-                       style={fileUploadAreaStyle(errors.dbaDocuments)} // Use dynamic style for error border (but border is now static in function)
-                       onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                       onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                       onDrop={handleDbaDrop}
-                       onClick={() => document.getElementById('dbaDocumentsInput').click()}
-                  >
-                       {/* SVG icon */}
-                       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                       </svg>
-                       {/* Drag & drop text */}
-                       <p style={{ margin: "1rem 0 0.5rem" }}>
-                          Drag & drop files or <label htmlFor="dbaDocumentsInput" style={{ color: "#d84b9e", cursor: "pointer", textDecoration: "underline" }}>Browse</label>
-                       </p>
-                       {/* Accepted file types (customize as needed) */}
-                       <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
-                       {/* Hidden file input */}
-                       <input
-                          type="file"
-                          key={dbaDocuments.length} // Key for smoother reset
-                          id="dbaDocumentsInput"
-                          name="dbaDocuments"
-                          multiple
-                          accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                          onChange={handleDbaFileChange}
-                          style={{ display: "none" }}
-                       />
-                  </div>
-                ) : (
-                    // Optional: Message when max files are uploaded
-                     <div style={{...fileUploadAreaStyle(errors.dbaDocuments), cursor: 'not-allowed', opacity: 0.7}}>
-                         <p style={{ color: "white", margin: 0 }}>Maximum 3 DBA/trade name documents uploaded.</p>
-                     </div>
-                )}
-
-
-                 {/* Display uploaded files */}
-                 {dbaDocuments.length > 0 && (
-                     <div style={{ marginTop: '1rem' }}>
-                         {dbaDocuments.map((file, index) => (
-                             <div key={`dba-doc-${index}`} className="uploaded-dba-document-item" style={uploadedFileItemStyle}>
-                                  {/* File Icon (example) */}
-                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}>
-                                    <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" />
-                                 </svg>
-                                 <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    {file.name} ({(file.size / 1024).toFixed(2)} KB)
-                                 </span>
-                                 <button
-                                     key={`remove-dba-${index}`}
-                                     type="button"
-                                     onClick={() => handleRemoveDbaDocument(index)}
-                                     style={removeFileButtonStyle}
-                                 >
-                                     &times;
-                                 </button>
-                             </div>
-                         ))}
-                     </div>
-                 )}
-
-                 {/* Display error message for DBA documents */}
-                {errors.dbaDocuments && <span style={errorStyle}>{errors.dbaDocuments}</span>}
-              </label>
-            </>
+          {/* Add a check/message if previous page data didn't load */}
+          {!dataFromPrevPage && (
+               <p style={{...errorStyle, textAlign: 'center', marginBottom: '2rem'}}>
+                  Could not load data from the previous step. Please go back and try again.
+               </p>
           )}
 
-          <label style={{ color: "white" }}>
-            Business contact Email
-            <input
-              type="email"
-               name="email"
-               style={inputStyle}
-               placeholder="Enter your email"
-               value={formData.email}
-               onChange={handleInputChange}
-            />
-             {errors.email && <span style={errorStyle}>{errors.email}</span>}
-          </label>
 
-          <label style={{ color: "white" }}>
-             Business contact Phone Number
-            <input
-              type="text"
-               name="phone"
-               style={inputStyle}
-               placeholder="Enter your phone number"
-               value={formData.phone}
-               onChange={handleInputChange}
-            />
-             {errors.phone && <span style={errorStyle}>{errors.phone}</span>}
-          </label>
+         {/* Wrap form content in a conditional div that only renders if dataFromPrevPage and its profile exist */}
+         {dataFromPrevPage && dataFromPrevPage.profile ? (
+             <> {/* Use a Fragment to group content */}
 
-          {/* Custom Checkbox for sameAsResidential */}
-          {/* CORRECTED: The opacity, cursor, and disabled state are now controlled by checking for profile.address */}
-          <div style={{ display: "flex", alignItems: "center", marginBottom: "15px", opacity: dataFromPrevPage?.profile?.address ? 1 : 0.5, cursor: dataFromPrevPage?.profile?.address ? 'pointer' : 'not-allowed' }}>
-            <input type="checkbox" id="sameAsResidential" name="sameAsResidential" checked={formData.sameAsResidential} onChange={() => {}} style={{ display: 'none' }} disabled={!dataFromPrevPage?.profile?.address} />
-            {/* The onClick handlers also use the corrected path */}
-            <div style={customCheckboxStyle(formData.sameAsResidential)} onClick={() => dataFromPrevPage?.profile?.address && handleCheckboxToggle("sameAsResidential")}>
-               {formData.sameAsResidential && (<span style={tickMarkStyle}>✓</span>)}
-            </div>
-            <label htmlFor="sameAsResidential" style={{ color: "white", margin: 0, cursor: dataFromPrevPage?.profile?.address ? 'pointer' : 'not-allowed' }} onClick={() => dataFromPrevPage?.profile?.address && handleCheckboxToggle("sameAsResidential")}>
-              My company address is same as my residential address
-            </label>
-             {/* This span displays the error message, now also controlled by profile.address */}
-             {!dataFromPrevPage?.profile?.address && (
-                 <span style={{ ...errorStyle, marginTop: 0, marginLeft: '10px', display: 'inline-block' }}>
-                    (Residential address not available from previous step)
-                 </span>
-             )}
-          </div>
-
-
-          <div style={{ display: "flex", gap: "3rem", flexWrap: "wrap" }}>
-            <div style={{ flex: 1 }}>
               <label style={{ color: "white" }}>
-                Address Line 1
-                 <input
-                   type="text"
-                    name="address1"
-                   style={getAddressInputStyle(formData.sameAsResidential)}
-                   value={formData.address1}
-                   onChange={handleInputChange}
-                   placeholder="Enter your address"
-                   readOnly={formData.sameAsResidential}
-                 />
-                 {errors.address1 && <span style={errorStyle}>{errors.address1}</span>}
-              </label>
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ color: "white" }}>
-                Address Line 2 (Optional)
-                 <input
-                    type="text"
-                    name="address2"
-                    style={getAddressInputStyle(formData.sameAsResidential)}
-                    value={formData.address2}
-                    onChange={handleInputChange}
-                    placeholder="Enter your address"
-                    readOnly={formData.sameAsResidential}
-                 />
-              </label>
-            </div>
-          </div>
-
-          <div style={{ display: "flex", gap: "3rem", flexWrap: "wrap" }}> {/* Adjusted gap to 3rem for better spacing */}
-            <div style={{ flex: 1 }}>
-              <label style={{ color: "white" }}>
-                City
-                 <input
-                    type="text"
-                    name="city"
-                    style={getAddressInputStyle(formData.sameAsResidential)}
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    placeholder="City"
-                    readOnly={formData.sameAsResidential}
-                 />
-                 {errors.city && <span style={errorStyle}>{errors.city}</span>}
-              </label>
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ color: "white" }}>
-                State
+                Business categories
                 <Select
                   className="select-input"
-                  name="state"
-                  options={usStates}
-                  value={usStates.find(state => state.value === formData.state) || null}
-                  onChange={(selectedOption) => handleSelectChange('state', selectedOption)}
+                  name="categories" // Added name for potential use, though not used by react-select itself
+                  isMulti
+                  value={selectedCategories}
+                  options={categories}
+                  onChange={(selectedOptions) => { setSelectedCategories(selectedOptions || []); setErrors({...errors, categories: ''}); }}
                   styles={customSelectStyles}
-                  placeholder="Select State"
-                  isDisabled={!formData.country || usStates.length === 0 || formData.sameAsResidential}
+                   placeholder="Select categories"
                 />
-                 {errors.state && <span style={errorStyle}>{errors.state}</span>}
+                {errors.categories && <span style={errorStyle}>{errors.categories}</span>}
               </label>
-            </div>
-          </div>
 
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-            <div style={{ flex: 1 }}>
               <label style={{ color: "white" }}>
-                Country
-                 <Select
-                   className="select-input"
-                   name="country"
-                   value={{ label: "United States", value: "USA" }} // Assuming fixed to USA
-                   options={[{ label: "United States", value: "USA" }]} // Only USA option
-                   isDisabled // Disable as it's fixed
-                   styles={customSelectStyles}
-                 />
-              </label>
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ color: "white" }}>
-                Zip / Postal code
-                 <input
-                    type="text"
-                    name="zip"
-                    style={getAddressInputStyle(formData.sameAsResidential)}
-                    value={formData.zip}
-                    onChange={handleInputChange}
-                    placeholder="Zip / Postal code"
-                    readOnly={formData.sameAsResidential}
-                 />
-                 {errors.zip && <span style={errorStyle}>{errors.zip}</span>}
-              </label>
-            </div>
-          </div>
-
-
-          <label style={{ color: "white" }}>Business website (optional)
-            <input type="text" name="website" style={inputStyle} value={formData.website} onChange={handleInputChange} placeholder="e.g., https://yourwebsite.com" />
-          </label>
-
-          <label style={{ color: "white" }}>Business type
-            <Select
-              className="select-input"
-               name="businessType"
-              options={businessTypes}
-              value={businessTypes.find((t) => t.value === formData.businessType) || null}
-              onChange={(selected) => handleSelectChange('businessType', selected)}
-              styles={customSelectStyles}
-              placeholder="Select business type"
-            />
-             {errors.businessType && <span style={errorStyle}>{errors.businessType}</span>}
-          </label>
-
-          <div style={{ display: "flex", alignItems: "center", marginBottom: errors.ein ? "5px" : "15px" }}>
-            <input type="checkbox" id="isRegistered" name="isRegistered" checked={formData.isRegistered} onChange={() => {}} style={{ display: 'none' }} />
-            <div style={customCheckboxStyle(formData.isRegistered)} onClick={() => handleCheckboxToggle("isRegistered")}>
-               {formData.isRegistered && (<span style={tickMarkStyle}>✓</span>)}
-            </div>
-            <label htmlFor="isRegistered" style={{ color: "white", margin: 0, cursor: 'pointer' }} onClick={() => handleCheckboxToggle("isRegistered")}>
-              Is it a registered business?
-            </label>
-          </div>
-
-          {showEIN && (
-            <label style={{ color: "white" }}>
-              EIN
-              <input type="text" name="ein" style={inputStyle} value={formData.ein} onChange={handleInputChange} placeholder="Enter EIN" />
-               {errors.ein && <span style={errorStyle}>{errors.ein}</span>}
-            </label>
-          )}
-
-          <div style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
-            <input type="checkbox" id="isManufacturer" name="isManufacturer" checked={formData.isManufacturer} onChange={() => {}} style={{ display: 'none' }} />
-            <div style={customCheckboxStyle(formData.isManufacturer)} onClick={() => handleCheckboxToggle("isManufacturer")}>
-               {formData.isManufacturer && (<span style={tickMarkStyle}>✓</span>)}
-            </div>
-            <label htmlFor="isManufacturer" style={{ color: "white", margin: 0, cursor: 'pointer' }} onClick={() => handleCheckboxToggle("isManufacturer")}>
-              Are you a manufacturer of this brand?
-            </label>
-          </div>
-
-          <label style={{ color: "white" }}>Country of manufacture
-             <Select
-                 className="select-input"
-                 name="manufactureCountry"
-                 options={allCountries}
-                 value={allCountries.find(country => country.value === formData.manufactureCountry) || null}
-                 onChange={(selectedOption) => handleSelectChange('manufactureCountry', selectedOption)}
-                 styles={customSelectStyles}
-                 placeholder="Select country"
-             />
-             {errors.manufactureCountry && <span style={errorStyle}>{errors.manufactureCountry}</span>}
-          </label>
-
-          <label style={{ color: "white" }}>What year did you launch this brand?
-             <input
-               type="text"
-                name="launchYear"
-                maxLength={4}
-               style={inputStyle}
-               value={formData.launchYear}
-               onChange={handleInputChange}
-                placeholder="YYYY"
-             />
-             {errors.launchYear && <span style={errorStyle}>{errors.launchYear}</span>}
-          </label>
-
-          <label style={{ color: "white" }}>Social links (optional)
-             <Select
-                 className="select-input"
-                 name="socialPlatforms"
-                 options={socialPlatforms}
-                 isMulti
-                 value={selectedSocials}
-                 onChange={handleSocialChange}
-                 styles={customSelectStyles}
-                 placeholder="Select social platforms"
-             />
-          </label>
-
-          {selectedSocials.map((platform) => (
-             <label key={platform.value} style={{ color: "white" }}>
-              {platform.label} Link
-              <div style={{ display: "flex", alignItems: "center" }}>
+                Registered business name
                 <input
                   type="text"
-                   name={`${platform.value}Link`}
-                  style={{ ...inputStyle, width: "90%" }}
-                  placeholder={`Enter your ${platform.label} link`}
-                  value={socialLinks[platform.value] || ""}
-                  onChange={(e) => setSocialLinks({ ...socialLinks, [platform.value]: e.target.value })}
+                   name="businessName"
+                   style={inputStyle}
+                   value={formData.businessName}
+                   onChange={handleInputChange}
+                   placeholder="Enter business name"
                 />
-                <button
-                  type="button"
-                  onClick={() => setSelectedSocials(selectedSocials.filter((p) => p.value !== platform.value))}
-                  style={{ background: "#eee", color: "#000", border: "none", borderRadius: "4px", padding: "10px", fontWeight: "bold", fontSize: "1rem", marginLeft: "10px", cursor: "pointer", ':hover': { backgroundColor: '#ddd', } }}
-                >
-                   &minus;
-                </button>
-              </div>
-            </label>
-          ))}
+                 {errors.businessName && <span style={errorStyle}>{errors.businessName}</span>}
+              </label>
 
-          <div className="row" style={{ marginTop: "2rem" }}>
-             {/* >> UPDATED Previous Button Style << */}
-             <button type="button" className="black-btn" onClick={() => navigate(-1)}
-                     style={{
-                         flex: 1,
-                         marginRight: '10px',
-                         backgroundColor: "#7B7B7B", // Grey color
-                         color: "#FFFFFF", // White text
-                         // Other black-btn styles like padding, border, etc. would apply unless overridden
-                     }}>
-               Previous
-             </button>
-             {/* >> UPDATED Next Button Style << */}
-             <button type="submit" className="black-btn"
-                     style={{
-                         flex: 1,
-                         marginLeft: '10px',
-                         backgroundColor: "#96105E", // Purple color
-                         color: "#FFFFFF", // White text
-                         // Other black-btn styles like padding, border, etc. would apply unless overridden
-                     }}>
-               Next
-             </button>
-          </div>
+              {/* Custom Checkbox for hasDBA */}
+              <div style={{ display: "flex", alignItems: "center", marginBottom: (errors.tradeName || errors.dbaDocuments) ? "5px" : "15px" }}>
+                <input type="checkbox" id="hasDBA" name="hasDBA" checked={formData.hasDBA} onChange={() => {}} style={{ display: 'none' }} />
+                <div style={customCheckboxStyle(formData.hasDBA)} onClick={() => handleCheckboxToggle("hasDBA")}>
+                   {formData.hasDBA && (<span style={tickMarkStyle}>✓</span>)}
+                </div>
+                <label htmlFor="hasDBA" style={{ color: "white", margin: 0, cursor: 'pointer' }} onClick={() => handleCheckboxToggle("hasDBA")}>
+                  My company has a DBA (Doing Business As) or an official name change
+                </label>
+              </div>
+
+              {showTrade && (
+                <>
+                  <label style={{ color: "white" }}>
+                    Trade name
+                     <input
+                       type="text"
+                        name="tradeName"
+                       style={inputStyle}
+                       value={formData.tradeName}
+                       onChange={handleInputChange}
+                        placeholder="Enter trade name"
+                     />
+                     {errors.tradeName && <span style={errorStyle}>{errors.tradeName}</span>}
+                  </label>
+
+                  {/* DBA Documents Upload Section */}
+                   {/* Label includes max count hint */}
+                  <label style={{ color: "white", fontSize: "0.95rem", display: 'block', marginBottom: dbaDocuments.length > 0 ? '0' : '1rem' }}>
+                     DBA and/or trade name documents (Max 3)
+                     {/* File Upload/Drop Area */}
+                     {/* Disable if max files reached */}
+                    {(dbaDocuments.length < 3) ? (
+                      <div
+                           id="dbaDocumentsUploadArea" // Added ID for potential scrolling
+                           style={fileUploadAreaStyle(!!errors.dbaDocuments, false)} // Use dynamic style for error border
+                           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                           onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                           onDrop={handleDbaDrop}
+                           onClick={() => document.getElementById('dbaDocumentsInput').click()}
+                      >
+                           {/* SVG icon */}
+                           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
+                           </svg>
+                           {/* Drag & drop text */}
+                           <p style={{ margin: "1rem 0 0.5rem" }}>
+                              Drag & drop files or <label htmlFor="dbaDocumentsInput" style={{ color: "#d84b9e", cursor: "pointer", textDecoration: "underline" }}>Browse</label>
+                           </p>
+                           {/* Accepted file types (customize as needed) */}
+                           <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
+                           {/* Hidden file input */}
+                           <input
+                              type="file"
+                              key={dbaDocuments.length} // Key for smoother reset
+                              id="dbaDocumentsInput"
+                              name="dbaDocuments" // Added name for validation/scrolling
+                              multiple
+                              accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                              onChange={handleDbaFileChange}
+                              style={{ display: "none" }}
+                           />
+                      </div>
+                    ) : (
+                        // Optional: Message when max files are uploaded and upload area is disabled
+                         <div
+                            id="dbaDocumentsUploadArea" // Keep ID even when disabled for scrolling
+                            style={fileUploadAreaStyle(!!errors.dbaDocuments, true)} // Pass boolean error and isDisabled = true
+                         >
+                             {/* SVG icon (can make it slightly less prominent) */}
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                               <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
+                            </svg>
+                            <p style={{ margin: "1rem 0 0.5rem", color: '#ccc' }}>Maximum 3 documents allowed.</p>
+                            <p style={{ fontSize: "0.85rem", color: "#888" }}>Remove a document to upload another.</p>
+                         </div>
+                    )}
+
+
+                     {/* Display uploaded files */}
+                     {dbaDocuments.length > 0 && (
+                         <div style={{ marginTop: dbaDocuments.length > 0 ? '0' : '1rem' }}> {/* Adjusted margin */}
+                             {dbaDocuments.map((file, index) => (
+                                 <div key={`dba-doc-${index}`} className="uploaded-dba-document-item" style={uploadedFileItemStyle}>
+                                      {/* File Icon (example) */}
+                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}>
+                                        <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" />
+                                     </svg>
+                                     <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {file.name} ({(file.size / 1024).toFixed(2)} KB)
+                                     </span>
+                                     <button
+                                         key={`remove-dba-${index}`} // Added key
+                                         type="button"
+                                         onClick={() => handleRemoveDbaDocument(index)}
+                                         style={removeFileButtonStyle}
+                                     >
+                                         &times;
+                                     </button>
+                                 </div>
+                             ))}
+                         </div>
+                     )}
+
+                     {/* Display error message for DBA documents below the list if files are present */}
+                    {errors.dbaDocuments && <span style={{...errorStyle, marginTop: dbaDocuments.length > 0 ? '5px' : '0'}}>{errors.dbaDocuments}</span>} {/* Adjusted marginTop */}
+                  </label>
+                </>
+              )}
+
+              <label style={{ color: "white" }}>
+                Business contact Email
+                <input
+                  type="email"
+                   name="email" // Added name for validation/scrolling
+                   style={inputStyle}
+                   placeholder="Enter your email"
+                   value={formData.email}
+                   onChange={handleInputChange}
+                />
+                 {errors.email && <span style={errorStyle}>{errors.email}</span>}
+              </label>
+
+              <label style={{ color: "white" }}>
+                 Business contact Phone Number
+                <input
+                  type="text"
+                   name="phone" // Added name for validation/scrolling
+                   style={inputStyle}
+                   placeholder="Enter your phone number"
+                   value={formData.phone}
+                   onChange={handleInputChange}
+                />
+                 {errors.phone && <span style={errorStyle}>{errors.phone}</span>}
+              </label>
+
+              {/* Custom Checkbox for sameAsResidential */}
+              {/* CORRECTED: The opacity, cursor, and disabled state are now controlled by checking for profile.address */}
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "15px", opacity: dataFromPrevPage?.profile?.address ? 1 : 0.5, cursor: dataFromPrevPage?.profile?.address ? 'pointer' : 'not-allowed' }}>
+                <input type="checkbox" id="sameAsResidential" name="sameAsResidential" checked={formData.sameAsResidential} onChange={() => {}} style={{ display: 'none' }} disabled={!dataFromPrevPage?.profile?.address} />
+                {/* The onClick handlers also use the corrected path */}
+                <div style={customCheckboxStyle(formData.sameAsResidential)} onClick={() => dataFromPrevPage?.profile?.address && handleCheckboxToggle("sameAsResidential")}>
+                   {formData.sameAsResidential && (<span style={tickMarkStyle}>✓</span>)}
+                </div>
+                <label htmlFor="sameAsResidential" style={{ color: "white", margin: 0, cursor: dataFromPrevPage?.profile?.address ? 'pointer' : 'not-allowed' }} onClick={() => dataFromPrevPage?.profile?.address && handleCheckboxToggle("sameAsResidential")}>
+                  My company address is same as my residential address
+                </label>
+                 {/* This span displays the error message, now also controlled by profile.address */}
+                 {!dataFromPrevPage?.profile?.address && (
+                     <span style={{ ...errorStyle, marginTop: 0, marginLeft: '10px', display: 'inline-block' }}>
+                        (Residential address not available from previous step)
+                     </span>
+                 )}
+              </div>
+
+
+              <div style={{ display: "flex", gap: "3rem", flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: '150px' }}> {/* Added minWidth */}
+                  <label style={{ color: "white" }}>
+                    Address Line 1
+                     <input
+                       type="text"
+                        name="address1" // Added name for validation/scrolling
+                       style={getAddressInputStyle(formData.sameAsResidential)}
+                       value={formData.address1}
+                       onChange={handleInputChange}
+                       placeholder="Enter your address"
+                       readOnly={formData.sameAsResidential}
+                     />
+                     {errors.address1 && <span style={errorStyle}>{errors.address1}</span>}
+                  </label>
+                </div>
+                <div style={{ flex: 1, minWidth: '150px' }}> {/* Added minWidth */}
+                  <label style={{ color: "white" }}>
+                    Address Line 2 (Optional)
+                     <input
+                        type="text"
+                        name="address2" // Added name for validation/scrolling
+                        style={getAddressInputStyle(formData.sameAsResidential)}
+                        value={formData.address2}
+                        onChange={handleInputChange}
+                        placeholder="Enter your address"
+                        readOnly={formData.sameAsResidential}
+                     />
+                    {/* Removed error check for optional field */}
+                     {/*errors.address2 && <span style={errorStyle}>{errors.address2}</span>*/}
+                  </label>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: "3rem", flexWrap: "wrap" }}> {/* Adjusted gap to 3rem for better spacing */}
+                <div style={{ flex: 1, minWidth: '150px' }}> {/* Added minWidth */}
+                  <label style={{ color: "white" }}>
+                    City
+                     <input
+                        type="text"
+                        name="city" // Added name for validation/scrolling
+                        style={getAddressInputStyle(formData.sameAsResidential)}
+                        value={formData.city}
+                        onChange={handleInputChange}
+                        placeholder="City"
+                        readOnly={formData.sameAsResidential}
+                     />
+                     {errors.city && <span style={errorStyle}>{errors.city}</span>}
+                  </label>
+                </div>
+                <div style={{ flex: 1, minWidth: '150px' }}> {/* Added minWidth */}
+                  <label style={{ color: "white" }}>
+                    State
+                    <Select
+                      className="select-input"
+                      name="state" // Added name for validation/scrolling
+                      options={usStates}
+                      value={usStates.find(state => state.value === formData.state) || null}
+                      onChange={(selectedOption) => handleSelectChange('state', selectedOption)}
+                      styles={customSelectStyles}
+                      placeholder="Select State"
+                      isDisabled={!formData.country || usStates.length === 0 || formData.sameAsResidential}
+                    />
+                     {errors.state && <span style={errorStyle}>{errors.state}</span>}
+                  </label>
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}> {/* Adjusted gap to 1rem */}
+                <div style={{ flex: 1, minWidth: '150px' }}> {/* Added minWidth */}
+                  <label style={{ color: "white" }}>
+                    Country
+                     <Select
+                       className="select-input"
+                       name="country" // Added name for validation/scrolling
+                       value={{ label: "United States", value: "USA" }} // Assuming fixed to USA
+                       options={[{ label: "United States", value: "USA" }]} // Only USA option
+                       isDisabled // Disable as it's fixed
+                       styles={customSelectStyles}
+                     />
+                      {/* Removed error check for fixed field */}
+                     {/*errors.country && <span style={errorStyle}>{errors.country}</span>*/}
+                  </label>
+                </div>
+                <div style={{ flex: 1, minWidth: '150px' }}> {/* Added minWidth */}
+                  <label style={{ color: "white" }}>
+                    Zip / Postal code
+                     <input
+                        type="text"
+                        name="zip" // Added name for validation/scrolling
+                        style={getAddressInputStyle(formData.sameAsResidential)}
+                        value={formData.zip}
+                        onChange={handleInputChange}
+                        placeholder="Zip / Postal code"
+                        readOnly={formData.sameAsResidential}
+                     />
+                     {errors.zip && <span style={errorStyle}>{errors.zip}</span>}
+                  </label>
+                </div>
+              </div>
+
+
+              <label style={{ color: "white" }}>Business website (optional)
+                <input type="text" name="website" style={inputStyle} value={formData.website} onChange={handleInputChange} placeholder="e.g., https://yourwebsite.com" />
+                 {errors.website && <span style={errorStyle}>{errors.website}</span>} {/* Added error for optional field */}
+              </label>
+
+              <label style={{ color: "white" }}>Business type
+                <Select
+                  className="select-input"
+                   name="businessType" // Added name for validation/scrolling
+                  options={businessTypes}
+                  value={businessTypes.find((t) => t.value === formData.businessType) || null}
+                  onChange={(selected) => handleSelectChange('businessType', selected)}
+                  styles={customSelectStyles}
+                  placeholder="Select business type"
+                />
+                 {errors.businessType && <span style={errorStyle}>{errors.businessType}</span>}
+              </label>
+
+              <div style={{ display: "flex", alignItems: "center", marginBottom: errors.ein ? "5px" : "15px" }}>
+                <input type="checkbox" id="isRegistered" name="isRegistered" checked={formData.isRegistered} onChange={() => {}} style={{ display: 'none' }} />
+                <div style={customCheckboxStyle(formData.isRegistered)} onClick={() => handleCheckboxToggle("isRegistered")}>
+                   {formData.isRegistered && (<span style={tickMarkStyle}>✓</span>)}
+                </div>
+                <label htmlFor="isRegistered" style={{ color: "white", margin: 0, cursor: 'pointer' }} onClick={() => handleCheckboxToggle("isRegistered")}>
+                  Is it a registered business?
+                </label>
+              </div>
+
+              {showEIN && (
+                <label style={{ color: "white" }}>
+                  EIN
+                  <input type="text" name="ein" style={inputStyle} value={formData.ein} onChange={handleInputChange} placeholder="Enter EIN" />
+                   {errors.ein && <span style={errorStyle}>{errors.ein}</span>}
+                </label>
+              )}
+
+              <div style={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
+                <input type="checkbox" id="isManufacturer" name="isManufacturer" checked={formData.isManufacturer} onChange={() => {}} style={{ display: 'none' }} />
+                <div style={customCheckboxStyle(formData.isManufacturer)} onClick={() => handleCheckboxToggle("isManufacturer")}>
+                   {formData.isManufacturer && (<span style={tickMarkStyle}>✓</span>)}
+                </div>
+                <label htmlFor="isManufacturer" style={{ color: "white", margin: 0, cursor: 'pointer' }} onClick={() => handleCheckboxToggle("isManufacturer")}>
+                  Are you a manufacturer of this brand?
+                </label>
+              </div>
+
+              <label style={{ color: "white" }}>Country of manufacture
+                 <Select
+                     className="select-input"
+                     name="manufactureCountry" // Added name for validation/scrolling
+                     options={allCountries}
+                     value={allCountries.find(country => country.value === formData.manufactureCountry) || null}
+                     onChange={(selectedOption) => handleSelectChange('manufactureCountry', selectedOption)}
+                     styles={customSelectStyles}
+                     placeholder="Select country"
+                 />
+                 {errors.manufactureCountry && <span style={errorStyle}>{errors.manufactureCountry}</span>}
+              </label>
+
+              <label style={{ color: "white" }}>What year did you launch this brand?
+                 <input
+                   type="text"
+                    name="launchYear" // Added name for validation/scrolling
+                    maxLength={4}
+                   style={inputStyle}
+                   value={formData.launchYear}
+                   onChange={handleInputChange}
+                    placeholder="YYYY"
+                 />
+                 {errors.launchYear && <span style={errorStyle}>{errors.launchYear}</span>}
+              </label>
+
+              <label style={{ color: "white" }}>Social links (optional)
+                 <Select
+                     className="select-input"
+                     name="socialPlatforms" // Added name
+                     options={socialPlatforms}
+                     isMulti
+                     value={selectedSocials}
+                     onChange={handleSocialChange}
+                     styles={customSelectStyles}
+                     placeholder="Select social platforms"
+                 />
+              </label>
+
+              {selectedSocials.map((platform) => (
+                 <label key={platform.value} style={{ color: "white" }}>
+                  {platform.label} Link
+                  <div style={{ display: "flex", alignItems: "center", gap: '10px' }}> {/* Added gap */}
+                    <input
+                      type="text"
+                       name={`${platform.value}Link`} // Use a unique name for each input (not validated currently)
+                      style={{ ...inputStyle, width: "100%", flex: 1 }} // Allow input to grow
+                      placeholder={`Enter your ${platform.label} link`}
+                      value={socialLinks[platform.value] || ""}
+                      onChange={(e) => setSocialLinks({ ...socialLinks, [platform.value]: e.target.value })}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleSocialChange(selectedSocials.filter((p) => p.value !== platform.value))} // Use handleSocialChange to keep links synced
+                      style={{ background: "#eee", color: "#000", border: "none", borderRadius: "4px", padding: "10px", fontWeight: "bold", fontSize: "1rem", cursor: "pointer", flexShrink: 0 }} // Prevent button shrinking
+                    >
+                       &minus;
+                    </button>
+                  </div>
+                </label>
+              ))}
+
+              <div className="row" style={{ marginTop: "2rem", display: "flex", gap: "20px" }}> {/* Added gap */}
+                 {/* Previous Button */}
+                 <button type="button" className="black-btn" onClick={() => navigate(-1)}
+                         style={{
+                             flex: 1,
+                             marginRight: '10px',
+                             backgroundColor: "#7B7B7B", // Grey color
+                             color: "#FFFFFF", // White text
+                             // Other black-btn styles like padding, border, etc. would apply unless overridden
+                         }}>
+                   Previous
+                 </button>
+                 {/* Next Button */}
+                 {/* Disable button if dataFromPrevPage is missing or identification wasn't successful */}
+                 <button type="submit" className="black-btn"
+                         disabled={!dataFromPrevPage || !dataFromPrevPage.profile?.identification || dataFromPrevPage.profile.identification.status !== 'success'}
+                         style={{
+                             flex: 1,
+                             marginLeft: '10px',
+                             backgroundColor: "#96105E", // Purple color
+                             color: "white", // White text
+                             opacity: (!dataFromPrevPage || !dataFromPrevPage.profile?.identification || dataFromPrevPage.profile.identification.status !== 'success') ? 0.5 : 1,
+                             cursor: (!dataFromPrevPage || !dataFromPrevPage.profile?.identification || dataFromPrevPage.profile.identification.status !== 'success') ? 'not-allowed' : 'pointer',
+                             transition: "opacity 0.3s ease-in-out",
+                             // Other black-btn styles like padding, border, etc. would apply unless overridden
+                         }}>
+                   Next
+                 </button>
+              </div>
+
+             </> // Close Fragment
+         ) : (
+             // Display a message if dataFromPrevPage or its profile is missing
+             <p style={{...errorStyle, textAlign: 'center', marginBottom: '2rem'}}>
+                 Could not load data from the previous step. Please go back and try again.
+             </p>
+         )} {/* Close dataFromPrevPage and profile conditional render */}
+
         </form>
       </main>
       <Footer />
