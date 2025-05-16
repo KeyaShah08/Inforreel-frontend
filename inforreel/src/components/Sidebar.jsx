@@ -45,7 +45,7 @@ function Sidebar({ onNavItemClick, activeItem }) {
     <div style={{
       display: 'flex',
       flexDirection: 'column',
-      width: '20%', // Adjust this percentage as needed for the overall sidebar width
+      width: '250px ', // Adjust this percentage as needed for the overall sidebar width
       backgroundColor: 'rgba(20, 20, 20, 0.35)', // Updated: #141414 with 65% transparency
       color: 'white',
       padding: '0', // Removed general padding
