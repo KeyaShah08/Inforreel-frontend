@@ -196,6 +196,10 @@ function BusinessInfoDetails1() {
   // State for validation errors
   const [errors, setErrors] = useState({});
 
+  // State for API loading status
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+
   // Load country data on mount
   useEffect(() => {
     const countries = Country.getAllCountries().map(country => ({ value: country.isoCode, label: country.name }));
@@ -356,6 +360,22 @@ function BusinessInfoDetails1() {
     // The sessionId will just be passed as potentially null or undefined if the check failed or wasn't done.
 
     if (Object.keys(validationErrors).length === 0) {
+      setIsSubmitting(true); // Start loading state
+
+      // --- Retrieve Auth Token ---
+      const authToken = localStorage.getItem('authToken');
+
+      if (!authToken) {
+          console.error("Authentication token not found in local storage.");
+          alert("Authentication required. Please log in again."); // Inform user
+          setIsSubmitting(false); // End loading state
+          // Optionally redirect to login page
+          // navigate('/login'); // Uncomment and use navigate if needed
+          return; // Stop the submission process
+      }
+      // --- End Retrieve Auth Token ---
+
+
       // --- Structure ALL data for the API call ---
 
       // 1. Get ALL relevant data received from the previous page (BusinessInfoDetails.jsx)
@@ -374,7 +394,7 @@ function BusinessInfoDetails1() {
           createdAt: new Date().toISOString(), // Generate current timestamp
       };
 
-      // 3. Combine data into the final requested structure for the API call
+      // 3. Combine data into the final requested structure for the API call (JSON part)
       // This requires pulling data from different nested levels of dataFromPrevPages
       const finalProfileData = {
           // From BusinessInfo.jsx (nested in profile from prev page)
@@ -390,39 +410,42 @@ function BusinessInfoDetails1() {
               country: dataFromPrevPages.profile?.address?.country || "", // Assuming label was passed from BusinessInfo
               zipCode: dataFromPrevPages.profile?.address?.zipCode || "",
           },
-          identification: {
+           identification: {
                // The BusinessInfo.jsx doesn't explicitly set identification status or sessionId in the combined data anymore
                // We will pull sessionId and assume status is "Pending" as per desired output structure
-               status: "Pending", // Hardcoded as per desired output
-               stripeSessionId: dataFromPrevPages?.sessionId || "", // Get from top-level sessionId passed
+               status: dataFromPrevPages.profile?.identification?.status || "Pending", // Get status from prev page if available, else Pending
+               stripeSessionId: dataFromPrevPages.profile?.identification?.stripeSessionId || "", // Get session ID from prev page
            },
 
-          // From BusinessInfoDetails.jsx (nested in businessDetails from prev page, and top level businessCategories/socialLinks)
-          categories: dataFromPrevPages.businessCategories || [], // Should already be labels if formatted in prev page
-          businessName: dataFromPrevPages.businessDetails?.businessName || "",
-          hasDba: dataFromPrevPages.businessDetails?.hasDBA || false, // Corrected key name from prev page
-          dbaTradeName: dataFromPrevPages.businessDetails?.tradeName || "", // Conditional, corrected key name from prev page
+
+          // From BusinessInfoDetails.jsx (nested in profile from prev page)
+          // Note: In the last step's BusinessInfoDetails.jsx, I structured these *inside* the profile object.
+          // So we access them from dataFromPrevPages.profile
+          categories: dataFromPrevPages.profile?.categories || [], // Should already be labels if formatted in prev page
+          businessName: dataFromPrevPages.profile?.businessName || "",
+          hasDba: dataFromPrevPages.profile?.hasDba || false, // Corrected key name from prev page
+          dbaTradeName: dataFromPrevPages.profile?.dbaTradeName || "", // Conditional, corrected key name from prev page
           businessContact: {
-              email: dataFromPrevPages.businessDetails?.email || "",
-              phone: dataFromPrevPages.businessDetails?.phone || "",
+              email: dataFromPrevPages.profile?.businessContact?.email || "",
+              phone: dataFromPrevPages.profile?.businessContact?.phone || "",
           },
           businessAddress: { // Business address
-              sameAsResidential: dataFromPrevPages.businessDetails?.sameAsResidential || false,
-              addressLine1: dataFromPrevPages.businessDetails?.address1 || "", // Using keys from BusinessInfoDetails formData
-              addressLine2: dataFromPrevPages.businessDetails?.address2 || "", // Using keys from BusinessInfoDetails formData
-              city: dataFromPrevPages.businessDetails?.city || "",
-              state: dataFromPrevPages.businessDetails?.state || "", // ISO code
-              country: dataFromPrevPages.businessDetails?.country || "USA", // Assuming "USA" string from BusinessInfoDetails
-              zipCode: dataFromPrevPages.businessDetails?.zip || "", // Using key from BusinessInfoDetails formData
+              sameAsResidential: dataFromPrevPages.profile?.businessAddress?.sameAsResidential || false,
+              addressLine1: dataFromPrevPages.profile?.businessAddress?.addressLine1 || "", // Using keys from BusinessInfoDetails formData
+              addressLine2: dataFromPrevPages.profile?.businessAddress?.addressLine2 || "", // Using keys from BusinessInfoDetails formData
+              city: dataFromPrevPages.profile?.businessAddress?.city || "",
+              state: dataFromPrevPages.profile?.businessAddress?.state || "", // ISO code
+              country: dataFromPrevPages.profile?.businessAddress?.country || "USA", // Assuming "USA" string from BusinessInfoDetails
+              zipCode: dataFromPrevPages.profile?.businessAddress?.zipCode || "", // Using key from BusinessInfoDetails formData
           },
-          businessWebsite: dataFromPrevPages.businessDetails?.website || "", // Optional
-          businessType: dataFromPrevPages.businessDetails?.businessType || "", // Should be label if formatted in prev page
-          isRegisteredBusiness: dataFromPrevPages.businessDetails?.isRegistered || false, // Corrected key name from prev page
-          einNumber: dataFromPrevPages.businessDetails?.ein || "", // Conditional, corrected key name from prev page
-          isManufacturer: dataFromPrevPages.businessDetails?.isManufacturer || false,
-          brandCountry: dataFromPrevPages.businessDetails?.brandCountry || "", // Should be label if formatted in prev page
-          brandLaunchYear: dataFromPrevPages.businessDetails?.launchYear || "",
-          socialLinks: dataFromPrevPages.socialLinks || {}, // Object of social links
+          businessWebsite: dataFromPrevPages.profile?.businessWebsite || "", // Optional
+          businessType: dataFromPrevPages.profile?.businessType || "", // Should be label if formatted in prev page
+          isRegisteredBusiness: dataFromPrevPages.profile?.isRegisteredBusiness || false, // Corrected key name from prev page
+          einNumber: dataFromPrevPages.profile?.einNumber || "", // Conditional, corrected key name from prev page
+          isManufacturer: dataFromPrevPages.profile?.isManufacturer || false,
+          brandCountry: dataFromPrevPages.profile?.brandCountry || "", // Should be label if formatted in prev page
+          brandLaunchYear: dataFromPrevPages.profile?.brandLaunchYear || "",
+          socialLinks: dataFromPrevPages.profile?.socialLinks || {}, // Object of social links
 
           // From current page (BusinessInfoDetails1.jsx)
           ...dataFromCurrentPage, // includes isAllowedEveryWhere, productCountries (labels), brandPromotionalPlan, productDescription, productUSP, documentStatus, createdAt
@@ -464,33 +487,57 @@ function BusinessInfoDetails1() {
           }] : []),
       ];
 
-      // 5. Final request body structure
-      const requestBody = {
+      // 5. Create FormData object and append data
+      const formData = new FormData();
+
+      // Append the JSON part (profile and fileMeta) as a string
+      formData.append('data', JSON.stringify({
           profile: finalProfileData,
           fileMeta: allFileMeta,
-      };
+      }));
 
-      console.log("API Request Body:", requestBody);
+      // Append all actual File objects under the key 'files'
+      // Files from BusinessInfo.jsx (ID documents) - passed as files in prev page state
+      (dataFromPrevPages.files || []).forEach(file => {
+          formData.append('files', file);
+      });
+      // Files from BusinessInfoDetails.jsx (DBA documents) - passed as dbaFiles in prev page state
+       (dataFromPrevPages.dbaFiles || []).forEach(file => {
+           formData.append('files', file);
+       });
+      // Files from current page (BusinessInfoDetails1.jsx)
+      if (ingredientTransparencyFile) formData.append('files', ingredientTransparencyFile);
+      if (packagingSustainabilityFile) formData.append('files', packagingSustainabilityFile);
+      productMediaFiles.forEach(file => { // Append each file in the array
+          formData.append('files', file);
+      });
+      if (complianceQAFile) formData.append('files', complianceQAFile);
+
+
+      console.log("API Request Body (FormData - JSON part):", { profile: finalProfileData, fileMeta: allFileMeta });
+      console.log("API Request Body (FormData - Files):", formData.getAll('files').map(file => file.name)); // Log file names
+
 
       // 6. Make the API call
       try {
           const response = await fetch(api_url, {
               method: 'POST',
+              // When using FormData, the 'Content-Type' header is automatically set to 'multipart/form-data'
+              // and includes the correct boundary. Do NOT set it manually here.
               headers: {
-                  'Content-Type': 'application/json',
-                  // Add any other necessary headers, e.g., Authorization token
-                  // 'Authorization': 'Bearer YOUR_AUTH_TOKEN', // <<-- Replace with your actual token
+                  // 'Content-Type': 'multipart/form-data', // <-- DO NOT SET MANUALLY
+                  'Authorization': `Bearer ${authToken}`, // Add this line to include the token
               },
-              body: JSON.stringify(requestBody),
+              body: formData, // Pass the FormData object directly
           });
 
           if (response.ok) {
               const result = await response.json();
               console.log('API call successful:', result);
-              // Handle success, e.g., navigate to a success page
-              navigate('/success'); // Replace with your actual success route
+              // Handle success, navigate to the next page
+              navigate('/signup/business/info-details-2'); // Navigate to the specified next page
           } else {
-              const errorResult = await response.json();
+              const errorResult = await response.json(); // Attempt to parse error response
               console.error('API call failed:', response.status, errorResult);
               // Handle API errors, e.g., display an error message to the user
               alert(`Failed to submit profile data: ${errorResult.message || response.statusText}`); // Display user-friendly error
@@ -499,6 +546,8 @@ function BusinessInfoDetails1() {
           console.error('Error making API call:', error);
           // Handle network or other fetch errors
           alert(`An error occurred while submitting data: ${error.message}`); // Display user-friendly error
+      } finally {
+          setIsSubmitting(false); // End loading state
       }
     } else {
       console.log("Validation errors:", validationErrors);
@@ -807,9 +856,13 @@ function BusinessInfoDetails1() {
                      style={{ ...buttonStyle, backgroundColor: "#7B7B7B" }}> {/* Grey color */}
                 Previous
               </button>
-              <button type="submit" className="black-btn"
-                     style={{ ...buttonStyle, backgroundColor: "#96105E" }}> {/* Purple color */}
-                Next {/* Changed text to Next as per Figma flow */}
+              <button
+                  type="submit"
+                  className="black-btn"
+                  style={{ ...buttonStyle, backgroundColor: "#96105E" }}
+                  disabled={isSubmitting} // Disable button while submitting
+              >
+                {isSubmitting ? 'Submitting...' : 'Next'} {/* Change button text while submitting */}
               </button>
           </div>
         </form>

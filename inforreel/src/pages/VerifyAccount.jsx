@@ -111,6 +111,9 @@ function VerifyAccount() {
             } else if (response.status === 400 && data.error === "User already verified") {
                 console.log("User already verified on initial resend attempt. Navigating.");
                 const authToken = data.data?.token || null;
+                if (authToken) { // Check if token is not null before storing
+                     localStorage.setItem('authToken', authToken); // <-- ADDED THIS LINE
+                }
                 const verifiedUserType = data.data?.userType || userType;
                 handleSuccessfulNavigation(authToken, verifiedUserType); // Navigate if already verified
             }
@@ -186,7 +189,7 @@ function VerifyAccount() {
 
     const stateToPass = {
       userType: verifiedUserType,
-      authToken: token
+      authToken: token // Pass the token via state to the next page if needed immediately (though local storage is for future)
     };
     console.log("Navigating with state:", stateToPass);
 
@@ -198,7 +201,7 @@ function VerifyAccount() {
       navigate("/signup/influencer/profile", { state: stateToPass });
     } else if (verifiedUserType === "vendor") {
       console.log("UserType is 'vendor'. Navigating to verification intro page (BusinessInfo).");
-      navigate("/policy", { state: stateToPass });
+      navigate("/policy", { state: stateToPass }); // This might be where you redirect before BusinessInfoDetails1
     } else {
       console.log("Unknown userType or no specific navigation defined for:", verifiedUserType);
       navigate("/dashboard", { state: stateToPass });
@@ -246,6 +249,9 @@ function VerifyAccount() {
       if (response.ok && data.code === 200) {
         console.log("OTP verification successful:", data);
         const authToken = data.data?.token;
+        if (authToken) { // Check if token is not null before storing
+             localStorage.setItem('authToken', authToken); // <-- ADDED THIS LINE
+        }
         const verifiedUserType = data.data?.userType || userType; // Use userType from state as fallback
 
         // Call the navigation handler (which now includes the forgot password check)
@@ -304,6 +310,9 @@ function VerifyAccount() {
       } else if (response.status === 400 && data.error === "User already verified") {
            console.log("User already verified on manual resend attempt. Navigating.");
            const authToken = data.data?.token || null;
+           if (authToken) { // Check if token is not null before storing
+                localStorage.setItem('authToken', authToken); // <-- ADDED THIS LINE
+           }
            const verifiedUserType = data.data?.userType || userType;
            handleSuccessfulNavigation(authToken, verifiedUserType); // Navigate if already verified
       }

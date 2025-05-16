@@ -12,7 +12,7 @@ const categories = [
   { label: "Health & Wellness", value: "health" },
   { label: "Beauty", value: "beauty" },
   { label: "Athletics / Fitness", value: "fitness" },
-  { label: "Other", value: "other" }, // Added Other as it appears in your desired output
+  { label: "Other", value: "other" },
 ];
 
 const businessTypes = [
@@ -23,11 +23,11 @@ const businessTypes = [
 ];
 
 const socialPlatforms = [
-  { label: "Instagram", value: "Instagram" }, // Changed value to match desired output key
-  { label: "Facebook", value: "Facebook" },   // Changed value to match desired output key
-  { label: "TikTok", value: "TikTok" },       // Changed value to match desired output key
-  { label: "YouTube", value: "YouTube" },     // Added YouTube as it appears in your desired output
-  { label: "Other", value: "Other" },         // Changed value to match desired output key
+  { label: "Instagram", value: "Instagram" },
+  { label: "Facebook", value: "Facebook" },
+  { label: "TikTok", value: "TikTok" },
+  { label: "YouTube", value: "YouTube" },
+  { label: "Other", value: "Other" },
 ];
 
 function BusinessInfoDetails() {
@@ -35,34 +35,34 @@ function BusinessInfoDetails() {
   const location = useLocation(); // Get the location object to access state
 
   // Retrieve ALL data passed from the previous page (BusinessInfo.jsx) via state
-  // This object contains the structure { profile: { ..., address: {...}, documents: [...] }, sessionId: '...' }
+  // This object contains the structure { profile: { ..., address: {...}, identification: {...} }, fileMeta: [...], files: [...] }
   const dataFromPrevPage = location.state;
 
   // Log the received data to confirm
   useEffect(() => {
-        console.log("Received data from BusinessInfo.jsx:", dataFromPrevPage);
-        // Access specific pieces assuming they are nested as per the last BusinessInfo.jsx code
-        const personalInfo = dataFromPrevPage?.profile;
-        // Access residential address from inside the profile object
-        const residentialAddress = dataFromPrevPage?.profile?.address;
-        // Access ID file metadata from the documents array inside the profile object
-        const idFileMeta = dataFromPrevPage?.profile?.documents;
-        const receivedSessionId = dataFromPrevPage?.sessionId;
+        console.log("Received data from BusinessInfo.jsx:", dataFromPrevPage);
+
+        // You can access specific pieces like this:
+        const personalInfo = dataFromPrevPage?.profile;
+        const residentialAddress = dataFromPrevPage?.profile?.address;
+        const identificationData = dataFromPrevPage?.profile?.identification; // Access identification from profile
+        const idFileMeta = dataFromPrevPage?.fileMeta; // Access fileMeta from top level
+        const idFiles = dataFromPrevPage?.files; // Access files (actual File objects) from top level
 
 
-        console.log("Received Session ID:", receivedSessionId);
-        console.log("Received Personal Info (from profile):", personalInfo);
-        console.log("Received Residential Address:", residentialAddress);
-        console.log("Received ID File Metadata (from documents):", idFileMeta);
+        console.log("Received Personal Info (from profile):", personalInfo);
+        console.log("Received Residential Address:", residentialAddress);
+        console.log("Received Identification Data:", identificationData);
+        console.log("Received ID File Metadata (from fileMeta):", idFileMeta);
+        console.log("Received ID Files (actual File objects):", idFiles); // Log the actual File objects
 
+        if (!identificationData || !identificationData.stripeSessionId || !identificationData.status) {
+          console.error("Identification data (status or session ID) is missing in data received from BusinessInfo.jsx.");
+          // Handle this critical error - maybe redirect to an error page or the verification start
+          // navigate('/signup/identity-intro', { state: { message: 'Verification data missing in flow.' } });
+        }
 
-        if (!receivedSessionId) {
-          console.error("Session ID is missing in data received from BusinessInfo.jsx.");
-          // Handle this critical error - maybe redirect to an error page or the verification start
-          // navigate('/signup/identity-intro', { state: { message: 'Verification session ID missing in flow.' } });
-        }
-
-    }, [dataFromPrevPage]); // Depend on dataFromPrevPage
+    }, [dataFromPrevPage]); // Depend on dataFromPrevPage
 
 
   // State to hold the loaded country and state data from the library
@@ -74,15 +74,12 @@ function BusinessInfoDetails() {
 
   // Load country and state data when the component mounts
   useEffect(() => {
-    // Fetch all countries and map them to the { label, value } format for react-select
     const countries = Country.getAllCountries().map(country => ({
       value: country.isoCode, // Use ISO code as value
       label: country.name,    // Use country name as label
     }));
     setAllCountries(countries);
 
-    // Assuming the main business address country is fixed to USA (as per original code)
-    // Fetch states for the USA (ISO code 'US') and map them
     const states = State.getStatesOfCountry('US').map(state => ({
         value: state.isoCode, // Use ISO code as value
         label: state.name,    // Use state name as label
@@ -199,7 +196,6 @@ function BusinessInfoDetails() {
     isManufacturer: false,
     manufactureCountry: "", // Store country ISO code (e.g., 'US', 'CHN')
     launchYear: "", // Store year as string
-    // dbaDocuments state is managed separately
   });
 
   // State for validation errors
@@ -212,7 +208,6 @@ function BusinessInfoDetails() {
 
 
   // Still needed for conditional rendering of inputs
-  // showTrade controls the entire DBA section including documents
   const [showTrade, setShowTrade] = useState(false);
   const [showEIN, setShowEIN] = useState(false);
 
@@ -519,51 +514,19 @@ function BusinessInfoDetails() {
     const validationErrors = validateForm();
     setErrors(validationErrors);
 
-    // We are no longer blocking submission if sessionId is missing based on simplified flow.
-    // The sessionId will just be passed as potentially null or undefined if the check failed or wasn't done.
+    // Check if identification data from the previous page is available before proceeding
+    const identificationData = dataFromPrevPage?.profile?.identification;
+    if (!identificationData || !identificationData.stripeSessionId || !identificationData.status) {
+        setErrors(prev => ({ ...prev, flowError: "Critical: Identification data missing from previous step." }));
+        console.error("Identification data missing. Cannot proceed.");
+        return; // Stop submission
+    }
 
 
     if (Object.keys(validationErrors).length === 0) {
       // --- Structure all data for the next page (/signup/business/info-details-1) ---
 
-      // 1. Get ALL relevant data received from the previous page (BusinessInfo.jsx)
-      // This object should contain profile (with address & documents) and sessionId
-      const dataFromPrevPageForNext = dataFromPrevPage || {}; // Use empty object if state is null/undefined
-
-
-      // 2. Structure data collected on the current page (BusinessInfoDetails.jsx)
-      // Based on your desired output structure:
-      const dataFromCurrentPageForNext = {
-          categories: selectedCategories.map(cat => cat.label), // Pass labels as in desired output
-          businessName: formData.businessName,
-          hasDba: formData.hasDBA, // Corrected key name
-          dbaTradeName: formData.tradeName, // Conditional, corrected key name
-          businessContact: {
-              email: formData.email,
-              phone: formData.phone,
-          },
-          businessAddress: { // This seems to be the business address
-              sameAsResidential: formData.sameAsResidential,
-              // Use the current state of the business address fields
-              addressLine1: formData.address1,
-              addressLine2: formData.address2,
-              city: formData.city,
-              state: formData.state, // ISO code
-              country: formData.country, // Assuming "USA" string
-              zipCode: formData.zip, // Corrected key name
-          },
-          businessWebsite: formData.website, // Optional
-          businessType: businessTypes.find(type => type.value === formData.businessType)?.label || "", // Pass label
-          isRegisteredBusiness: formData.isRegistered, // Corrected key name
-          einNumber: formData.ein, // Conditional, corrected key name
-          isManufacturer: formData.isManufacturer,
-          brandCountry: allCountries.find(country => country.value === formData.manufactureCountry)?.label || "", // Pass label
-          brandLaunchYear: formData.launchYear,
-           socialLinks: socialLinks, // Object of social links (optional fields)
-          // DBA documents metadata is separate in your desired output
-      };
-
-      // 3. DBA documents metadata from the current page
+      // DBA documents metadata from the current page
        const dbaDocumentsMetaForNext = dbaDocuments.map(file => ({
             fileName: file.name,
             category: "DBA Document", // Hardcoded category
@@ -571,28 +534,54 @@ function BusinessInfoDetails() {
         }));
 
 
-       // 4. Combine ALL data from previous page and current page into the final desired structure
+       // Combine ALL data from previous page and current page into the final desired structure
        const combinedDataForNextPage = {
-           ...dataFromPrevPageForNext, // Includes profile (with address & documents) and sessionId
-           // Add the manual status here as it's not in dataFromPrevPage based on your last BusinessInfo.jsx code
-           identification: { // Based on your desired output structure
-               status: "success", // Manually set to "success" as requested
-               stripeSessionId: dataFromPrevPage?.sessionId || "", // Use sessionId from previous page
+           // Start with the profile object from the previous page
+           profile: {
+               ...(dataFromPrevPage?.profile || {}), // Spread existing profile data (personal info, identification)
+               // Add all business details collected on the current page INSIDE profile
+               categories: selectedCategories.map(cat => cat.label), // Pass labels as in desired output
+               businessName: formData.businessName,
+               hasDba: formData.hasDBA, // Corrected key name
+               dbaTradeName: formData.tradeName, // Conditional, corrected key name
+               businessContact: {
+                   email: formData.email,
+                   phone: formData.phone,
+               },
+               businessAddress: { // Business address collected on this page
+                   sameAsResidential: formData.sameAsResidential,
+                   // Use the current state of the business address fields
+                   addressLine1: formData.address1,
+                   addressLine2: formData.address2,
+                   city: formData.city,
+                   state: formData.state, // ISO code
+                   country: formData.country, // Assuming "USA" string from state
+                   zipCode: formData.zip, // Corrected key name
+               },
+               businessWebsite: formData.website, // Optional
+               businessType: businessTypes.find(type => type.value === formData.businessType)?.label || "", // Pass label
+               isRegisteredBusiness: formData.isRegistered, // Corrected key name
+               einNumber: formData.ein, // Conditional, corrected key name
+               isManufacturer: formData.isManufacturer,
+               brandCountry: allCountries.find(country => country.value === formData.manufactureCountry)?.label || "", // Pass label
+               brandLaunchYear: formData.launchYear,
+               socialLinks: socialLinks, // Object of social links (optional fields)
+               // Note: fileMeta and files from the previous page were previously in profile.documents
+               // Now they will be at the top level according to the desired output structure.
+               // So we don't spread dataFromPrevPage?.profile?.documents here.
+               // The identification is already part of profile from the previous page spread.
            },
-           ...dataFromCurrentPageForNext, // Includes business details, categories, website, type, EIN, manufacturer, launch year, social links
-           dbaDocumentsMeta: dbaDocumentsMetaForNext, // Add DBA documents metadata as a separate top-level array
+           // Add the file metadata from the previous page at the top level
+           fileMeta: dataFromPrevPage?.fileMeta || [], // Ensure it's an array even if empty
+           // Add the actual File object(s) from the previous page at the top level
+           files: dataFromPrevPage?.files || [], // Ensure it's an array even if empty
+           // Add DBA documents metadata from the current page at the top level
+           dbaDocumentsMeta: dbaDocumentsMetaForNext,
+           // Add the actual DBA File object(s) from the current page at the top level
+           ...(dbaDocuments.length > 0 && {
+               dbaFiles: dbaDocuments // Put the DBA File objects in an array
+           }),
        };
-
-        // Correct the fileMeta key from previous page if it's nested differently
-        // Your desired output shows fileMeta at the top level, but BusinessInfo.jsx passes 'documents' inside 'profile'
-        // We need to extract it from profile.documents and put it at the top level fileMeta
-       if (dataFromPrevPageForNext?.profile?.documents) {
-           combinedDataForNextPage.fileMeta = dataFromPrevPageForNext.profile.documents;
-           // Optionally remove it from profile if you strictly want the output structure
-           // If you want the documents to remain nested in profile AND have a top-level fileMeta,
-           // then remove the 'delete' line below.
-           // delete combinedDataForNextPage.profile.documents;
-       }
 
 
        console.log("Combined data for next page (/signup/business/info-details-1):", combinedDataForNextPage);
@@ -714,7 +703,7 @@ function BusinessInfoDetails() {
        if (!fileName) return "";
        const lastDotIndex = fileName.lastIndexOf('.');
        return lastDotIndex !== -1 && lastDotIndex < fileName.length - 1
-           ? fileName.substring(lastDotIndex)
+           ? fileName.substring(lastDotIndex + 1) // Get substring AFTER the dot
            : "";
    };
 
@@ -942,7 +931,7 @@ function BusinessInfoDetails() {
             </div>
           </div>
 
-          <div style={{ display: "flex", gap: "3rem", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "3rem", flexWrap: "wrap" }}> {/* Adjusted gap to 3rem for better spacing */}
             <div style={{ flex: 1 }}>
               <label style={{ color: "white" }}>
                 City
@@ -983,9 +972,9 @@ function BusinessInfoDetails() {
                  <Select
                    className="select-input"
                    name="country"
-                   value={{ label: "United States", value: "USA" }}
-                   options={[{ label: "United States", value: "USA" }]}
-                   isDisabled
+                   value={{ label: "United States", value: "USA" }} // Assuming fixed to USA
+                   options={[{ label: "United States", value: "USA" }]} // Only USA option
+                   isDisabled // Disable as it's fixed
                    styles={customSelectStyles}
                  />
               </label>
@@ -1007,8 +996,9 @@ function BusinessInfoDetails() {
             </div>
           </div>
 
+
           <label style={{ color: "white" }}>Business website (optional)
-            <input type="text" name="website" style={inputStyle} value={formData.website} onChange={handleInputChange} />
+            <input type="text" name="website" style={inputStyle} value={formData.website} onChange={handleInputChange} placeholder="e.g., https://yourwebsite.com" />
           </label>
 
           <label style={{ color: "white" }}>Business type
@@ -1037,7 +1027,7 @@ function BusinessInfoDetails() {
           {showEIN && (
             <label style={{ color: "white" }}>
               EIN
-              <input type="text" name="ein" style={inputStyle} value={formData.ein} onChange={handleInputChange} />
+              <input type="text" name="ein" style={inputStyle} value={formData.ein} onChange={handleInputChange} placeholder="Enter EIN" />
                {errors.ein && <span style={errorStyle}>{errors.ein}</span>}
             </label>
           )}

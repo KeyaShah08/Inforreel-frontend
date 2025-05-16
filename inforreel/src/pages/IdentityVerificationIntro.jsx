@@ -43,15 +43,15 @@ export default function IdentityVerificationIntro() {
 
     useEffect(() => {
         const sessionAlreadyHandled = sessionStorage.getItem("session_verified");
-    
+
         if (sessionId && !sessionAlreadyHandled) {
             const runFlow = async () => {
                 try {
                     const response = await fetch(`http://54.236.192.13:8000/identity-complete?session_id=${sessionId}`);
                     const data = await response.json();
-    
+
                     if (data.redirectUrl) {
-                        sessionStorage.setItem("session_verified", "true"); 
+                        sessionStorage.setItem("session_verified", "true");
                         window.location.href = data.redirectUrl;
                     } else {
                         setError("Invalid server response.");
@@ -60,7 +60,7 @@ export default function IdentityVerificationIntro() {
                     setError("Error verifying identity.");
                 }
             };
-    
+
             runFlow();
         }
     }, [sessionId]);
@@ -137,33 +137,6 @@ export default function IdentityVerificationIntro() {
                     <p style={linkTextStyle}>
                         <span style={{ marginRight: "5px" }}>ⓘ</span> How identity verification works
                     </p>
-
-                    <button
-    style={{ ...buttonStyle, backgroundColor: "#444", marginTop: "1rem" }}
-    onClick={async () => {
-        if (!sessionId) {
-            setError("Session ID not found in URL.");
-            return;
-        }
-        setIsLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(`http://54.236.192.13:8000/identity-complete?session_id=${sessionId}`);
-            const data = await response.json();
-            if (data.redirectUrl) {
-                window.location.href = data.redirectUrl;
-            } else {
-                setError("Invalid server response.");
-            }
-        } catch (err) {
-            setError("Error verifying identity.");
-        } finally {
-            setIsLoading(false);
-        }
-    }}
->
-    Next
-</button>
 
                 </div>
             </main>
