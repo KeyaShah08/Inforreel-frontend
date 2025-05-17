@@ -100,13 +100,18 @@ function BusinessSignup() {
 
         if (response.ok) {
           // API call successful
+
+          // ADDED: Save fullName to sessionStorage
           sessionStorage.setItem("businessFullName", formData.fullName);
+
           // Navigate to verify page, passing email, next step, and importantly, the userType
           navigate("/verify", {
             state: {
               email: formData.email,
               next: "business-info", // This 'next' might not be directly used in VerifyAccount anymore if userType dictates navigation
               userType: "vendor", // <--- Add userType here as "vendor"
+              // ADDED: Pass username in state to VerifyAccount
+              username: formData.username,
             },
           });
         } else {
@@ -185,7 +190,7 @@ function BusinessSignup() {
                   onChange={handleChange}
                   style={{
                     padding: "10px",
-                    border: `1px solid ${errors[field] ? '#ff4d4d' : '#444'}`,
+                    border: `1px solid ${errors[field] ? '#ff4d4f' : '#444'}`,
                     backgroundColor: "#1d1d1d",
                     borderRadius: "6px",
                     fontSize: "1rem",
@@ -193,7 +198,7 @@ function BusinessSignup() {
                   }}
                 />
                 {errors[field] && (
-                  <span style={{ color: "#ff4d4d", fontSize: "0.85rem", marginTop: "0.3rem" }}>
+                  <span style={{ color: "#ff4d4f", fontSize: "0.85rem", marginTop: "0.3rem" }}>
                     {errors[field]}
                   </span>
                 )}
@@ -218,7 +223,7 @@ function BusinessSignup() {
                     onChange={handleChange}
                     style={{
                       padding: "10px",
-                      border: `1px solid ${errors[field] ? '#ff4d4d' : '#444'}`,
+                      border: `1px solid ${errors[field] ? '#ff4d4f' : '#444'}`,
                       backgroundColor: "#1d1d1d",
                       borderRadius: "6px",
                       fontSize: "1rem",
@@ -254,7 +259,7 @@ function BusinessSignup() {
                   </small>
                 )}
                 {errors[field] && (
-                  <span style={{ color: "#ff4d4d", fontSize: "0.85rem", marginTop: "0.3rem" }}>
+                  <span style={{ color: "#ff4d4f", fontSize: "0.85rem", marginTop: "0.3rem" }}>
                     {errors[field]}
                   </span>
                 )}
@@ -273,7 +278,7 @@ function BusinessSignup() {
               </span>
             </div>
             {errors.agreed && (
-              <span style={{ color: "#ff4d4d", fontSize: "0.85rem" }}>{errors.agreed}</span>
+              <span style={{ color: "#ff4d4f", fontSize: "0.85rem" }}>{errors.agreed}</span>
             )}
 
             <div style={{ display: "flex", alignItems: "center", fontSize: "0.85rem", gap: "0.5rem", lineHeight: "1.4" }}>
@@ -294,7 +299,7 @@ function BusinessSignup() {
             )}
 
             {apiError && (
-              <span style={{ color: "#ff4d4d", fontSize: "0.85rem", textAlign: "center" }}>
+              <span style={{ color: "#ff4d4f", fontSize: "0.85rem", textAlign: "center" }}>
                 {apiError}
               </span>
             )}

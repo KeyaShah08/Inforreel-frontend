@@ -6,22 +6,52 @@ import Header from "../components/Header";
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Add loading state
   const navigate = useNavigate();
 
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // Make handleSubmit async
     e.preventDefault();
+    setError(""); // Clear previous errors
+
     if (!email) {
       setError("Please enter your email.");
+      return;
     } else if (!validateEmail(email)) {
       setError("Please enter a valid email address.");
-    } else {
-      setError("");
-      navigate("/reset-password", { state: { email } });
+      return;
+    }
+
+    setLoading(true); // Set loading to true before API call
+
+    try {
+      const response = await fetch("http://54.236.192.13:8000/api/users/request-password-reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.code === 200) {
+        // API call successful, navigate to VerifyAccount page with email
+        navigate("/verify", { state: { email: email, source: 'forgot-password' } }); // Pass email and source
+      } else {
+        // API call failed, display error message from response
+        setError(data.message || "Failed to request password reset. Please try again.");
+      }
+    } catch (error) {
+      // Network error or other exceptions
+      setError("An error occurred. Please check your network and try again.");
+      console.error("API Error:", error);
+    } finally {
+      setLoading(false); // Set loading to false after API call
     }
   };
-  
+
 
   return (
     <div
@@ -61,6 +91,8 @@ function ForgotPassword() {
             }}
           >
             <label style={{ fontSize: "0.95rem", marginBottom: "-0.5rem" }}>
+              Enter your email address and we’ll send a One Time Password (OTP) to reset password <br />
+              <br />
               Email Address
             </label>
             <input
@@ -76,6 +108,7 @@ function ForgotPassword() {
                 fontSize: "1rem",
                 color: "#fff",
               }}
+              disabled={loading} // Disable input while loading
             />
             {error && (
               <span style={{ color: "#ff4d4d", fontSize: "0.85rem" }}>{error}</span>
@@ -91,10 +124,12 @@ function ForgotPassword() {
                 padding: "12px",
                 border: "none",
                 borderRadius: "6px",
-                cursor: "pointer",
+                cursor: loading ? "not-allowed" : "pointer", // Change cursor while loading
+                opacity: loading ? 0.7 : 1, // Reduce opacity while loading
               }}
+              disabled={loading} // Disable button while loading
             >
-              Send Reset Link
+              {loading ? "Processing..." : "Continue"} {/* Change button text while loading */}
             </button>
           </form>
         </div>

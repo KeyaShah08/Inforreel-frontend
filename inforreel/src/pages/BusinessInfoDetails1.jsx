@@ -1,3 +1,5 @@
+// BusinessInfoDetails1.jsx - Final Page for API Submission
+
 import { Country } from 'country-state-city'; // Import Country data
 import { useEffect, useState } from "react"; // Added useEffect
 import { useLocation, useNavigate } from "react-router-dom"; // Import useLocation
@@ -20,6 +22,7 @@ const inputStyle = {
   marginTop: "5px",
   marginBottom: "5px", // Adjusted for error spacing
   width: "100%",
+  boxSizing: 'border-box', // Ensure padding doesn't add to width
 };
 
 // Adjusted labelStyle for the dark theme
@@ -30,35 +33,36 @@ const labelStyle = {
   color: "#FFFFFF", // White text for dark theme
 };
 
-// Modified fileUploadBox for dashed border and dark theme
-// This function now only determines the border color based on error for fields *other than* product media
-const fileUploadBoxStyle = (hasError) => ({
+// Modified fileUploadBox for dashed border and dark theme - for OPTIONAL single files
+const fileUploadBoxStyle = (hasError, isDisabled) => ({
   border: `1px dashed ${hasError ? '#ff4d4f' : '#888'}`, // Dashed border, red on error for single optional fields
-  backgroundColor: "#1d1d1d", // Dark background
+  backgroundColor: isDisabled ? '#2d2d2d' : "#1d1d1d", // Dark background, slightly different when disabled
   padding: "2rem",
   textAlign: "center",
   borderRadius: "10px", // Rounded corners matching other elements
   color: "#ccc", // Greyish text
   marginTop: "0.5rem",
-  marginBottom: hasError || false ? '10px' : '20px', // Adjust spacing (no file list here)
-  cursor: "pointer",
+  marginBottom: hasError ? '10px' : '20px', // Adjust spacing based on error presence below
+  cursor: isDisabled ? 'not-allowed' : "pointer",
+  opacity: isDisabled ? 0.7 : 1,
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
 });
 
-// New style specifically for the Product Media upload box, without error highlighting
-const productMediaFileUploadBoxStyle = (hasError) => ({
-     border: `1px dashed #888`, // Always dashed border with default color
-     backgroundColor: "#1d1d1d", // Dark background
+// New style specifically for the Product Media upload box (REQUIRED multi-file)
+const productMediaFileUploadBoxStyle = (hasError, isDisabled) => ({
+     border: `1px dashed ${hasError ? '#ff4d4f' : '#888'}`, // Dashed border, red on error for this REQUIRED multi-file field
+     backgroundColor: isDisabled ? '#2d2d2d' : "#1d1d1d", // Dark background, slightly different when disabled
      padding: "2rem",
      textAlign: "center",
      borderRadius: "10px", // Rounded corners matching other elements
      color: "#ccc", // Greyish text
      marginTop: "0.5rem",
      marginBottom: hasError ? '10px' : '20px', // Adjust spacing based on error presence below
-     cursor: "pointer",
+     cursor: isDisabled ? 'not-allowed' : "pointer",
+     opacity: isDisabled ? 0.7 : 1,
      display: 'flex',
      flexDirection: 'column',
      alignItems: 'center',
@@ -196,11 +200,40 @@ function BusinessInfoDetails1() {
   // State for validation errors
   const [errors, setErrors] = useState({});
 
+  // State for API loading status
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+   // Add state to hold consolidated file data and metadata from previous pages
+   const [allPreviousFiles, setAllPreviousFiles] = useState([]);
+   const [allPreviousFileMeta, setAllPreviousFileMeta] = useState([]);
+
+
   // Load country data on mount
   useEffect(() => {
     const countries = Country.getAllCountries().map(country => ({ value: country.isoCode, label: country.name }));
     setAllCountries(countries);
   }, []);
+
+  // Effect to process data received from the previous page on mount
+  useEffect(() => {
+      const dataFromPrevPages = location.state || {};
+      console.log("Data received from BusinessInfoDetails.jsx:", dataFromPrevPages);
+
+      // Extract and store consolidated files and fileMeta from previous pages
+      // BusinessInfoDetails.jsx should have combined ID file and DBA files/meta
+      setAllPreviousFiles(dataFromPrevPages.files || []); // This should contain ID file + DBA files
+      setAllPreviousFileMeta(dataFromPrevPages.fileMeta || []); // This should contain ID file meta + DBA file meta
+
+      // Optional: Check for critical data received from previous pages
+      // Although validation on submit is the primary gate, checking here can provide early feedback.
+      if (!dataFromPrevPages.profile || !dataFromPrevPages.profile.identification || !dataFromPrevPages.profile.identification.stripeSessionId || dataFromPrevPages.profile.identification.status !== 'success') {
+           console.error("Critical data (profile, identification, session ID, or successful status) missing or invalid from previous steps.");
+           // You might set an error state here to disable submission or show a message
+           setErrors(prev => ({...prev, flowError: "Critical data missing from previous steps. Please go back."}));
+       }
+
+
+  }, [location.state]); // Dependency on location.state
 
 
   // Handlers for standard inputs
@@ -241,7 +274,7 @@ function BusinessInfoDetails1() {
   const handleSingleFileChange = (setter, name, e) => {
       const file = e.target.files[0] || null;
       setter(file);
-        // Clear error on change
+        // Clear error on change for single optional file fields
       if (errors[name]) {
              setErrors(prev => {
                   const { [name]: removedError, ...rest } = prev;
@@ -272,17 +305,17 @@ function BusinessInfoDetails1() {
         // If trying to add more than allowed, set the error immediately
         if (productMediaFiles.length + newFiles.length > 3) {
              setErrors(prev => ({
-                 ...prev,
-                 productMediaFiles: `You can upload a maximum of 3 files. You tried to add ${newFiles.length + productMediaFiles.length} files.`, // More accurate count
-             }));
+                  ...prev,
+                  productMediaFiles: `You can upload a maximum of 3 files. You tried to add ${productMediaFiles.length + newFiles.length} files.`, // More accurate count
+              }));
         }
     };
 
     const handleProductMediaFileChange = (e) => {
          const files = Array.from(e.target.files); // Convert FileList to Array
          addProductMediaFiles(files);
-         // Clearing the input's value happens automatically when key changes due to state update
-         // e.target.value = null; // Less crucial with key fix
+         // Clear the input's value
+         e.target.value = null;
     };
 
     const handleProductMediaDrop = (e) => {
@@ -352,175 +385,256 @@ function BusinessInfoDetails1() {
     const validationErrors = validateForm();
     setErrors(validationErrors);
 
-    // We are no longer blocking submission if sessionId is missing based on simplified flow.
-    // The sessionId will just be passed as potentially null or undefined if the check failed or wasn't done.
-
-    if (Object.keys(validationErrors).length === 0) {
-      // --- Structure ALL data for the API call ---
-
-      // 1. Get ALL relevant data received from the previous page (BusinessInfoDetails.jsx)
-      // This object should contain profile (with residential address & ID documents), businessDetails, businessCategories, socialLinks, dbaDocumentsMeta, and sessionId
-      const dataFromPrevPages = location.state || {}; // Use empty object if state is null/undefined
-
-      // 2. Collect data from the current page (BusinessInfoDetails1.jsx)
-      const dataFromCurrentPage = {
-          isAllowedEveryWhere: useEverywhere,
-          // Store selected countries as their labels if not everywhere, empty array otherwise
-          productCountries: useEverywhere ? [] : selectedCountries.map(country => country.label),
-          brandPromotionalPlan: plan,
-          productDescription: description,
-          productUSP: usp,
-          documentStatus: "Pending", // Hardcoded as per desired output
-          createdAt: new Date().toISOString(), // Generate current timestamp
-      };
-
-      // 3. Combine data into the final requested structure for the API call
-      // This requires pulling data from different nested levels of dataFromPrevPages
-      const finalProfileData = {
-          // From BusinessInfo.jsx (nested in profile from prev page)
-          fullName: dataFromPrevPages.profile?.fullName || "",
-          dob: dataFromPrevPages.profile?.dob || "",
-          gender: dataFromPrevPages.profile?.gender || "",
-          ssn: dataFromPrevPages.profile?.ssn || "",
-          address: { // Residential address
-              addressLine1: dataFromPrevPages.profile?.address?.addressLine1 || "",
-              addressLine2: dataFromPrevPages.profile?.address?.addressLine2 || "",
-              city: dataFromPrevPages.profile?.address?.city || "",
-              state: dataFromPrevPages.profile?.address?.state || "", // ISO code
-              country: dataFromPrevPages.profile?.address?.country || "", // Assuming label was passed from BusinessInfo
-              zipCode: dataFromPrevPages.profile?.address?.zipCode || "",
-          },
-          identification: {
-               // The BusinessInfo.jsx doesn't explicitly set identification status or sessionId in the combined data anymore
-               // We will pull sessionId and assume status is "Pending" as per desired output structure
-               status: "Pending", // Hardcoded as per desired output
-               stripeSessionId: dataFromPrevPages?.sessionId || "", // Get from top-level sessionId passed
-           },
-
-          // From BusinessInfoDetails.jsx (nested in businessDetails from prev page, and top level businessCategories/socialLinks)
-          categories: dataFromPrevPages.businessCategories || [], // Should already be labels if formatted in prev page
-          businessName: dataFromPrevPages.businessDetails?.businessName || "",
-          hasDba: dataFromPrevPages.businessDetails?.hasDBA || false, // Corrected key name from prev page
-          dbaTradeName: dataFromPrevPages.businessDetails?.tradeName || "", // Conditional, corrected key name from prev page
-          businessContact: {
-              email: dataFromPrevPages.businessDetails?.email || "",
-              phone: dataFromPrevPages.businessDetails?.phone || "",
-          },
-          businessAddress: { // Business address
-              sameAsResidential: dataFromPrevPages.businessDetails?.sameAsResidential || false,
-              addressLine1: dataFromPrevPages.businessDetails?.address1 || "", // Using keys from BusinessInfoDetails formData
-              addressLine2: dataFromPrevPages.businessDetails?.address2 || "", // Using keys from BusinessInfoDetails formData
-              city: dataFromPrevPages.businessDetails?.city || "",
-              state: dataFromPrevPages.businessDetails?.state || "", // ISO code
-              country: dataFromPrevPages.businessDetails?.country || "USA", // Assuming "USA" string from BusinessInfoDetails
-              zipCode: dataFromPrevPages.businessDetails?.zip || "", // Using key from BusinessInfoDetails formData
-          },
-          businessWebsite: dataFromPrevPages.businessDetails?.website || "", // Optional
-          businessType: dataFromPrevPages.businessDetails?.businessType || "", // Should be label if formatted in prev page
-          isRegisteredBusiness: dataFromPrevPages.businessDetails?.isRegistered || false, // Corrected key name from prev page
-          einNumber: dataFromPrevPages.businessDetails?.ein || "", // Conditional, corrected key name from prev page
-          isManufacturer: dataFromPrevPages.businessDetails?.isManufacturer || false,
-          brandCountry: dataFromPrevPages.businessDetails?.brandCountry || "", // Should be label if formatted in prev page
-          brandLaunchYear: dataFromPrevPages.businessDetails?.launchYear || "",
-          socialLinks: dataFromPrevPages.socialLinks || {}, // Object of social links
-
-          // From current page (BusinessInfoDetails1.jsx)
-          ...dataFromCurrentPage, // includes isAllowedEveryWhere, productCountries (labels), brandPromotionalPlan, productDescription, productUSP, documentStatus, createdAt
-      };
-
-      // 4. Consolidate ALL document metadata from all pages into a single fileMeta array
-      const allFileMeta = [
-          // Documents from BusinessInfo.jsx (ID documents) - passed as fileMeta in prev page state
-          ...(dataFromPrevPages.fileMeta || []),
-          // Documents from BusinessInfoDetails.jsx (DBA documents) - passed as dbaDocumentsMeta in prev page state
-          // Note: In the last step's BusinessInfoDetails.jsx, I *did* include dbaDocumentsMeta in the combined state,
-          // so we can use that. Ensure dbaDocumentsMeta also contains category and fileType.
-          ...(dataFromPrevPages.dbaDocumentsMeta || []),
-          // Documents from current page (BusinessInfoDetails1.jsx)
-          // Ingredient Transparency (Optional)
-          ...(ingredientTransparencyFile ? [{
-              fileName: ingredientTransparencyFile.name,
-              category: "Ingredient Transparency", // Define category
-              fileType: getFileExtension(ingredientTransparencyFile.name),
-          }] : []),
-          // Packaging Sustainability (Optional)
-          ...(packagingSustainabilityFile ? [{
-              fileName: packagingSustainabilityFile.name,
-              category: "Packaging Sustainability", // Define category
-              fileType: getFileExtension(packagingSustainabilityFile.name),
-          }] : []),
-          // Product Media (Required, Max 3)
-          // Map each file in the productMediaFiles array
-          ...(productMediaFiles.map(file => ({
-              fileName: file.name,
-              category: "Product Media", // Define category
-              fileType: getFileExtension(file.name),
-          }))),
-          // Compliance and QA (Optional)
-          ...(complianceQAFile ? [{
-              fileName: complianceQAFile.name,
-              category: "Compliance and QA", // Define category
-              fileType: getFileExtension(complianceQAFile.name),
-          }] : []),
-      ];
-
-      // 5. Final request body structure
-      const requestBody = {
-          profile: finalProfileData,
-          fileMeta: allFileMeta,
-      };
-
-      console.log("API Request Body:", requestBody);
-
-      // 6. Make the API call
-      try {
-          const response = await fetch(api_url, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-                  // Add any other necessary headers, e.g., Authorization token
-                  // 'Authorization': 'Bearer YOUR_AUTH_TOKEN', // <<-- Replace with your actual token
-              },
-              body: JSON.stringify(requestBody),
-          });
-
-          if (response.ok) {
-              const result = await response.json();
-              console.log('API call successful:', result);
-              // Handle success, e.g., navigate to a success page
-              navigate('/success'); // Replace with your actual success route
-          } else {
-              const errorResult = await response.json();
-              console.error('API call failed:', response.status, errorResult);
-              // Handle API errors, e.g., display an error message to the user
-              alert(`Failed to submit profile data: ${errorResult.message || response.statusText}`); // Display user-friendly error
-          }
-      } catch (error) {
-          console.error('Error making API call:', error);
-          // Handle network or other fetch errors
-          alert(`An error occurred while submitting data: ${error.message}`); // Display user-friendly error
-      }
-    } else {
-      console.log("Validation errors:", validationErrors);
-       // Scroll to the first error (simplified targeting)
-       const firstErrorFieldName = Object.keys(validationErrors)[0];
-         const element = document.getElementById(firstErrorFieldName) ||
-                         document.querySelector(`[name="${firstErrorFieldName}"]`) || // Inputs
-                         document.querySelector(`.signup-form label[htmlFor="${firstErrorFieldName}"]`) || // Labels linked by htmlFor
-                         document.querySelector(`.signup-form .select-input[name="${firstErrorFieldName}"] .react-select__control`) || // Selects
-                         document.getElementById('productMediaFilesInputArea'); // Product Media upload area (if that's the first error)
+    // Prevent submission if there are client-side validation errors OR critical data from previous pages is missing
+    if (Object.keys(validationErrors).length > 0 || errors.flowError) {
+        console.log("Validation errors or flow error:", { ...validationErrors, flowError: errors.flowError });
+         // Scroll to the first error (simplified targeting)
+         const firstErrorFieldName = errors.flowError ? 'flowError' : Object.keys(validationErrors)[0]; // Prioritize flow error scroll
+           const element = document.getElementById(firstErrorFieldName) ||
+                           document.querySelector(`[name="${firstErrorFieldName}"]`) || // Inputs
+                           document.querySelector(`label[htmlFor="${firstErrorFieldName}"]`) || // Labels linked by htmlFor
+                           document.querySelector(`.select-input[name="${firstErrorFieldName}"] .react-select__control`) || // Selects (using a class helper)
+                           document.getElementById('productMediaFilesInputArea'); // Product Media upload area (if that's the first error)
 
          // Fallback to label if direct input not found (can be useful for checkbox errors if you add them)
-         const labelElement = document.querySelector(`.signup-form label[htmlFor="${firstErrorFieldName}"]`);
+         const labelElement = document.querySelector(`label[htmlFor="${firstErrorFieldName}"]`); // Also check label for scrolling
+
+         if (element) {
+              element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+         } else if (labelElement) { // Fallback to label
+              labelElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+         }
+         else {
+              // Fallback to the top of the form if the element wasn't found
+              document.querySelector('.signup-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+         }
+        return; // Stop submission
+    }
+
+    // --- Proceed if no validation errors AND no flow errors ---
+    setIsSubmitting(true); // Start loading state
+
+    // --- Retrieve Auth Token ---
+    const authToken = localStorage.getItem('authToken');
+
+    if (!authToken) {
+        console.error("Authentication token not found in local storage.");
+        alert("Authentication required. Please log in again."); // Inform user
+        setIsSubmitting(false); // End loading state
+        // Optionally redirect to login page
+        // navigate('/login'); // Uncomment and use navigate if needed
+        return; // Stop the submission process
+    }
+    // --- End Retrieve Auth Token ---
 
 
-       if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-       } else if (labelElement) {
-            labelElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-       } else {
-            document.querySelector('.signup-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-       }
+    // --- Structure ALL data for the API call ---
+
+    // 1. Get ALL relevant data received from the previous page (BusinessInfoDetails.jsx)
+    // This object should contain profile (with personal info, residential address, identification, business details, business address, social links, etc.),
+    // fileMeta (ID documents metadata), files (ID documents File objects), dbaDocumentsMeta (DBA documents metadata), and dbaFiles (DBA documents File objects).
+    const dataFromPrevPages = location.state || {}; // Use empty object if state is null/undefined
+
+    // Check again for critical data received from previous pages before constructing API payload
+     if (!dataFromPrevPages.profile || !dataFromPrevPages.profile.identification || !dataFromPrevPages.profile.identification.stripeSessionId || dataFromPrevPages.profile.identification.status !== 'success' ||
+         !Array.isArray(allPreviousFileMeta) || !Array.isArray(allPreviousFiles)) {
+          console.error("Critical data (profile, identification, session ID, status, or previous files/metadata arrays) missing or invalid from previous steps right before API call.");
+          alert("An internal error occurred. Critical data from previous steps is missing. Please restart the process.");
+          setIsSubmitting(false);
+          // navigate('/signup/identity-intro'); // Redirect to a known safe start point
+          return; // Stop submission
+      }
+
+
+    // 2. Collect data from the current page (BusinessInfoDetails1.jsx)
+    const dataFromCurrentPage = {
+        isAllowedEveryWhere: useEverywhere,
+        // Store selected countries as their labels if not everywhere, empty array otherwise
+        productCountries: useEverywhere ? [] : selectedCountries.map(country => country.label),
+        brandPromotionalPlan: plan,
+        productDescription: description,
+        productUSP: usp,
+        documentStatus: "Pending", // Hardcoded as per desired output
+        createdAt: new Date().toISOString(), // Generate current timestamp
+    };
+
+    // 3. Combine data into the final requested STRUCTURE for the API call (JSON part)
+    // This structure should EXACTLY match the 'profile' JSON expected by the backend.
+    const finalProfileData = {
+        // From BusinessInfo.jsx and BusinessInfoDetails.jsx (already merged into dataFromPrevPages.profile)
+        // Access nested properties directly from dataFromPrevPages.profile
+        fullName: dataFromPrevPages.profile.fullName || "",
+        dob: dataFromPrevPages.profile.dob || "",
+        gender: dataFromPrevPages.profile.gender || "",
+        ssn: dataFromPrevPages.profile.ssn || "",
+        address: { // Residential address
+            addressLine1: dataFromPrevPages.profile.address?.addressLine1 || "",
+            addressLine2: dataFromPrevPages.profile.address?.addressLine2 || "",
+            city: dataFromPrevPages.profile.address?.city || "",
+            state: dataFromPrevPages.profile.address?.state || "", // ISO code
+            country: dataFromPrevPages.profile.address?.country || "", // Assuming label was passed from BusinessInfo/Details
+            zipCode: dataFromPrevPages.profile.address?.zipCode || "",
+        },
+         identification: { // Identification data
+             status: dataFromPrevPages.profile.identification?.status || "Pending", // Get status from prev page if available, else Pending
+             stripeSessionId: dataFromPrevPages.profile.identification?.stripeSessionId || "", // Get session ID from prev page
+         },
+         categories: dataFromPrevPages.profile.categories || [], // Should already be labels if formatted in prev page
+         businessName: dataFromPrevPages.profile.businessName || "",
+         hasDba: dataFromPrevPages.profile.hasDba || false, // Corrected key name
+         dbaTradeName: dataFromPrevPages.profile.dbaTradeName || "", // Conditional, corrected key name
+         businessContact: {
+             email: dataFromPrevPages.profile.businessContact?.email || "",
+             phone: dataFromPrevPages.profile.businessContact?.phone || "",
+         },
+         businessAddress: { // Business address
+             sameAsResidential: dataFromPrevPages.profile.businessAddress?.sameAsResidential || false,
+             addressLine1: dataFromPrevPages.profile.businessAddress?.addressLine1 || "",
+             addressLine2: dataFromPrevPages.profile.businessAddress?.addressLine2 || "",
+             city: dataFromPrevPages.profile.businessAddress?.city || "",
+             state: dataFromPrevPages.profile.businessAddress?.state || "", // ISO code
+             country: dataFromPrevPages.profile.businessAddress?.country || "USA", // Assuming "USA" string from BusinessInfoDetails
+             zipCode: dataFromPrevPages.profile.businessAddress?.zipCode || "",
+         },
+         businessWebsite: dataFromPrevPages.profile.businessWebsite || "", // Optional
+         businessType: dataFromPrevPages.profile.businessType || "", // Should be label
+         isRegisteredBusiness: dataFromPrevPages.profile.isRegisteredBusiness || false, // Corrected key name
+         einNumber: dataFromPrevPages.profile.einNumber || "", // Conditional, corrected key name
+         isManufacturer: dataFromPrevPages.profile.isManufacturer || false,
+         brandCountry: dataFromPrevPages.profile.brandCountry || "", // Should be label
+         brandLaunchYear: dataFromPrevPages.profile.brandLaunchYear || "",
+         socialLinks: dataFromPrevPages.profile.socialLinks || {}, // Object of social links
+
+        // Add/Overwrite with data from current page (P3) - Ensure consistency in keys
+        ...dataFromCurrentPage, // includes isAllowedEveryWhere, productCountries (labels), brandPromotionalPlan, productDescription, productUSP, documentStatus, createdAt
+    };
+
+    // 4. Consolidate ALL document metadata from all pages into a single fileMeta array
+    // This structure should EXACTLY match the 'fileMeta' JSON array expected by the backend.
+    const allFileMeta = [
+        // Metadata from previous pages (ID documents + DBA documents) - already consolidated in state
+        ...allPreviousFileMeta,
+        // Metadata from current page (P3) optional files + required product media
+        // Ingredient Transparency (Optional)
+        ...(ingredientTransparencyFile ? [{
+            fileName: ingredientTransparencyFile.name,
+            category: "Ingredient Transparency", // Define category
+            fileType: getFileExtension(ingredientTransparencyFile.name),
+        }] : []),
+        // Packaging Sustainability (Optional)
+        ...(packagingSustainabilityFile ? [{
+            fileName: packagingSustainabilityFile.name,
+            category: "Packaging Sustainability", // Define category
+            fileType: getFileExtension(packagingSustainabilityFile.name),
+        }] : []),
+        // Product Media (Required, Max 3)
+        // Map each file in the productMediaFiles array
+        ...(productMediaFiles.map(file => ({
+            fileName: file.name,
+            category: "Product Media", // Define category
+            fileType: getFileExtension(file.name),
+        }))),
+        // Compliance and QA (Optional)
+        ...(complianceQAFile ? [{
+            fileName: complianceQAFile.name,
+            category: "Compliance and QA", // Define category
+            fileType: getFileExtension(complianceQAFile.name),
+        }] : []),
+    ];
+
+    // 5. Create FormData object and append data - MATCHING POSTMAN STRUCTURE
+    const formData = new FormData();
+
+    // Append the 'profile' JSON string under the key 'profile'
+    formData.append('profile', JSON.stringify(finalProfileData));
+
+    // Append the 'fileMeta' JSON string under the key 'fileMeta'
+    formData.append('fileMeta', JSON.stringify(allFileMeta));
+
+    // Append ALL actual File objects under the key 'files'
+    // Files from previous pages (ID documents + DBA documents) - already consolidated in state
+    allPreviousFiles.forEach(file => {
+        // Ensure it's actually a File/Blob before appending
+        if (file instanceof File || file instanceof Blob) {
+             formData.append('files', file);
+        } else {
+             console.warn("Skipping non-File/Blob object found in previous pages' files array:", file);
+        }
+    });
+
+    // Files from current page (P3)
+    if (ingredientTransparencyFile) {
+        if (ingredientTransparencyFile instanceof File || ingredientTransparencyFile instanceof Blob) {
+            formData.append('files', ingredientTransparencyFile);
+        } else { console.warn("Ingredient Transparency File is not a File/Blob:", ingredientTransparencyFile); }
+    }
+    if (packagingSustainabilityFile) {
+         if (packagingSustainabilityFile instanceof File || packagingSustainabilityFile instanceof Blob) {
+            formData.append('files', packagingSustainabilityFile);
+        } else { console.warn("Packaging Sustainability File is not a File/Blob:", packagingSustainabilityFile); }
+    }
+
+    productMediaFiles.forEach(file => { // Append each file in the required array
+         if (file instanceof File || file instanceof Blob) {
+             formData.append('files', file);
+         } else {
+              console.warn("Skipping non-File/Blob object found in current page's productMediaFiles array:", file);
+         }
+    });
+
+    if (complianceQAFile) {
+         if (complianceQAFile instanceof File || complianceQAFile instanceof Blob) {
+            formData.append('files', complianceQAFile);
+        } else { console.warn("Compliance QA File is not a File/Blob:", complianceQAFile); }
+    }
+
+
+    // Optional: Log FormData entries (for debugging, handles text and file names)
+    console.log("Constructed FormData entries:");
+    for (let pair of formData.entries()) {
+        if (pair[1] instanceof File) {
+            console.log(pair[0] + ': ', pair[1].name, pair[1].size, pair[1].type);
+        } else {
+            console.log(pair[0] + ': ', pair[1]);
+        }
+    }
+
+
+    // --- 6. Make the API call ---
+    try {
+        const response = await fetch(api_url, {
+            method: 'POST',
+            // 'Content-Type': 'multipart/form-data' is automatically set by fetch when using FormData,
+            // including the necessary boundary. Do NOT set it manually.
+            headers: {
+                'Authorization': `Bearer ${authToken}`, // Include the authentication token
+                // DO NOT set 'Content-Type' manually for FormData
+            },
+            body: formData, // Pass the FormData object directly
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log('API call successful:', result);
+            // Handle success - navigate to a success page
+            navigate('/dashboard'); // Example success page route
+        } else {
+            // Attempt to parse error response for more details
+            const errorResult = await response.json();
+            console.error('API call failed:', response.status, errorResult);
+            // Display a user-friendly error message
+            alert(`Failed to submit profile data: ${errorResult.message || errorResult.error || response.statusText}`);
+            // If the error is "Missing profile data", log a specific suggestion
+            if (errorResult.error === "Missing profile data") {
+                 console.warn("Received 'Missing profile data' error from backend. This suggests the backend's middleware for parsing multipart/form-data might not be correctly configured to parse the 'profile' text field when files are present. The FormData structure sent from the client appears correct based on Postman/backend code.");
+            }
+        }
+    } catch (error) {
+        console.error('Error making API call:', error);
+        // Handle network or other fetch errors
+        alert(`An error occurred while submitting data: ${error.message}`);
+    } finally {
+        setIsSubmitting(false); // End loading state regardless of success or failure
     }
   };
 
@@ -538,280 +652,323 @@ function BusinessInfoDetails1() {
           style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "500px", margin: "2rem auto", textAlign: "left", padding: "0 20px" }} // Added padding for small screens
           noValidate // Disable default browser validation
         >
-          <h2 style={{ textAlign: "center", fontSize: "1.8rem", fontWeight: 700, marginBottom: "1.5rem" }}>Business Information</h2> {/* Adjusted margin */}
+          <h2 style={{ textAlign: "center", fontSize: "1.8rem", fontWeight: 700, marginBottom: "1.5rem" }}>Product Information</h2> {/* Adjusted margin */}
 
-          {/* Ingredient transparency document (optional) */}
-            <label style={labelStyle}>
-              Ingredient transparency document (optional)
-              <div
-                  style={fileUploadBoxStyle(errors.ingredientTransparencyFile)} // Use style function
-                  onClick={() => document.getElementById('ingredientTransparencyInput').click()} // Trigger hidden input
-              >
-                 {/* SVG icon */}
-                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                 </svg>
-                 {/* Drag & drop text */}
-                <p style={{ margin: "1rem 0 0.5rem" }}>
-                  Drag & drop files or <span style={browseLinkStyle}>Browse</span> {/* Use styled span */}
-                </p>
-                 {/* Accepted file types (customize as needed) */}
-                <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
-                 {/* Hidden file input */}
-                 <input
-                    type="file"
-                    id="ingredientTransparencyInput"
-                    name="ingredientTransparencyFile"
-                    accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    onChange={(e) => handleSingleFileChange(setIngredientTransparencyFile, 'ingredientTransparencyFile', e)} // Use generic handler
-                    style={{ display: "none" }}
-                 />
-              </div>
-               {/* Display selected file name if any */}
-               {ingredientTransparencyFile && (
-                    <div style={uploadedFileItemStyle}>
-                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
-                       <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ingredientTransparencyFile.name}</span>
-                        <button type="button" onClick={() => setIngredientTransparencyFile(null)} style={removeFileButtonStyle}>&times;</button>
-                    </div>
-                 )}
-               {/* No error span for optional field */}
-            </label>
+          {/* Display flow error if critical data is missing from previous pages */}
+          {errors.flowError && <p style={errorStyle}>{errors.flowError}</p>}
 
-            {/* Packaging sustainability document (optional) */}
-            <label style={labelStyle}>
-              Packaging sustainability document (optional)
-              <div
-                  style={fileUploadBoxStyle(errors.packagingSustainabilityFile)} // Use style function
-                  onClick={() => document.getElementById('packagingSustainabilityInput').click()} // Trigger hidden input
-              >
-                 {/* SVG icon */}
-                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                 </svg>
-                 {/* Drag & drop text */}
-                <p style={{ margin: "1rem 0 0.5rem" }}>
-                  Drag & drop files or <span style={browseLinkStyle}>Browse</span> {/* Use styled span */}
-                </p>
-                 {/* Accepted file types (customize as needed) */}
-                <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
-                 {/* Hidden file input */}
-                 <input
-                    type="file"
-                    id="packagingSustainabilityInput"
-                    name="packagingSustainabilityFile"
-                    accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    onChange={(e) => handleSingleFileChange(setPackagingSustainabilityFile, 'packagingSustainabilityFile', e)} // Use generic handler
-                    style={{ display: "none" }}
-                 />
-              </div>
-                {/* Display selected file name if any */}
-                {packagingSustainabilityFile && (
-                    <div style={uploadedFileItemStyle}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
-                        <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{packagingSustainabilityFile.name}</span>
-                         <button type="button" onClick={() => setPackagingSustainabilityFile(null)} style={removeFileButtonStyle}>&times;</button>
-                    </div>
-                 )}
-               {/* No error span for optional field */}
-            </label>
+          {/* Conditional rendering of form content based on flowError */}
+          {!errors.flowError ? (
+             <> {/* Use a Fragment to group content */}
 
-
-          {/* Custom Checkbox for useEverywhere */}
-            <div style={{ display: "flex", alignItems: "center", marginTop: "0.5rem", marginBottom: errors.selectedCountries ? "5px" : "15px", cursor: 'pointer' }}> {/* Adjusted margin */}
-              <input
-                type="checkbox"
-                id="useEverywhere"
-                name="useEverywhere"
-                checked={useEverywhere}
-                onChange={(e) => setUseEverywhere(e.target.checked)}
-                style={{ display: 'none' }}
-              />
-              <div style={customCheckboxStyle(useEverywhere)} onClick={() => setUseEverywhere(!useEverywhere)}>
-                 {useEverywhere && (<span style={tickMarkStyle}>✓</span>)}
-              </div>
-              <label htmlFor="useEverywhere" style={{ color: "white", margin: 0, cursor: 'pointer' }} onClick={() => setUseEverywhere(!useEverywhere)}>
-                Is this product allowed to use everywhere?
-              </label>
-            </div>
-
-          {!useEverywhere && (
-             <label style={labelStyle}>
-               Which country should it be used in?
-                {/* Using react-select for country - NOW MULTI-SELECT */}
-                <Select
-                   className="select-input"
-                   name="selectedCountries" // Name for validation/scrolling
-                   options={allCountries}
-                   value={selectedCountries} // Use the array of selectedCountry objects
-                   onChange={handleCountryChange} // Use the handler that handles arrays
-                   styles={customSelectStyles}
-                   placeholder="Select country(ies)" // Updated placeholder
-                   isMulti // Add this prop for multiple selection
-                 />
-                {errors.selectedCountries && <span style={errorStyle}>{errors.selectedCountries}</span>}
-             </label>
-          )}
-
-          <label style={labelStyle}>
-              What is your brand promotional plan in InforReel?
-              <input
-                type="text"
-                name="plan" // Name for validation/scrolling
-                placeholder="Type here"
-                value={plan}
-                onChange={handleInputChange} // Use generic handler
-                style={inputStyle}
-              />
-              {errors.plan && <span style={errorStyle}>{errors.plan}</span>}
-            </label>
-
-          <label style={labelStyle}>
-              Product description
-              <input
-                type="text"
-                name="description" // Name for validation/scrolling
-                placeholder="Product description"
-                value={description}
-                onChange={handleInputChange} // Use generic handler
-                style={inputStyle}
-              />
-              {errors.description && <span style={errorStyle}>{errors.description}</span>}
-            </label>
-
-          <label style={labelStyle}>
-              What makes your product unique (USP)?
-              <input
-                type="text"
-                name="usp" // Name for validation/scrolling
-                placeholder="Type here"
-                value={usp}
-                onChange={handleInputChange} // Use generic handler
-                style={inputStyle}
-              />
-              {errors.usp && <span style={errorStyle}>{errors.usp}</span>}
-            </label>
-
-            {/* Product video and photos (max 3 uploads) - Multi-upload logic */}
-            <label style={{ ...labelStyle, marginBottom: productMediaFiles.length > 0 || errors.productMediaFiles ? '0' : '1rem' }}> {/* Adjust margin */}
-              Product video and photos (max 3 uploads)
-              {/* File Upload/Drop Area */}
-              {(productMediaFiles.length < 3) ? (
+              {/* Ingredient transparency document (optional) */}
+                <label style={labelStyle}>
+                  Ingredient transparency document (optional)
                   <div
-                       id="productMediaFilesInputArea" // ID for scrolling
-                       style={productMediaFileUploadBoxStyle(errors.productMediaFiles)} // Use the NEW style function without error border
-                       onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                       onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                       onDrop={handleProductMediaDrop} // Multi-file drop handler
-                       onClick={() => document.getElementById('productMediaFilesInput').click()} // Trigger hidden input
+                      style={fileUploadBoxStyle(!!errors.ingredientTransparencyFile, !!ingredientTransparencyFile)} // Use style function, pass boolean error and isDisabled if file exists
+                      onClick={() => {
+                           // Only trigger click if a file isn't already selected
+                           if (!ingredientTransparencyFile) document.getElementById('ingredientTransparencyInput').click()
+                           else console.log("Remove existing file to upload a new one."); // Optional feedback
+                       }}
                   >
-                      {/* SVG icon */}
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                         <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                      </svg>
-                      {/* Drag & drop text */}
-                     <p style={{ margin: "1rem 0 0.5rem" }}>
-                          Drag & drop files or <span style={browseLinkStyle}>Browse</span>
-                     </p>
-                      {/* Accepted file types (customize as needed) */}
-                     <p style={{ fontSize: "0.85rem", color: "#ccc" }}>mp4, mov, jpg, jpeg, png accepted</p> {/* Updated accepted types */}
-                      {/* Hidden file input */}
-                      <input
-                          type="file"
-                          key={productMediaFiles.length} // Key for smoother reset
-                          id="productMediaFilesInput"
-                          name="productMediaFiles" // Name for validation/scrolling
-                          multiple // Allow multiple file selection
-                          accept="video/*,image/*" // Accept video and image files
-                          onChange={handleProductMediaFileChange} // Multi-file change handler
-                          style={{ display: "none" }}
-                      />
+                     {/* SVG icon */}
+                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
+                     </svg>
+                     {/* Drag & drop text */}
+                    <p style={{ margin: "1rem 0 0.5rem" }}>
+                      Drag & drop file or <span style={browseLinkStyle}>Browse</span> {/* Use styled span */}
+                    </p>
+                     {/* Accepted file types (customize as needed) */}
+                    <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
+                     {/* Hidden file input */}
+                     <input
+                        type="file"
+                         key={ingredientTransparencyFile?.name || 'no-file'} // Key to force re-render on file change/removal
+                        id="ingredientTransparencyInput"
+                        name="ingredientTransparencyFile" // Name for validation/scrolling (though not validated)
+                        accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        onChange={(e) => handleSingleFileChange(setIngredientTransparencyFile, 'ingredientTransparencyFile', e)} // Use generic handler
+                        style={{ display: "none" }}
+                         disabled={!!ingredientTransparencyFile} // Disable input if a file is already selected
+                     />
                   </div>
-                ) : (
-                    // This div will also use the NEW style without error border
-                    <div style={{...productMediaFileUploadBoxStyle(errors.productMediaFiles), cursor: 'not-allowed', opacity: 0.7, marginBottom: errors.productMediaFiles ? '10px' : '20px'}}>
-                        <p style={{ color: "white", margin: 0 }}>Maximum 3 files uploaded.</p>
-                    </div>
-                )}
+                   {/* Display selected file name if any */}
+                   {ingredientTransparencyFile && (
+                        <div style={uploadedFileItemStyle}>
+                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
+                           <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ingredientTransparencyFile.name}</span>
+                            <button type="button" onClick={() => setIngredientTransparencyFile(null)} style={removeFileButtonStyle}>&times;</button>
+                        </div>
+                     )}
+                   {/* No error span for optional field */}
+                </label>
 
-              {/* Display uploaded files */}
-              {productMediaFiles.length > 0 && (
-                  <div style={{ marginTop: '1rem' }}>
-                      {productMediaFiles.map((file, index) => (
-                           <div key={`product-media-${index}`} className="uploaded-file-item" style={uploadedFileItemStyle}>
-                                {/* File Icon (example) */}
-                              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
-                              <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                  {file.name} ({(file.size / 1024).toFixed(2)} KB)
-                              </span>
-                              <button
-                                   key={`remove-product-media-${index}`}
-                                   type="button"
-                                   onClick={() => handleRemoveProductMediaFile(index)} // Multi-file remove handler
-                                   style={removeFileButtonStyle}
-                              >
-                                   &times;
-                              </button>
-                           </div>
-                      ))}
+                {/* Packaging sustainability document (optional) */}
+                <label style={labelStyle}>
+                  Packaging sustainability document (optional)
+                  <div
+                      style={fileUploadBoxStyle(!!errors.packagingSustainabilityFile, !!packagingSustainabilityFile)} // Use style function, pass boolean error and isDisabled if file exists
+                      onClick={() => {
+                           // Only trigger click if a file isn't already selected
+                           if (!packagingSustainabilityFile) document.getElementById('packagingSustainabilityInput').click()
+                            else console.log("Remove existing file to upload a new one."); // Optional feedback
+                      }}
+                  >
+                     {/* SVG icon */}
+                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
+                     </svg>
+                     {/* Drag & drop text */}
+                    <p style={{ margin: "1rem 0 0.5rem" }}>
+                      Drag & drop file or <span style={browseLinkStyle}>Browse</span> {/* Use styled span */}
+                    </p>
+                     {/* Accepted file types (customize as needed) */}
+                    <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
+                     {/* Hidden file input */}
+                     <input
+                        type="file"
+                         key={packagingSustainabilityFile?.name || 'no-file'} // Key to force re-render
+                        id="packagingSustainabilityInput"
+                        name="packagingSustainabilityFile" // Name for validation/scrolling (though not validated)
+                        accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        onChange={(e) => handleSingleFileChange(setPackagingSustainabilityFile, 'packagingSustainabilityFile', e)} // Use generic handler
+                        style={{ display: "none" }}
+                         disabled={!!packagingSustainabilityFile} // Disable input if a file is already selected
+                     />
                   </div>
+                    {/* Display selected file name if any */}
+                    {packagingSustainabilityFile && (
+                        <div style={uploadedFileItemStyle}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
+                            <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{packagingSustainabilityFile.name}</span>
+                             <button type="button" onClick={() => setPackagingSustainabilityFile(null)} style={removeFileButtonStyle}>&times;</button>
+                        </div>
+                     )}
+                   {/* No error span for optional field */}
+                </label>
+
+
+              {/* Custom Checkbox for useEverywhere */}
+                <div style={{ display: "flex", alignItems: "center", marginTop: "0.5rem", marginBottom: errors.selectedCountries ? "5px" : "15px", cursor: 'pointer' }}> {/* Adjusted margin */}
+                  <input
+                    type="checkbox"
+                    id="useEverywhere"
+                    name="useEverywhere"
+                    checked={useEverywhere}
+                    onChange={(e) => setUseEverywhere(e.target.checked)}
+                    style={{ display: 'none' }}
+                  />
+                  <div style={customCheckboxStyle(useEverywhere)} onClick={() => setUseEverywhere(!useEverywhere)}>
+                     {useEverywhere && (<span style={tickMarkStyle}>✓</span>)}
+                  </div>
+                  <label htmlFor="useEverywhere" style={{ color: "white", margin: 0, cursor: 'pointer' }} onClick={() => setUseEverywhere(!useEverywhere)}>
+                    Is this product allowed to use everywhere?
+                  </label>
+                </div>
+
+              {!useEverywhere && (
+                 <label style={labelStyle}>
+                   Which country should it be used in?
+                    {/* Using react-select for country - NOW MULTI-SELECT */}
+                    <Select
+                       className="select-input"
+                       name="selectedCountries" // Name for validation/scrolling
+                       options={allCountries}
+                       value={selectedCountries} // Use the array of selectedCountry objects
+                       onChange={handleCountryChange} // Use the handler that handles arrays
+                       styles={customSelectStyles}
+                       placeholder="Select country(ies)" // Updated placeholder
+                       isMulti // Add this prop for multiple selection
+                     />
+                    {errors.selectedCountries && <span style={errorStyle}>{errors.selectedCountries}</span>}
+                 </label>
               )}
 
-              {/* Display error message for Product Media */}
-             {errors.productMediaFiles && <span style={errorStyle}>{errors.productMediaFiles}</span>}
-            </label>
+              <label style={labelStyle}>
+                  What is your brand promotional plan in InforReel?
+                  <input
+                    type="text"
+                    name="plan" // Name for validation/scrolling
+                    placeholder="Type here"
+                    value={plan}
+                    onChange={handleInputChange} // Use generic handler
+                    style={inputStyle}
+                  />
+                  {errors.plan && <span style={errorStyle}>{errors.plan}</span>}
+                </label>
+
+              <label style={labelStyle}>
+                  Product description
+                  <input
+                    type="text"
+                    name="description" // Name for validation/scrolling
+                    placeholder="Product description"
+                    value={description}
+                    onChange={handleInputChange} // Use generic handler
+                    style={inputStyle}
+                  />
+                  {errors.description && <span style={errorStyle}>{errors.description}</span>}
+                </label>
+
+              <label style={labelStyle}>
+                  What makes your product unique (USP)?
+                  <input
+                    type="text"
+                    name="usp" // Name for validation/scrolling
+                    placeholder="Type here"
+                    value={usp}
+                    onChange={handleInputChange} // Use generic handler
+                    style={inputStyle}
+                  />
+                  {errors.usp && <span style={errorStyle}>{errors.usp}</span>}
+                </label>
+
+                {/* Product video and photos (max 3 uploads) - Multi-upload logic */}
+                <label style={{ ...labelStyle, marginBottom: productMediaFiles.length > 0 || errors.productMediaFiles ? '0' : '1rem' }}> {/* Adjust margin based on error/files below */}
+                  Product video and photos (max 3 uploads)
+                  {/* File Upload/Drop Area */}
+                  {(productMediaFiles.length < 3) ? (
+                      <div
+                           id="productMediaFilesInputArea" // ID for scrolling
+                           style={productMediaFileUploadBoxStyle(!!errors.productMediaFiles, false)} // Use the NEW style function and pass isDisabled=false
+                           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                           onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                           onDrop={handleProductMediaDrop} // Multi-file drop handler
+                           onClick={() => document.getElementById('productMediaFilesInput').click()} // Trigger hidden input
+                      >
+                          {/* SVG icon */}
+                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                             <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
+                          </svg>
+                          {/* Drag & drop text */}
+                         <p style={{ margin: "1rem 0 0.5rem" }}>
+                              Drag & drop files or <span style={browseLinkStyle}>Browse</span>
+                         </p>
+                          {/* Accepted file types (customize as needed) */}
+                         <p style={{ fontSize: "0.85rem", color: "#ccc" }}>mp4, mov, jpg, jpeg, png accepted</p> {/* Updated accepted types */}
+                          {/* Hidden file input - use key to reset input field state */}
+                          <input
+                              type="file"
+                              key={productMediaFiles.length} // Key for smoother reset when adding/removing files
+                              id="productMediaFilesInput"
+                              name="productMediaFiles" // Name for validation/scrolling
+                              multiple // Allow multiple file selection
+                              accept="video/*,image/*" // Accept video and image files
+                              onChange={handleProductMediaFileChange} // Multi-file change handler
+                              style={{ display: "none" }}
+                               disabled={productMediaFiles.length >= 3} // Disable input if max files reached
+                          />
+                      </div>
+                    ) : (
+                        // This div will also use the NEW style without error border when disabled
+                        <div
+                           id="productMediaFilesInputArea" // Keep ID even when disabled for scrolling
+                           style={productMediaFileUploadBoxStyle(!!errors.productMediaFiles, true)} // Use the NEW style function and pass isDisabled=true
+                        >
+                            {/* SVG icon (can make it slightly less prominent) */}
+                           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
+                           </svg>
+                           <p style={{ margin: "1rem 0 0.5rem", color: '#ccc' }}>Maximum 3 files allowed.</p>
+                           <p style={{ fontSize: "0.85rem", color: "#888" }}>Remove a file to upload another.</p>
+                        </div>
+                    )}
+
+                  {/* Display uploaded files */}
+                  {productMediaFiles.length > 0 && (
+                      <div style={{ marginTop: productMediaFiles.length > 0 ? '0' : '1rem' }}> {/* Adjusted margin */}
+                          {productMediaFiles.map((file, index) => (
+                               <div key={`product-media-${index}`} className="uploaded-file-item" style={uploadedFileItemStyle}>
+                                    {/* File Icon (example) */}
+                                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
+                                  <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                      {file.name} ({(file.size / 1024).toFixed(2)} KB)
+                                  </span>
+                                  <button
+                                       key={`remove-product-media-${index}`} // Added key
+                                       type="button"
+                                       onClick={() => handleRemoveProductMediaFile(index)} // Multi-file remove handler
+                                       style={removeFileButtonStyle}
+                                  >
+                                       &times;
+                                  </button>
+                               </div>
+                           ))}
+                       </div>
+                   )}
+
+                  {/* Display error message for Product Media */}
+                 {errors.productMediaFiles && <span style={errorStyle}>{errors.productMediaFiles}</span>}
+                </label>
 
 
-            {/* Compliance and QA upload (optional) */}
-            <label style={labelStyle}>
-              Compliance and QA upload (optional)
-              <div
-                  style={fileUploadBoxStyle(errors.complianceQAFile)} // Use style function
-                  onClick={() => document.getElementById('complianceQAInput').click()} // Trigger hidden input
-              >
-                 {/* SVG icon */}
-                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                 </svg>
-                 {/* Drag & drop text */}
-                <p style={{ margin: "1rem 0 0.5rem" }}>
-                  Drag & drop files or <span style={browseLinkStyle}>Browse</span> {/* Use styled span */}
-                </p>
-                 {/* Accepted file types (customize as needed) */}
-                <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
-                 {/* Hidden file input */}
-                 <input
-                    type="file"
-                    id="complianceQAInput"
-                    name="complianceQAFile"
-                    accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    onChange={(e) => handleSingleFileChange(setComplianceQAFile, 'complianceQAFile', e)} // Use generic handler
-                    style={{ display: "none" }}
-                 />
+                {/* Compliance and QA upload (optional) */}
+                <label style={labelStyle}>
+                  Compliance and QA upload (optional)
+                  <div
+                      style={fileUploadBoxStyle(!!errors.complianceQAFile, !!complianceQAFile)} // Use style function, pass boolean error and isDisabled if file exists
+                      onClick={() => {
+                          // Only trigger click if a file isn't already selected
+                          if (!complianceQAFile) document.getElementById('complianceQAInput').click()
+                           else console.log("Remove existing file to upload a new one."); // Optional feedback
+                      }}
+                  >
+                     {/* SVG icon */}
+                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
+                     </svg>
+                     {/* Drag & drop text */}
+                    <p style={{ margin: "1rem 0 0.5rem" }}>
+                      Drag & drop file or <span style={browseLinkStyle}>Browse</span> {/* Use styled span */}
+                    </p>
+                     {/* Accepted file types (customize as needed) */}
+                    <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
+                     {/* Hidden file input - use key to reset input field state */}
+                     <input
+                        type="file"
+                         key={complianceQAFile?.name || 'no-file'} // Key to force re-render
+                        id="complianceQAInput"
+                        name="complianceQAFile" // Name for validation/scrolling (though not validated)
+                        accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        onChange={(e) => handleSingleFileChange(setComplianceQAFile, 'complianceQAFile', e)} // Use generic handler
+                        style={{ display: "none" }}
+                         disabled={!!complianceQAFile} // Disable input if a file is already selected
+                     />
+                  </div>
+                    {/* Display selected file name if any */}
+                    {complianceQAFile && (
+                        <div style={uploadedFileItemStyle}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
+                            <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{complianceQAFile.name}</span>
+                             <button type="button" onClick={() => setComplianceQAFile(null)} style={removeFileButtonStyle}>&times;</button>
+                        </div>
+                     )}
+                   {/* No error span for optional field */}
+                </label>
+
+
+              {/* Buttons */}
+              <div className="row" style={{ marginTop: "0.5rem", display: "flex", gap: "20px" }}> {/* Added gap */}
+                  <button type="button" className="black-btn" onClick={() => navigate(-1)}
+                         style={{ ...buttonStyle, backgroundColor: "#7B7B7B" }}> {/* Grey color */}
+                    Previous
+                  </button>
+                  <button
+                      type="submit"
+                      className="black-btn"
+                      style={{ ...buttonStyle, backgroundColor: "#96105E" }}
+                      disabled={isSubmitting || !!errors.flowError} // Disable button while submitting OR if flow error exists
+                  >
+                    {isSubmitting ? 'Submitting...' : 'Submit Profile'} {/* Change button text while submitting */}
+                  </button>
               </div>
-                {/* Display selected file name if any */}
-                {complianceQAFile && (
-                    <div style={uploadedFileItemStyle}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
-                        <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{complianceQAFile.name}</span>
-                         <button type="button" onClick={() => setComplianceQAFile(null)} style={removeFileButtonStyle}>&times;</button>
-                    </div>
-                 )}
-               {/* No error span for optional field */}
-            </label>
+
+             </> // Close Fragment
+         ) : null /* Render nothing or a loading/error message if flowError exists */ }
 
 
-          {/* Buttons */}
-          <div className="row" style={{ marginTop: "0.5rem", display: "flex", gap: "20px" }}> {/* Added gap */}
-              <button type="button" className="black-btn" onClick={() => navigate(-1)}
-                     style={{ ...buttonStyle, backgroundColor: "#7B7B7B" }}> {/* Grey color */}
-                Previous
-              </button>
-              <button type="submit" className="black-btn"
-                     style={{ ...buttonStyle, backgroundColor: "#96105E" }}> {/* Purple color */}
-                Next {/* Changed text to Next as per Figma flow */}
-              </button>
-          </div>
         </form>
       </main>
       <Footer />
