@@ -46,12 +46,12 @@ function Sidebar({ onNavItemClick, activeItem }) {
       display: 'flex',
       flexDirection: 'column',
       width: '250px ', // Adjust this percentage as needed for the overall sidebar width
-      backgroundColor: 'rgba(20, 20, 20, 0.35)', // Updated: #141414 with 65% transparency
+      backgroundColor: 'rgba(20, 20, 20, 0.7)', // Updated: #141414 with 65% transparency
       color: 'white',
       padding: '0', // Removed general padding
       paddingTop: '20px', // Added specific top padding
       boxSizing: 'border-box',
-      borderRight: '1px solid rgba(51, 51, 51, 0.35)', // Updated: #333 border with matching transparency
+      borderRight: '1px solid rgba(51, 51, 51, 0.7)', // Updated: #333 border with matching transparency
       position: 'fixed', // Added: Fixes the sidebar position
       top: headerHeight, // <-- Starts below the header
       left: 0, // Added: Positions sidebar at the left of the viewport

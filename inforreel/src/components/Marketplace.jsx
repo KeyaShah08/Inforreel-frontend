@@ -234,7 +234,7 @@ function Marketplace() {
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between" }}>
             {/* Navigation Buttons */}
             <div style={{ width:"100%",display: 'flex', marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Shop by Brands</span>
+              <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Shop by Brands</span>
               <div style={{ display: 'flex' }}>
                 <button
                   onClick={prevImage}
@@ -296,7 +296,7 @@ function Marketplace() {
                   width: '32%',
                   height: '32%',
                   marginRight: '10px',
-                  borderRadius: '8px',
+                  borderRadius: '0px',
                   scrollSnapAlign: 'start',
                   transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                   opacity: previousImages.includes(image) ? 0 : 1, // Hide previous images
@@ -304,7 +304,7 @@ function Marketplace() {
                   <img
                     src={image}
                     alt={`Brand ${index + 1}`}
-                    style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                   />
                 </div>
               ))}
@@ -380,7 +380,7 @@ function Marketplace() {
                   width: '32%',
                   height: '32%',
                   marginRight: '10px',
-                  borderRadius: '8px',
+                  borderRadius: '0px',
                   scrollSnapAlign: 'start',
                   transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                   opacity: previousProducts.includes(product) ? 0 : 1, // Hide previous images
@@ -388,7 +388,7 @@ function Marketplace() {
                   <img
                     src={product}
                     alt={`Product ${index + 1}`}
-                    style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                   />
                 </div>
               ))}
@@ -464,7 +464,7 @@ function Marketplace() {
                   width: '32%',
                   height: '32%',
                   marginRight: '10px',
-                  borderRadius: '8px',
+                  borderRadius: '0px',
                   scrollSnapAlign: 'start',
                   transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                   opacity: previousAmbassadors.includes(ambassador) ? 0 : 1, // Hide previous images
@@ -472,7 +472,7 @@ function Marketplace() {
                   <img
                     src={ambassador}
                     alt={`Ambassador ${index + 1}`}
-                    style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                   />
                 </div>
               ))}
@@ -548,7 +548,7 @@ function Marketplace() {
                   width: '32%',
                   height: '32%',
                   marginRight: '10px',
-                  borderRadius: '8px',
+                  borderRadius: '0px',
                   scrollSnapAlign: 'start',
                   transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                   opacity: previousVideos.includes(video) ? 0 : 1, // Hide previous images
@@ -559,7 +559,7 @@ function Marketplace() {
                   <video
                     src={video}
                     controls
-                    style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                    style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                   />
                 </div>
               ))}
