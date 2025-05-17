@@ -424,11 +424,11 @@ function BeautyProducts () {
           </section>
 
           {/* Shop by Product Section */}
-          <section style={{  textAlign: 'left', marginTop: '40px' }}>
+          <section style={{  textAlign: 'left', marginTop: '0px' }}>
           
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end"  }}>
               {/* Navigation Buttons */}
-              <div style={{ display: 'flex', width:"100%",marginTop:"20px",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <div style={{ display: 'flex', width:"100%",marginTop:"10px",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
                 
                 <div style={{ display: 'flex' }}>
                   <button
@@ -489,7 +489,7 @@ function BeautyProducts () {
                 }}
               >
                 {displayedProducts.map((product, index) => (
-                  <div key={index} style={{
+                  <div className='Effect' key={index} style={{
                     flex: '0 0 auto',
                     width: '32%',
                     height: '32%',
@@ -499,11 +499,135 @@ function BeautyProducts () {
                     transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                     opacity: previousProducts.includes(product) ? 0 : 1, // Hide previous images
                   }} onClick={() => handleDetailView()}>
-                    <img
-                      src={product.img}
-                      alt={`Product ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0', objectFit: 'cover' }}
-                    />
+                    <span className='OnHover'>
+                      <img
+                        src={product.img}
+                        alt={`Product ${index + 1}`}
+                        style={{ width: '100%', height: '100%', borderRadius: '0', objectFit: 'cover' }}
+                      />
+                      <div className='HoverEffect'>
+                            <img
+                              src={product.img}
+                                    alt={`Brand ${index + 1}`}
+                                    style={{ width: '100%', height: '100%', borderRadius: '0', objectFit: 'cover' }}
+                                  />
+                              <div style={{background: '#2f2f2f',padding:"15px",marginTop: '-5px'}}>
+                                <div style={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+                                    <div style={{display:"flex", alignItems:"center", justifyContent:"flex-start"}}>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            padding:"5px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"20px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/Thumb.png"}
+                                            alt={`cdiorbeauty`}
+                                          /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>241</span>
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            padding:"5px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"20px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/Msg.png"}
+                                            alt={`cdiorbeauty`}
+                                          /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>32</span>
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            padding:"8px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/cart.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/send.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                    </div>
+                                    <div style={{display:"flex", alignItems:"center", justifyContent:"flex-end"}}>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/down.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                    </div>
+                                </div>
+                                <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', marginTop:"25px"}}>                                  
+                                  <img
+                                      src={'/gucci.png'}
+                                      alt={`Brand ${index + 1}`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"5px",}}
+                                    />
+                                  <span style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', fontWeight:"bold", fontSize:"20px"}}>Dior</span>
+                                </div>
+                                <div style={{display: 'block', marginTop:"15px"}}>
+                                  <p style={{display: 'block', fontSize:"15px", marginTop:"10px", color:"#d2d2d2"}}>Dior Prestige La Micro-Huile de Rose Activated Serum</p>
+                                  <p style={{display: 'block', fontSize:"12px", marginTop:"5px", color:"#d2d2d2"}}>Exceptional Repairing Micro-Nutritive Serum</p>
+                                </div>
+                                <div style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>
+                                  <p style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginRight:"20px",fontSize:"16px"}}>$100.00</p>
+                                  <img
+                                      src={'/star.png'}
+                                      alt={`Brand ${index + 1}`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"6px",marginTop:"3px"}}
+                                    />
+                                    <p style={{fontSize:"10px", marginTop:"3px"}}>( 32 review )</p>
+                                </div>
+                              </div>
+                              
+                          </div>
+                    </span>
                   </div>
                 ))}
               </div>
@@ -511,11 +635,11 @@ function BeautyProducts () {
           </section>
 
           {/* Shop by Brand Ambassador Section */}
-          <section style={{  textAlign: 'left', marginTop: '40px' }}>
+          <section style={{  textAlign: 'left', marginTop: '0px' }}>
           
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end"  }}>
               {/* Navigation Buttons */}
-              <div style={{ display: 'flex', width: "100%", marginTop:"20px",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <div style={{ display: 'flex', width: "100%", marginTop:"10px",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
               
                 <div style={{ display: 'flex' }}>
                   <button
@@ -576,7 +700,7 @@ function BeautyProducts () {
                 }}
               >
                 {displayedAmbassadors.map((ambassador, index) => (
-                  <div key={index} style={{
+                  <div key={index} className='Effect' style={{
                     flex: '0 0 auto',
                     width: '32%',
                     height: '32%',
@@ -586,11 +710,135 @@ function BeautyProducts () {
                     transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                     opacity: previousAmbassadors.includes(ambassador) ? 0 : 1, // Hide previous images
                   }} onClick={() => handleDetailView()}>
-                    <img
-                      src={ambassador.img}
-                      alt={`Ambassador ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0', objectFit: 'cover' }}
-                    />
+                    <span className='OnHover'>
+                        <img
+                          src={ambassador.img}
+                          alt={`Ambassador ${index + 1}`}
+                          style={{ width: '100%', height: '100%', borderRadius: '0', objectFit: 'cover' }}
+                        />
+                        <div className='HoverEffect'>
+                            <img
+                              src={ambassador.img}
+                                    alt={`Brand ${index + 1}`}
+                                    style={{ width: '100%', height: '100%', borderRadius: '0', objectFit: 'cover' }}
+                                  />
+                              <div style={{background: '#2f2f2f',padding:"15px",marginTop: '-5px'}}>
+                                <div style={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+                                    <div style={{display:"flex", alignItems:"center", justifyContent:"flex-start"}}>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            padding:"5px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"20px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/Thumb.png"}
+                                            alt={`cdiorbeauty`}
+                                          /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>241</span>
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            padding:"5px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"20px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/Msg.png"}
+                                            alt={`cdiorbeauty`}
+                                          /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>32</span>
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            padding:"8px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/cart.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/send.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                    </div>
+                                    <div style={{display:"flex", alignItems:"center", justifyContent:"flex-end"}}>
+                                      <button type='button' style={{  
+                                            background: '#7b7b7b',
+                                            border:"none",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/down.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                    </div>
+                                </div>
+                                <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', marginTop:"25px"}}>                                  
+                                  <img
+                                      src={'/gucci.png'}
+                                      alt={`Brand ${index + 1}`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"5px",}}
+                                    />
+                                  <span style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', fontWeight:"bold", fontSize:"20px"}}>Dior</span>
+                                </div>
+                                <div style={{display: 'block', marginTop:"15px"}}>
+                                  <p style={{display: 'block', fontSize:"15px", marginTop:"10px", color:"#d2d2d2"}}>Dior Prestige La Micro-Huile de Rose Activated Serum</p>
+                                  <p style={{display: 'block', fontSize:"12px", marginTop:"5px", color:"#d2d2d2"}}>Exceptional Repairing Micro-Nutritive Serum</p>
+                                </div>
+                                <div style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>
+                                  <p style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginRight:"20px",fontSize:"16px"}}>$100.00</p>
+                                  <img
+                                      src={'/star.png'}
+                                      alt={`Brand ${index + 1}`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"6px",marginTop:"3px"}}
+                                    />
+                                    <p style={{fontSize:"10px", marginTop:"3px"}}>( 32 review )</p>
+                                </div>
+                              </div>
+                              
+                          </div>
+                    </span>
                   </div>
                 ))}
               </div>
