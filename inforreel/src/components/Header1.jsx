@@ -33,7 +33,7 @@ function Header1() {
         width: '100%', // Added: Makes the header span the full width
         height: headerHeight, // Added: Set a fixed height for the header
         boxSizing: 'border-box', // Ensure padding is included in height/width
-        zIndex: 10, // Ensure header is above other content
+        zIndex: 666, // Ensure header is above other content
       }}
     >
       {/* Link for the InforReel title/logo */}

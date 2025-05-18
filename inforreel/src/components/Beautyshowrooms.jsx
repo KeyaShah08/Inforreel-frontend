@@ -166,8 +166,7 @@ function Beautyshowrooms () {
         left: 0,
         width: '100%',
         minHeight: '100vh',
-        backgroundColor: '#000' // Changed to black
-        // background: 'linear-gradient(to bottom, #141414, #282828)', // Removed gradient
+        backgroundColor: '#000'
       }}>
         <div style={{
           position: 'absolute',

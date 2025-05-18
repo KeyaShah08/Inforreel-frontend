@@ -1,37 +1,35 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // Import arrow icons
-import Beautyshowrooms from './Beautyshowrooms';
-import Beautyshowambassadors from './Beautyshowambassadors';
+import ProductDetails2 from './ProductDetails2';
 
-function Marketplace() {
- const allImages = [
-    {img:'/helth.png', Name:"Health & Wellness",},
-    {img:'/sport.png', Name:"Sports & Athletics"},
-    {img:'/beautyNew.png', Name:"Beauty"},
-    {img:'/sport.png', Name:"Sports & Athletics"},
-    {img:'/helth.png', Name:"Health & Wellness"},
-    {img:'/beautyNew.png', Name:"Beauty"},
+function Beautyshowambassadors () {
+  const allImages = [
+    {img:'/w1.png', Name:"Rihanna"},
+    {img:'/w2.png', Name:"Cara Delevingne"},
+    {img:'/w3.png', Name:"Armani"},
+    {img:'/w2.png', Name:"Cara Delevingne"},
+    {img:'/w3.png', Name:"Rihanna"},
+    {img:'/w1.png', Name:"Armani"},
   ];
   const allProducts = [
-    {img:'/p1.png', Name:"Beauty",},
-    {img:'/p2.png', Name:"Health & Wellness"},
-    {img:'/p3.png', Name:"Fashion"},
-    {img:'/p3.png', Name:"Beauty"},
-    {img:'/p1.png', Name:"Health & Wellness"},
-    {img:'/p2.png', Name:"Fashion"},
+    {img:'/q1.png', Name:"Paulina Porizkova"},
+    {img:'/q2.png', Name:"Lisa"},
+    {img:'/q3.png', Name:"Guerlain"},
+    {img:'/q2.png', Name:"Lisa"},
+    {img:'/q3.png', Name:"Paulina Porizkova"},
   ];
   const allAmbassadors = [
-    {img:'/pq1.png', Name:"Fashion",},
-    {img:'/pq2.png', Name:"Health & Wellness"},
-    {img:'/pq3.png', Name:"Beauty"},
-    {img:'/pq3.png', Name:"Sports & Athletics"},
-    {img:'/pq1.png', Name:"Health & Wellness"},
-    {img:'/pq2.png', Name:"Fashion"},
+    {img:'/r1.png', Name:"Kendall Jenner"},
+    {img:'/r2.png', Name:"Ariana Greenblatt"},
+    {img:'/r3.png', Name:"La Prairie"},
+    {img:'/r2.png', Name:"Ariana Greenblatt"},
+    {img:'/r3.png', Name:"La Prairie"},
+    {img:'/r1.png', Name:"Kendall Jenner"},
   ];
   const allVideos = [
     '/samplevideo1.mp4',
+    '/samplevideo2.mp4',
     '/samplevideo3.mp4',
-    '/samplevideo4.mp4',
     '/samplevideo4.mp4',
     '/samplevideo5.mp4',
     '/samplevideo6.mp4',
@@ -56,7 +54,6 @@ function Marketplace() {
   const [previousAmbassadors, setPreviousAmbassadors] = useState([]);
   const [previousVideos, setPreviousVideos] = useState([]);
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
-  const [showBeautyShow, setShowBeauty] = useState(false);
 
   const nextImage = () => {
     if (imageContainerRef.current && currentIndex + 3 < allImages.length) {
@@ -149,11 +146,8 @@ function Marketplace() {
       setIsVideoNextDisabled(false);
     }
   };
-  const handleDetailView = () => {
+  const handleDetailViewNew = () => {
     setShowBeautyShowroom(true);
-  };
-  const handleDetailView2 = () => {
-    setShowBeauty(true);
   };
   useEffect(() => {
     //   console.log("Displayed Images:", displayedImages);
@@ -163,10 +157,8 @@ function Marketplace() {
   return (
     <>
     {showBeautyShowroom ? (
-      <Beautyshowrooms />
-    ) : showBeautyShow ? (
-      <Beautyshowambassadors />
-    ):(
+      <ProductDetails2 />
+    ) : (
       <div style={{
         position: 'absolute',
         top: 0,
@@ -176,50 +168,6 @@ function Marketplace() {
         backgroundColor: '#000' // Changed to black
         // background: 'linear-gradient(to bottom, #141414, #282828)', // Removed gradient
       }}>
-        <div style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          overflow: "hidden",
-          zIndex: 9,
-          backgroundColor: '#000',
-        }}>
-          <video autoPlay muted loop playsInline style={{
-            width: "100%",
-            height: "100%",
-            objectFit: 'cover'
-          }}>
-            <source src="/hero-bg.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <div
-            style={{
-              position: "absolute",
-              bottom: "-1px",
-              left: 0,
-              width: "100%",
-              height: "300px",
-              background: "linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #141414 100%)",
-              zIndex: 2,
-              pointerEvents: "none",
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "200px",
-              background: "linear-gradient(to top, rgba(0, 0, 0, 0) 0%, #141414 100%)",
-              zIndex: 2,
-              pointerEvents: "none",
-            }}
-          />
-        </div>
-
         <div style={{
           position: 'absolute',
           top: 0,
@@ -236,49 +184,52 @@ function Marketplace() {
 
 
           {/* Shop by Brands Section */}
-          <section style={{ marginTop: '100vh', textAlign: 'left' }}>
-        
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between" }}>
+          <section style={{ marginTop: '71px', textAlign: 'left' }}>
+          <h1 style={{ fontSize: '70px', display: 'flex', alignItems:"center", justifyContent:"center" }}>Beauty brand ambassadors</h1>
+            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end" }}>
               {/* Navigation Buttons */}
-              <div style={{ width:"100%",display: 'flex', marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Shop by Brands</span>
+              <div style={{ width:"100%",display: 'flex', marginTop:"20px", marginBottom: '20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+              
                 <div style={{ display: 'flex' }}>
                   <button
                     onClick={prevImage}
                     style={{
-                      background: '#9D9A95',
-                      color: 'white',
+                      background: '#868584',
+                      color: '#000',
                       border: 'none',
                       padding: '5px',
                       borderRadius: '50%',
                       cursor: 'pointer',
                       zIndex: 10,
-                      marginRight: '5px',
+                      marginRight: '20px',
+                      marginBottom: '20px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      width: '45px',
-                      height: '45px',
+                      width: '48px',
+                      height: '48px',
                     }}
                     disabled={currentIndex === 0}
                   >
-                    <ChevronLeft size={45} />
+                    <ChevronLeft size={32} />
                   </button>
                   <button
                     onClick={nextImage}
                     style={{  
-                      background: '#9D9A95',
-                      color: 'white',
+                      background: '#868584',
+                      color: '#000',
                       border: 'none',
                       padding: '5px',
                       borderRadius: '50%',
                       cursor: 'pointer',
+                      marginBottom: '20px',
+                      marginRight: '20px',
                       zIndex: 10,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      width: '45px',
-                      height: '45px',
+                      width: '48px',
+                      height: '48px',
                     }}
                     disabled={isNextDisabled}
                   >
@@ -303,17 +254,30 @@ function Marketplace() {
                     width: '32%',
                     height: '32%',
                     marginRight: '10px',
-                    borderRadius: '0px',
+                    borderRadius: '8px',
                     scrollSnapAlign: 'start',
                     transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                     opacity: previousImages.includes(image) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView()}>
+                  }} onClick={() => handleDetailViewNew()}>
                     <img
                       src={image.img}
                       alt={`Brand ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                      style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }}
                     />
-                    <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{image.Name}</p>
+                    <div key={index} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginTop:"16px",
+                      justifyContent: 'center',
+                    }}>
+                      <span style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginLeft:"16px",
+                        fontSize:"20px"
+                      }}>{image.Name}</span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -323,27 +287,28 @@ function Marketplace() {
           {/* Shop by Product Section */}
           <section style={{  textAlign: 'left', marginTop: '40px' }}>
           
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
+            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end"  }}>
               {/* Navigation Buttons */}
-              <div style={{ display: 'flex', width:"100%",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Shop by Products</span>
+              <div style={{ display: 'flex', width:"100%",marginTop:"20px",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+                
                 <div style={{ display: 'flex' }}>
                   <button
                     onClick={prevProduct}
                     style={{
-                      background: '#9D9A95',
-                      color: 'white',
+                      background: '#868584',
+                      color: '#000',
                       border: 'none',
                       padding: '5px',
                       borderRadius: '50%',
                       cursor: 'pointer',
                       zIndex: 10,
-                      marginRight: '5px',
+                      marginBottom: '20px',
+                      marginRight: '20px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      width: '45px',
-                      height: '45px',
+                      width: '48px',
+                      height: '48px',
                     }}
                     disabled={productIndex === 0}
                   >
@@ -352,18 +317,20 @@ function Marketplace() {
                   <button
                     onClick={nextProduct}
                     style={{
-                      background: '#9D9A95',
-                      color: 'white',
+                      background: '#868584',
+                      color: '#000',
                       border: 'none',
                       padding: '5px',
                       borderRadius: '50%',
                       cursor: 'pointer',
                       zIndex: 10,
+                      marginBottom: '20px',
+                      marginRight: '20px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      width: '45px',
-                      height: '45px',
+                      width: '48px',
+                      height: '48px',
                     }}
                     disabled={isProductNextDisabled}
                   >
@@ -388,17 +355,30 @@ function Marketplace() {
                     width: '32%',
                     height: '32%',
                     marginRight: '10px',
-                    borderRadius: '0px',
+                    borderRadius: '8px',
                     scrollSnapAlign: 'start',
                     transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                     opacity: previousProducts.includes(product) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView2()}>
+                  }} onClick={() => handleDetailViewNew()}>
                     <img
                       src={product.img}
                       alt={`Product ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                      style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }}
                     />
-                    <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{product.Name}</p>
+                    <div key={index} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginTop:"16px",
+                      justifyContent: 'center',
+                    }}>
+                      <span style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginLeft:"16px",
+                        fontSize:"20px"
+                      }}>{product.Name}</span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -408,27 +388,28 @@ function Marketplace() {
           {/* Shop by Brand Ambassador Section */}
           <section style={{  textAlign: 'left', marginTop: '40px' }}>
           
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between'  }}>
+            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end"  }}>
               {/* Navigation Buttons */}
-              <div style={{ display: 'flex', width: "100%", marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Shop by Brand Ambassadors</span>
+              <div style={{ display: 'flex', width: "100%", marginTop:"20px",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
+              
                 <div style={{ display: 'flex' }}>
                   <button
                     onClick={prevAmbassador}
                     style={{
-                      background: '#9D9A95',
-                      color: 'white',
+                      background: '#868584',
+                      color: '#000',
                       border: 'none',
                       padding: '5px',
                       borderRadius: '50%',
                       cursor: 'pointer',
                       zIndex: 10,
-                      marginRight: '5px',
+                      marginRight: '20px',
+                      marginBottom: '20px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      width: '45px',
-                      height: '45px',
+                      width: '48px',
+                      height: '48px',
                     }}
                     disabled={ambassadorIndex === 0}
                   >
@@ -437,18 +418,20 @@ function Marketplace() {
                   <button
                     onClick={nextAmbassador}
                     style={{
-                      background: '#9D9A95',
-                      color: 'white',
+                      background: '#868584',
+                      color: '#000',
                       border: 'none',
                       padding: '5px',
                       borderRadius: '50%',
                       cursor: 'pointer',
                       zIndex: 10,
+                      marginRight: '20px',
+                      marginBottom: '20px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      width: '45px',
-                      height: '45px',
+                      width: '48px',
+                      height: '48px',
                     }}
                     disabled={isAmbassadorNextDisabled}
                   >
@@ -473,109 +456,36 @@ function Marketplace() {
                     width: '32%',
                     height: '32%',
                     marginRight: '10px',
-                    borderRadius: '0px',
+                    borderRadius: '8px',
                     scrollSnapAlign: 'start',
                     transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                     opacity: previousAmbassadors.includes(ambassador) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView()}>
+                  }} onClick={() => handleDetailViewNew()}>
                     <img
                       src={ambassador.img}
                       alt={`Ambassador ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                      style={{ width: '100%', height: '100%', borderRadius: '8px', objectFit: 'cover' }}
                     />
-                    <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{ambassador.Name}</p>
+                    <div key={index} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      marginTop:"16px",
+                      justifyContent: 'center',
+                    }}>
+                      <span style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginLeft:"16px",
+                        fontSize:"20px"
+                      }}>{ambassador.Name}</span>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* Shop by Brand Video Section */}
-          <section style={{ textAlign: 'left', marginTop: '40px' }}>
-          
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              {/* Navigation Buttons */}
-              <div style={{ display: 'flex', width: "100%",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Shop by Brand Videos</span>
-                <div style={{ display: 'flex' }}>
-                  <button
-                    onClick={prevVideo}
-                    style={{
-                      background: '#9D9A95',
-                      color: 'white',
-                      border: 'none',
-                      padding: '5px',
-                      borderRadius: '50%',
-                      cursor: 'pointer',
-                      zIndex: 10,
-                      marginRight: '5px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '45px',
-                      height: '45px',
-                    }}
-                    disabled={videoIndex === 0}
-                  >
-                    <ChevronLeft size={32} />
-                  </button>
-                  <button
-                    onClick={nextVideo}
-                    style={{
-                      background: '#9D9A95',
-                      color: 'white',
-                      border: 'none',
-                      padding: '5px',
-                      borderRadius: '50%',
-                      cursor: 'pointer',
-                      zIndex: 10,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '45px',
-                      height: '45px',
-                    }}
-                    disabled={isVideoNextDisabled}
-                  >
-                    <ChevronRight size={32} />
-                  </button>
-                </div>
-              </div>
-              <div
-                ref={imageContainerRef}
-                style={{
-                  display: 'flex',
-                  overflowX: 'auto',
-                  paddingBottom: '20px',
-                  scrollSnapType: 'x mandatory',
-                  WebkitOverflowScrolling: 'touch',
-                  justifyContent: "space-between"
-                }}
-              >
-                {displayedVideos.map((video, index) => (
-                  <div key={index} style={{
-                    flex: '0 0 auto',
-                    width: '32%',
-                    height: '32%',
-                    marginRight: '10px',
-                    borderRadius: '0px',
-                    scrollSnapAlign: 'start',
-                    transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                    opacity: previousVideos.includes(video) ? 0 : 1, // Hide previous images
-                    display: 'flex', // Use flexbox for centering
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <video
-                      src={video}
-                      controls
-                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
         </div>
       </div>
     )}
@@ -583,4 +493,4 @@ function Marketplace() {
   );
 }
 
-export default Marketplace;
+export default Beautyshowambassadors ;
