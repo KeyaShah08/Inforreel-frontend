@@ -41,16 +41,36 @@ function Header1() {
         <h1 style={{ margin: 0, fontSize: "1.4rem", fontWeight: 700 }}>InforReel</h1>
       </Link>
 
+      <ul className='Shownone' style={{margin:"0", padding:"0", listStyle:"none", display:"flex"}}>
+        <li style={{fontSize:"14px",color:"#96105E", borderBottom:"1px solid #96105E", padding:"0", margin:"0", fontWeight:"bold"}}>All</li>
+        <li style={{fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Shop by Brands</li>
+        <li style={{fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Shop by Brands</li>
+        <li style={{fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Shop by Ambassador</li>
+        <li style={{fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Brand Video</li>
+        <li style={{fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Fast Channel</li>
+        <li style={{fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Video On demand</li>
+      </ul>
       {/* Container for the three options/icons */}
       <div style={{ display: "flex", alignItems: "center" }}>
         {/* Shopping Cart Icon */}
         <div style={{ marginLeft: "20px", cursor: "pointer", fontSize: '1.2rem' }}>
-          <FaShoppingCart />
+          <img
+                     src="/cart1.png"
+                     alt="Add to Cart Icon"
+                     style={{ marginBottom: 0, width: "70%", height: "auto", cursor: 'pointer',margin:"auto", display:"flex", alignItems:"center",justifyContent:"center"}}
+                     onClick={() => handleAddToCartClick(item.id)}
+                     />
         </div>
 
         {/* Notification Bell Icon */}
         <div style={{ marginLeft: "20px", cursor: "pointer", fontSize: '1.2rem' }}>
-          <FaBell />
+          <img
+                     src="/BellIcon.png"
+                     alt="Add to Cart Icon"
+                     style={{ marginBottom: 0,height: "auto", cursor: 'pointer',margin:"auto", display:"flex", alignItems:"center",justifyContent:"center"}}
+                     onClick={() => handleAddToCartClick(item.id)}
+                     />
+          
         </div>
 
         {/* User/Profile Icon with Dropdown */}
@@ -59,7 +79,13 @@ function Header1() {
             style={{ display: 'flex', alignItems: 'center', fontSize: '1.2rem' }}
             onClick={toggleDropdown} // Toggle dropdown on click
           >
-            <FaUserCircle />
+             <img
+                     src="/SmallAvatar.png"
+                     alt="Add to Cart Icon"
+                     style={{ marginBottom: 0,height: "auto", cursor: 'pointer',margin:"auto", display:"flex", alignItems:"center",justifyContent:"center"}}
+                     onClick={() => handleAddToCartClick(item.id)}
+                     />
+
             <FaCaretDown style={{ marginLeft: '5px', fontSize: '0.8rem' }} /> {/* Dropdown arrow */}
           </div>
 

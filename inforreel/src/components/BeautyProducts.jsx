@@ -39,14 +39,14 @@ function BeautyProducts () {
     
   ];
 
-  const allImagesBottom = [
-    {img:'/b11.png', Name:"Gucci", Smallimg:'/gucci.png'},
-    {img:'/b12.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
-    {img:'/b13.png', Name:"Armani", Smallimg:'/armani.png'},
-    {img:'/b12.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
-    {img:'/b13.png', Name:"Gucci", Smallimg:'/gucci.png'},
-    {img:'/b11.png', Name:"Armani", Smallimg:'/armani.png'},
-  ];
+    const allImagesBottom = [
+      {img:'/b11.png', Name:"Gucci", Smallimg:'/gucci.png'},
+      {img:'/b12.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
+      {img:'/b13.png', Name:"Armani", Smallimg:'/armani.png'},
+      {img:'/b12.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
+      {img:'/b13.png', Name:"Gucci", Smallimg:'/gucci.png'},
+      {img:'/b11.png', Name:"Armani", Smallimg:'/armani.png'},
+    ];
 
   const slides = [
     { src: "/sl1.png"},
@@ -248,7 +248,7 @@ function BeautyProducts () {
           overflow: hidden;
         }
         .modal-body {
-          max-height: 80vh;
+          max-height: 92vh;
           overflow-y: auto;
           scrollbar-width: none;
           -ms-overflow-style: none; 
@@ -1145,7 +1145,7 @@ function BeautyProducts () {
                                               backgroundColor: '#000',
                                               boxShadow: '0px 8px 16px rgba(0,0,0,0.2)',
                                               minWidth: '100px',
-                                              zIndex: 1
+                                              zIndex: 1,
                                             }}>
                                               <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>20ml</button>
                                               <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>120ml</button>

@@ -349,9 +349,9 @@ function FeedItems() {
 
 
   const smallestActionIconSize = '28px';
-  const engagementIconSize = '32px';
-  const addToCartIconSize = '40px';
-  const profileIconSize = '56px';
+  const engagementIconSize = '22px';
+  const addToCartIconSize = '47px';
+  const profileIconSize = '50px';
   const fadingHeartSize = '100px';
 
   const standardSpacing = '20px';
@@ -678,53 +678,49 @@ function FeedItems() {
                 {/* Action Icons (Sizes adjusted based on visual reference) */}
 
                 {/* Shopping Cart Icon - Medium size */}
-                <img
-                  src="/icons/addtocart.svg"
-                  alt="Add to Cart Icon"
-                  style={{ marginBottom: 0, width: addToCartIconSize, height: addToCartIconSize, cursor: 'pointer' }}
-                  onClick={() => handleAddToCartClick(item.id)}
-                />
-
+                <button type='buttn' style={{padding:"0",marginBottom: "20px", background:"#666", borderRadius:"50%", width:"45px",height:"45px", border:"none"}}>
+                    <img
+                     src="/cart1.png"
+                     alt="Add to Cart Icon"
+                     style={{ marginBottom: 0, width: "50%", height: "auto", cursor: 'pointer',margin:"auto", display:"flex", alignItems:"center",justifyContent:"center"}}
+                     onClick={() => handleAddToCartClick(item.id)}
+                     />
+              </button>
                 {/* Like Icon and Count - Slightly larger base size */}
                 <div
-                  style={{ marginBottom: reducedSpacing, cursor: 'pointer' }}
+                  style={{ marginBottom: "0px", cursor: 'pointer' }}
                   onClick={() => handleLikeClick(item.id)}
                 >
                     {/* EMBEDDED SVG for dynamic color change */}
-                    <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill={item.liked ? '#96105E' : 'none'}
-                    stroke={item.liked ? 'none' : 'white'}
-                    strokeWidth="2"
-                    width={engagementIconSize}
-                    height={engagementIconSize}
-                  >
-                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                    </svg>
+                    <img
+                      src="/Heart.png"
+                      alt="Heart Icon"
+                      style={{ marginBottom: 0, width: smallestActionIconSize, height: smallestActionIconSize, cursor: 'pointer' }}
+                      onClick={() => handleCommentClick(item.id)}
+                    />
                   </div>
                   {/* Static Like Count */}
-                  <div style={{ marginBottom: standardSpacing, fontSize: '1rem', color: 'white', textAlign: 'center' }}>
+                  <div style={{ marginBottom: "20px", fontSize: '14px', color: 'white', textAlign: 'center' }}>
                     247K
                   </div>
 
                 {/* Comment Icon and Count - Smallest size */}
                 <img
-                  src="/icons/comment.svg"
+                  src="/comment.png"
                   alt="Comment Icon"
                   style={{ marginBottom: reducedSpacing, width: smallestActionIconSize, height: smallestActionIconSize, cursor: 'pointer' }}
                   onClick={() => handleCommentClick(item.id)}
                 />
                   {/* Static Comment Count */}
-                  <div style={{ marginBottom: standardSpacing, fontSize: '1rem', color: 'white', textAlign: 'center' }}>
+                  <div style={{ marginBottom: "20px", fontSize: '14px', color: 'white', textAlign: 'center' }}>
                     1,495
                   </div>
 
                 {/* Share Icon - Smallest size */}
                 <img
-                  src="/icons/share.svg"
+                  src="/shared.png"
                   alt="Share Icon"
-                  style={{ marginBottom: standardSpacing, width: smallestActionIconSize, height: smallestActionIconSize, cursor: 'pointer' }}
+                  style={{ marginBottom: "20px", width: engagementIconSize, height: engagementIconSize, cursor: 'pointer' }}
                   onClick={() => handleShareClick(item.id)}
                 />
 

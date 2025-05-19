@@ -719,7 +719,7 @@ function ProductDetails() {
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
               {/* Navigation Buttons */}
               <div style={{ display: 'flex', width:"100%",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Brand Videos</span>
+                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Collection</span>
                 <div style={{ display: 'flex' }}>
                   <button
                     onClick={prevProduct}
