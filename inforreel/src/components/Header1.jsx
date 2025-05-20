@@ -1,7 +1,7 @@
 import { useState } from 'react'; // Import useState hook
 import { Link } from "react-router-dom"; // Import Link for navigation
 // Import icons from react-icons (example using Font Awesome)
-import { FaBell, FaCaretDown, FaShoppingCart, FaUserCircle } from 'react-icons/fa'; // Shopping Cart, Bell, User, and Caret Down icons
+import { FaCaretDown } from 'react-icons/fa'; // Shopping Cart, Bell, User, and Caret Down icons
 
 function Header1() {
   // State to manage dropdown visibility
@@ -19,7 +19,7 @@ function Header1() {
   return (
     <header
       style={{
-        backgroundColor: "rgba(20, 20, 20, 0.35)", // Updated: Dark background color with 65% transparency
+    backgroundColor: 'rgba(20, 20, 20, 0.65)', // Matches #141414 with 85% opacity
         padding: "1rem 2rem", // Padding around the header content
         display: "flex", // Use flexbox for layout
         justifyContent: "space-between", // Space out the title and options

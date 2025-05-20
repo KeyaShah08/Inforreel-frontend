@@ -46,7 +46,7 @@ function Sidebar({ onNavItemClick, activeItem }) {
       display: 'flex',
       flexDirection: 'column',
       width: '250px ', // Adjust this percentage as needed for the overall sidebar width
-      backgroundColor: 'rgba(20, 20, 20, 0.7)', // Updated: #141414 with 65% transparency
+    backgroundColor: 'rgba(20, 20, 20, 0.65)', // Matches #141414 with 85% opacity
       color: 'white',
       padding: '0', // Removed general padding
       paddingTop: '20px', // Added specific top padding

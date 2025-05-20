@@ -1,10 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // Import arrow icons
-import ProductDetails from './ProductDetails';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { useEffect, useRef, useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { useNavigate } from 'react-router-dom';
+import ProductDetails from './ProductDetails';
 
 function BeautyProducts () {
+  const navigate = useNavigate();
+  const handleAddToCart = () => navigate('/mycart');
   const allImages = [
     {img:'/b11.png', Name:"Gucci", Smallimg:'/gucci.png'},
     {img:'/b12.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
@@ -1070,7 +1073,7 @@ function BeautyProducts () {
                                     </div>
                                     <div>
                                     <div style={{position:"relative", display:"flex", marginTop:"25px"}}>
-                                      <button style={{ marginRight: '20px', textAlign: 'center', background:"#96105E", color:"#fff", height:"50px", width:"166px",borderRadius:"10px", border:"1px solid #96105E", fontSize:"16px"}} type='button'>Add to Cart</button>
+                                      <button onClick={handleAddToCart} style={{ marginRight: '20px', textAlign: 'center', background:'#96105E', color:'#fff', height:'50px', width:'166px', borderRadius:'10px', border:'1px solid #96105E', fontSize:'16px' }} type='button'>Add to Cart</button>
                                       <button style={{ marginRight: '0px', textAlign: 'center', background:"transparent", color:"#fff", height:"50px", width:"166px",borderRadius:"10px", border:"1px solid #7B7B7B", fontSize:"16px"}} type='button'>Buy Now</button>
                                     </div>
                                     <div style={{display: 'block', marginTop:"15px"}}>

@@ -3,6 +3,7 @@ import BusinessInfo from "./pages/BusinessInfo";
 import BusinessInfoDetails from "./pages/BusinessInfoDetails";
 import BusinessInfoDetails1 from "./pages/BusinessInfoDetails1";
 import BusinessSignup from "./pages/BusinessSignup";
+import Checkout from './pages/Checkout'; // if it's just a component
 import Dashboard from "./pages/Dashboard";
 import ForgotPassword from "./pages/ForgotPassword";
 import Home from "./pages/Home";
@@ -10,6 +11,7 @@ import IdentityVerificationIntro from './pages/IdentityVerificationIntro'; // Im
 import InfluencerProfileSetup from "./pages/InfluencerProfileSetup";
 import InfluencerSignup from "./pages/InfluencerSignup";
 import InterestSelection from "./pages/InterestSelection";
+import MyCart from "./pages/MyCart"; // ✅ Make sure this line is present
 import PolicyPage from "./pages/PolicyPage";
 import ResetPassword from "./pages/ResetPassword";
 import SignIn from "./pages/SignIn";
@@ -17,6 +19,8 @@ import UserProfileSetup from "./pages/UserProfileSetup";
 import UserSignup from "./pages/UserSignup";
 import VerifyAccount from "./pages/VerifyAccount";
 import Welcome from "./pages/Welcome";
+
+
 
 
 
@@ -45,6 +49,10 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/signup/verify-intro" element={<IdentityVerificationIntro />} />
+        <Route path="/mycart" element={<MyCart />} /> {/* ✅ Route for MyCart */}
+        <Route path="/checkout" element={<Checkout />} />
+
+
 
 
 

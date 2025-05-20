@@ -1,9 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // Import arrow icons
-import Beautyshowrooms from './Beautyshowrooms';
+import { useEffect, useRef, useState } from 'react';
 import Beautyshowambassadors from './Beautyshowambassadors';
-import ProductDetails from './ProductDetails';
-import BeautyProducts from './BeautyProducts';
+import Beautyshowrooms from './Beautyshowrooms';
 
 function Marketplace() {
  const allImages = [
@@ -59,8 +57,6 @@ function Marketplace() {
   const [previousVideos, setPreviousVideos] = useState([]);
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [showBeautyShow, setShowBeauty] = useState(false);
-  const [showShowprod, setShowprod] = useState(false);
-
 
   const nextImage = () => {
     if (imageContainerRef.current && currentIndex + 3 < allImages.length) {
@@ -156,9 +152,6 @@ function Marketplace() {
   const handleDetailView = () => {
     setShowBeautyShowroom(true);
   };
-  const handleDetailView3 = () => {
-    setShowprod(true);
-  };
   const handleDetailView2 = () => {
     setShowBeauty(true);
   };
@@ -169,19 +162,10 @@ function Marketplace() {
 
   return (
     <>
-     <style>
-      {`
-        .Shownone {
-          display:none;
-        }
-      `}
-    </style>
     {showBeautyShowroom ? (
       <Beautyshowrooms />
     ) : showBeautyShow ? (
       <Beautyshowambassadors />
-    ) : showShowprod ? ( 
-      <BeautyProducts />
     ):(
       <div style={{
         position: 'absolute',
@@ -408,7 +392,7 @@ function Marketplace() {
                     scrollSnapAlign: 'start',
                     transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                     opacity: previousProducts.includes(product) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView3()}>
+                  }} onClick={() => handleDetailView2()}>
                     <img
                       src={product.img}
                       alt={`Product ${index + 1}`}
@@ -493,7 +477,7 @@ function Marketplace() {
                     scrollSnapAlign: 'start',
                     transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                     opacity: previousAmbassadors.includes(ambassador) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView2()}>
+                  }} onClick={() => handleDetailView()}>
                     <img
                       src={ambassador.img}
                       alt={`Ambassador ${index + 1}`}
