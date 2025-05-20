@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ added
 
 const steps = ['Address', 'Shipping', 'Payment', 'Review'];
 
@@ -9,8 +10,8 @@ const CheckoutComponent = () => {
     shippingMethod: '', cardName: '', cardNumber: '', expiry: '', cvv: '',
   });
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate(); // ✅ added
 
-  // ✅ Inject CSS to prevent Chrome autofill yellow background
   useEffect(() => {
     const style = document.createElement('style');
     style.innerHTML = `
@@ -102,128 +103,117 @@ const CheckoutComponent = () => {
             </div>
           </div>
         );
-case 1:
-  return (
-    <div style={{ flex: 2, marginLeft: '40px' }}>
-      <h2 style={{ fontSize: '20px', marginBottom: '30px' }}>Shipping</h2>
-      <div style={{ width: '518px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
-        {/* Standard Shipping Option */}
-        <label
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            padding: '16px',
-            border: '1px solid white',
-            borderRadius: '6px',
-            backgroundColor: 'transparent',
-            color: 'white',
-            cursor: 'pointer',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <input
-              type="radio"
-              name="shippingMethod"
-              value="Standard"
-              checked={form.shippingMethod === 'Standard'}
-              onChange={handleChange}
-              style={{ accentColor: '#B10263', transform: 'scale(1.2)' }}
-            />
-            <div>
-              <div style={{ fontWeight: 'bold', fontSize: '16px' }}>Standard</div>
-              <div style={{ fontSize: '14px', color: '#ccc' }}>Delivery Friday, May 23</div>
+      case 1:
+        return (
+          <div style={{ flex: 2, marginLeft: '40px' }}>
+            <h2 style={{ fontSize: '20px', marginBottom: '30px' }}>Shipping</h2>
+            <div style={{ width: '518px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
+              {/* Standard Shipping Option */}
+              <label style={shippingLabelStyle}>
+                <div style={shippingLeftStyle}>
+                  <input type="radio" name="shippingMethod" value="Standard" checked={form.shippingMethod === 'Standard'} onChange={handleChange} style={shippingInputStyle} />
+                  <div>
+                    <div style={shippingTitle}>Standard</div>
+                    <div style={shippingSub}>Delivery Friday, May 23</div>
+                  </div>
+                </div>
+                <div style={shippingPrice}>Free</div>
+              </label>
+
+              {/* Express Shipping Option */}
+              <label style={shippingLabelStyle}>
+                <div style={shippingLeftStyle}>
+                  <input type="radio" name="shippingMethod" value="Express" checked={form.shippingMethod === 'Express'} onChange={handleChange} style={shippingInputStyle} />
+                  <div>
+                    <div style={shippingTitle}>Express</div>
+                    <div style={shippingSub}>Delivered Tomorrow</div>
+                  </div>
+                </div>
+                <div style={shippingPrice}>$12.00</div>
+              </label>
+
+              <button onClick={nextStep} style={{ ...buttonStyle, marginTop: '30px' }}>Continue to Payment</button>
             </div>
           </div>
-          <div style={{ fontWeight: 'bold', fontSize: '14px' }}>Free</div>
-        </label>
-
-        {/* Express Shipping Option */}
-        <label
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            padding: '16px',
-            border: '1px solid white',
-            borderRadius: '6px',
-            backgroundColor: 'transparent',
-            color: 'white',
-            cursor: 'pointer',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <input
-              type="radio"
-              name="shippingMethod"
-              value="Express"
-              checked={form.shippingMethod === 'Express'}
-              onChange={handleChange}
-              style={{ accentColor: '#B10263', transform: 'scale(1.2)' }}
-            />
-            <div>
-              <div style={{ fontWeight: 'bold', fontSize: '16px' }}>Express</div>
-              <div style={{ fontSize: '14px', color: '#ccc' }}>Delivered Tomorrow</div>
+        );
+      case 2:
+        return (
+          <div style={{ flex: 2, marginLeft: '40px' }}>
+            <h2 style={{ fontSize: '20px', marginBottom: '20px' }}>Payment Information</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '398px' }}>
+              <select
+                name="savedCard"
+                value={form.savedCard}
+                onChange={handleChange}
+                style={{
+                  ...inputStyle,
+                  color: form.savedCard ? 'white' : 'grey',
+                  backgroundColor: 'transparent',
+                  border: '1px solid white',
+                  appearance: 'none',
+                  WebkitAppearance: 'none',
+                  MozAppearance: 'none',
+                }}
+              >
+                <option value="" disabled>Select payment method</option>
+                <option value="card1">Keya XXXXXXXXXXXX1234 — EXP 09/2028</option>
+                <option value="card2">Keya XXXXXXXXXXXX1654 — EXP 09/2029</option>
+              </select>
+              <input name="cardName" placeholder="Card holder name" value={form.cardName} onChange={handleChange} style={inputStyle} />
+              <input name="cardNumber" placeholder="Card number" value={form.cardNumber} onChange={handleChange} style={inputStyle} />
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <input name="expiry" placeholder="MM/YY" value={form.expiry} onChange={handleChange} style={{ ...inputStyle, width: '194px' }} />
+                <input name="cvv" placeholder="CVV" value={form.cvv} onChange={handleChange} style={{ ...inputStyle, width: '194px' }} />
+              </div>
+              <label style={{ fontSize: '13px', color: '#ccc' }}>
+                <input type="checkbox" style={{ marginRight: '8px', accentColor: '#96105E' }} />
+                Save card details for future payments
+              </label>
+              <button onClick={nextStep} style={{ ...buttonStyle, marginTop: '16px' }}>Pay now</button>
             </div>
           </div>
-          <div style={{ fontWeight: 'bold', fontSize: '14px' }}>$12.00</div>
-        </label>
-
-        <button onClick={nextStep} style={{ ...buttonStyle, marginTop: '30px' }}>Continue to Payment</button>
-      </div>
-    </div>
-  );
- 
-case 2:
-  return (
-    <div style={{ flex: 2, marginLeft: '40px' }}>
-      <h2 style={{ fontSize: '20px', marginBottom: '20px' }}>Payment Information</h2>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '398px' }}>
-        {/* Select Dropdown */}
-<select
-  name="savedCard"
-  value={form.savedCard}
-  onChange={handleChange}
-  style={{
-    ...inputStyle,
-    color: form.savedCard ? 'white' : 'grey',  // 👈 this changes only selected field color
-    backgroundColor: 'transparent',
-    border: '1px solid white',
-    appearance: 'none',
-    WebkitAppearance: 'none',
-    MozAppearance: 'none',
-  }}
->
-  <option value="" disabled>Select payment method</option>
-  <option value="card1">Keya XXXXXXXXXXXX1234 — EXP 09/2028</option>
-  <option value="card2">Keya XXXXXXXXXXXX1654 — EXP 09/2029</option>
-</select>
-
-        <input name="cardName" placeholder="Card holder name" value={form.cardName} onChange={handleChange} style={inputStyle} />
-        <input name="cardNumber" placeholder="Card number" value={form.cardNumber} onChange={handleChange} style={inputStyle} />
-
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <input name="expiry" placeholder="MM/YY" value={form.expiry} onChange={handleChange} style={{ ...inputStyle, width: '194px' }} />
-          <input name="cvv" placeholder="CVV" value={form.cvv} onChange={handleChange} style={{ ...inputStyle, width: '194px' }} />
-        </div>
-
-        <label style={{ fontSize: '13px', color: '#ccc' }}>
-          <input type="checkbox" style={{ marginRight: '8px', accentColor: '#96105E' }} />
-          Save card details for future payments
-        </label>
-
-        <button onClick={nextStep} style={{ ...buttonStyle, marginTop: '16px' }}>Pay now</button>
-      </div>
-    </div>
-  );
+        );
       case 3:
         return (
-          <div style={{ flex: 2 }}>
-            <h2 style={{ fontSize: '20px', marginBottom: '20px' }}>Review</h2>
-            <p><strong>Name:</strong> {form.firstName} {form.lastName}</p>
-            <p><strong>Address:</strong> {form.address1}, {form.city}, {form.zip}</p>
-            <p><strong>Shipping Method:</strong> {form.shippingMethod}</p>
-            <p><strong>Card:</strong> **** **** **** {form.cardNumber.slice(-4)}</p>
+          <div style={{ flex: 2, marginLeft: '40px', width: '449px' }}>
+            <h2 style={{ fontSize: '20px', marginBottom: '20px' }}>Payment Information</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <div>
+                <h4 style={{ fontWeight: 'bold', marginBottom: '6px' }}>Shipping address</h4>
+                <p style={{ margin: 0 }}>Keya Shah</p>
+                <p style={{ margin: 0 }}>4828 Jennifer Ct., Union City, 94587</p>
+                <p style={{ margin: 0 }}>+1 123 456 789</p>
+                <p style={editStyle}>Edit</p>
+              </div>
+              <div>
+                <h4 style={{ fontWeight: 'bold', marginBottom: '6px' }}>Payment Information</h4>
+                <p style={{ margin: 0 }}>Keya Shah</p>
+                <p style={{ margin: 0 }}>XXXXXXXXXXXX1234</p>
+                <p style={{ margin: 0 }}>09/2028</p>
+                <p style={editStyle}>Edit</p>
+              </div>
+            </div>
+            <div style={{ marginTop: '20px' }}>
+              <h4 style={{ fontWeight: 'bold', marginBottom: '6px' }}>Standard shipping</h4>
+              <p style={{ margin: 0 }}>Delivery Friday, May 23</p>
+              <p style={editStyle}>Edit</p>
+            </div>
+            <button
+              onClick={() => navigate("/thankyou")} // ✅ added
+              style={{
+                backgroundColor: '#B10263',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginTop: '16px'
+              }}
+            >
+              Place the order
+            </button>
           </div>
         );
       default:
@@ -258,7 +248,6 @@ case 2:
             {renderLeftSection()}
           </div>
 
-          {/* RIGHT: Order Summary */}
           <div style={{ flex: 1, maxWidth: '440px' }}>
             <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px' }}>Order Summary</h3>
             <div style={{ display: 'flex', gap: '20px', marginBottom: '16px' }}>
@@ -288,7 +277,23 @@ case 2:
             </div>
             <hr style={{ borderColor: '#555', margin: '12px 0' }} />
             <div style={{ ...summaryRowStyle, fontWeight: 'bold', fontSize: '16px' }}><span>Total</span><span>$100.14</span></div>
-            <button style={{ marginTop: '20px', width: '100%', backgroundColor: '#B10263', color: 'white', padding: '14px', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer' }}>Place Order</button>
+            <button
+              onClick={() => navigate("/thankyou")} // ✅ added
+              style={{
+                marginTop: '20px',
+                width: '100%',
+                backgroundColor: '#B10263',
+                color: 'white',
+                padding: '14px',
+                border: 'none',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                cursor: 'pointer'
+              }}
+            >
+              Place Order
+            </button>
           </div>
         </div>
       </div>
@@ -344,6 +349,52 @@ const summaryRowStyle = {
   display: 'flex',
   justifyContent: 'space-between',
   marginBottom: '10px'
+};
+
+const shippingLabelStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  padding: '16px',
+  border: '1px solid white',
+  borderRadius: '6px',
+  backgroundColor: 'transparent',
+  color: 'white',
+  cursor: 'pointer',
+};
+
+const shippingLeftStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px'
+};
+
+const shippingInputStyle = {
+  accentColor: '#B10263',
+  transform: 'scale(1.2)'
+};
+
+const shippingTitle = {
+  fontWeight: 'bold',
+  fontSize: '16px'
+};
+
+const shippingSub = {
+  fontSize: '14px',
+  color: '#ccc'
+};
+
+const shippingPrice = {
+  fontWeight: 'bold',
+  fontSize: '14px'
+};
+
+const editStyle = {
+  marginTop: '8px',
+  color: '#B10263',
+  cursor: 'pointer',
+  fontWeight: 'bold',
+  fontSize: '14px'
 };
 
 export default CheckoutComponent;
