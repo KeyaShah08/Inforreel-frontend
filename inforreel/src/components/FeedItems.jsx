@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaExpand, FaPause, FaPlay, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
 import "../App.css";
+import BeautyProducts from './BeautyProducts';
 // You might need to install react-icons if you haven't already: npm install react-icons
 
 // Helper function to format time in seconds to MM:SS or HH:MM:SS
@@ -19,7 +20,6 @@ const formatTime = (timeInSeconds) => {
 
   return `${minutes}:${paddedSeconds}`;
 };
-
 
 function FeedItems() {
   const [mediaItems, setMediaItems] = useState([
@@ -44,9 +44,12 @@ function FeedItems() {
   const [fadingHeartVisible, setFadingHeartVisible] = useState({});
   // State to track the ID of the item currently in fullscreen
   const [fullscreenItemId, setFullscreenItemId] = useState(null);
+  const [showOpenCart, setOpenCart] = useState(false);
 
   const videoRefs = useRef({});
   const clickTimeoutRef = useRef(null); // Ref to store the click timeout ID
+  const [isOpenDrp, setIsOpenDrp] = useState(false);
+  const [isRedirectioin, setRedirection] = useState(false);
 
 
   // Function to toggle mute state for a specific video
@@ -74,6 +77,7 @@ function FeedItems() {
         return item;
       })
     );
+
     const item = mediaItems.find(item => item.id === id);
     if (!item.liked) {
       console.log(`Item ${id} liked!`);
@@ -99,6 +103,7 @@ function FeedItems() {
 
   // Placeholder functions for other icon clicks
   const handleAddToCartClick = (id) => {
+    setOpenCart(true);
     console.log(`Add to cart clicked for item ${id}`);
   };
 
@@ -108,6 +113,9 @@ function FeedItems() {
 
   const handleShareClick = (id) => {
     console.log(`Share clicked for item ${id}`);
+  };
+  const toggleDropdown = () => {
+    setIsOpenDrp(!isOpenDrp);
   };
 
   // Function to toggle play/pause for a specific video
@@ -361,7 +369,9 @@ function FeedItems() {
   const customControlPadding = '8px'; // Padding around custom controls
   const customControlBackgroundColor = 'rgba(0, 0, 0, 0.5)';
 
-
+const handleRedirection = () => {
+  setRedirection(true);
+}
   return (
     <>
     <style>
@@ -376,6 +386,8 @@ function FeedItems() {
         }
       `}
     </style>
+    {isRedirectioin ? <BeautyProducts /> :
+      <>
       <div style={{
         height: '100%',
         display: 'flex',
@@ -408,7 +420,7 @@ function FeedItems() {
             {/* Video/Image Container - Apply fullscreen styles here */}
             <div style={{
               width: fullscreenItemId === item.id ? '100vw' : 'auto', // Take full viewport width in fullscreen
-              height: fullscreenItemId === item.id ? '87vh' : "87vh", // Take full viewport height in fullscreen
+              height: fullscreenItemId === item.id ? '87vh' : "9 / 16", // Take full viewport height in fullscreen
               aspectRatio: fullscreenItemId === item.id ? 'auto' : '4 / 5', // Auto aspect ratio in fullscreen
               overflow: 'hidden', // Keep overflow hidden for the main container
               borderRadius: fullscreenItemId === item.id ? '0' : '10px', // No border radius in fullscreen
@@ -726,7 +738,7 @@ function FeedItems() {
 
                 {/* Save Icon - Slightly larger base size */}
                 <div
-                  style={{ marginBottom: '0', cursor: 'pointer' }}
+                  style={{ marginBottom: '20px', cursor: 'pointer' }}
                   onClick={() => handleSaveClick(item.id)}
                 >
                   {/* EMBEDDED SVG for dynamic color change */}
@@ -742,6 +754,20 @@ function FeedItems() {
                     <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/>
                   </svg>
                 </div>
+                <div
+                  style={{ marginBottom: '0', cursor: 'pointer' }}
+                >
+                  <img
+                        src="/dots.png"
+                        alt="Profile Icon"
+                        style={{
+                            display: 'block',
+                            width: '100%',
+                            height: '100%',
+                            }}
+                        />
+                </div>
+                
 
               </div>
             )}
@@ -841,6 +867,137 @@ function FeedItems() {
           */
         `}</style>
       </div>
+      {showOpenCart ? 
+        <div style={{display:"block",position:"fixed", top:"0px",zIndex:"9999", right:"0", height:"100vh", width:"100%", background:"rgba(20,20,20,0.5)"}}>
+          <div style={{display:"block",position:"fixed", top:"58.5px",zIndex:"99999", right:"0", height:"100vh", width:"340px", background:"rgba(20,20,20,1)"}}>
+            <div style={{margin:"15px", borderBottom:"1px solid #454545"}}>
+              <button style={{ paddingBottom:"15px",background:"transparent", width:"100%", border:"none",  display:"flex", justifyContent:"flex-end"}} onClick={() => {setOpenCart(false)}}>
+                <img
+                  src={"/closeicon.png"}
+                  alt={`cdiorbeauty`}
+                  style={{ width: 'auto', height: 'auto', borderRadius: '0px' }}
+                />
+              </button>
+            </div>
+            <div style={{padding:"0 15px",}}>
+              <div style={{display: 'flex',alignItems:"center",justifyContent: 'space-between', marginTop:"25px"}}>                                  
+                              <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start',}}>    
+                                      <img
+                                          src={'/gucci.png'}
+                                          alt={`Brand`}
+                                          style={{width: "auto",cursor:"pointer",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"15px",}}
+                                        />
+                                      <span style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', fontWeight:"bold", fontSize:"20px", color:"#fff"}}>Dior</span>
+                                      </div>
+                                      <div onClick={() => handleRedirection()} style={{display: 'flex',alignItems:"center",justifyContent: 'flex-end',cursor:"pointer"}}>    
+                                        <img
+                                          src={"/back.png"}
+                                          alt={`cdiorbeauty`}
+                                          style={{ width: 'auto', height: 'auto', borderRadius: '0px' }}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div style={{display: 'block', marginTop:"15px"}}>
+                                      <p style={{display: 'block', fontSize:"18px", marginTop:"10px", color:"#d2d2d2",width:"330px", whiteSpace: "nowrap",overflow: "hidden", textOverflow: "ellipsis"}}>Dior Prestige La Micro-Huile de Rose Activated Serum</p>
+                                    </div>
+                                    <div style={{display: 'flex', color:"#fff",alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>
+                                      <p style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginRight:"20px",fontSize:"px"}}>$100.00</p>
+                                      <img
+                                          src={'/star.png'}
+                                          alt={`Brand`}
+                                          style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"6px",marginTop:"3px"}}
+                                        />
+                                        <p style={{fontSize:"13px", marginTop:"3px"}}>( 32 review )</p>
+                                    </div>
+                                    <div style={{display: 'flex', marginTop:"30px"}}>
+                                          <div>
+                                          <span style={{  
+                                            color:"#fff",
+                                            fontSize:"18px",
+                                              }}>Quantity</span>
+                                              <button type='button' style={{  
+                                                background: 'transparent',
+                                                border:"1px solid #d7d7d7",
+                                                padding:"8px 15px",
+                                                display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"space-between",
+                                                borderRadius:"20px",
+                                                width:"127px",
+                                                height:"49px",
+                                                marginRight:"10px",
+                                                marginTop:"20px",
+                                              }}
+                                            >
+                                              <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                                height:"24px", display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"center",}}>-</span>
+                                              <input type='text' value="1" style={{fontSize:"14px",color:"#fff", width:"20px", background:"transparent", border:"none", textAlign:"center"}}/>
+                                              <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                                height:"24px", display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"center",}}>+</span>
+                                          </button>
+                                          </div>
+                                          <div>
+                                          <span style={{  
+                                            color:"#fff",
+                                            fontSize:"18px",
+                                            marginLeft:"30px",
+                                              }}>Size</span>
+                                            <div className="dropdown" style={{ position: 'relative', display: 'block' }}>
+                                              <button onClick={toggleDropdown} className="dropdown-button" style={{
+                                                padding: '10px 20px',
+                                                backgroundColor: '#333',
+                                                color: 'white',
+                                                border: "1px solid #d7d7d7",
+                                                cursor: 'pointer',
+                                                background:"transparent",
+                                                display: 'block',
+                                                display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"space-between",
+                                                borderRadius:"20px",
+                                                width:"127px",
+                                                height:"49px",
+                                                marginLeft:"30px",
+                                                marginTop:"20px",
+
+                                              }}>
+                                                30ml  
+                                                <img
+                                                  src={'/downmenu.png'}
+                                                  alt={`name`}
+                                                  style={{paddingLeft:"15px",width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginTop:"3px"}}
+                                                />
+                                              </button>
+                                              {isOpenDrp && (
+                                                <div id="dropdownMenu" className="dropdown-content" style={{
+                                                  position: 'absolute',
+                                                  backgroundColor: '#000',
+                                                  boxShadow: '0px 8px 16px rgba(0,0,0,0.2)',
+                                                  minWidth: '100px',
+                                                  zIndex: 1,
+                                                }}>
+                                                  <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>20ml</button>
+                                                  <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>120ml</button>
+                                                  <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>150ml</button>
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <div style={{ display:"flex",alignItems:"center", justifyContent:"center",textAlign: 'center', }} >
+                                        <button style={{ marginTop:"30px", display:"flex",alignItems:"center", justifyContent:"center",marginLeft:"auto",marginRigth:"auto",textAlign: 'center', background:'#96105E', color:'#fff', height:'50px', width:'100%', borderRadius:'30px', border:'1px solid #96105E', fontSize:'16px' }} type='button'>Add to Cart</button>
+                                        </div>
+                                        
+            </div>
+          </div>
+        </div>
+      :""}
+      </>
+      }
     </>
   );
 }

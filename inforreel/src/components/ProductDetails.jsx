@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import BeautyProducts from './BeautyProducts';
+import Beautyshowrooms from './Beautyshowrooms';
 
 function ProductDetails() {
   const allImages = [
@@ -29,12 +30,11 @@ function ProductDetails() {
   ];
   const allVideos = [
     '/samplevideo1.mp4',
-    '/samplevideo2.mp4',
     '/samplevideo3.mp4',
     '/samplevideo4.mp4',
+    '/samplevideo4.mp4',
     '/samplevideo5.mp4',
-    '/samplevideo6.mp4',
-    
+    '/samplevideo6.mp4',  
   ];
   const ListItem = [
     {img:'/Li1.png', Date:"5/1/2025", purchsed:"2K purchased", Name:"Prestige Exceptional Micro-Nutritive and Repairing Ritual "},
@@ -61,6 +61,12 @@ function ProductDetails() {
   const [previousVideos, setPreviousVideos] = useState([]);
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [activeTab, setActiveTab] = useState('tab1');
+  const [isBack, setBackView] = useState(false);
+  const videoRefs = useRef([]);
+  const videoRefsN = useRef([]);
+  const videoRefscoll = useRef([]);
+  const videoRefs2 = useRef([]);
+  const videoRef3 = useRef([]);
 
   const nextImage = () => {
     if (imageContainerRef.current && currentIndex + 3 < allImages.length) {
@@ -156,10 +162,23 @@ function ProductDetails() {
   const handleDetailView = () => {
     setShowBeautyShowroom(true);
   };
+    const handleack = () => {
+      setBackView(true);
+    };
   useEffect(() => {
     //   console.log("Displayed Images:", displayedImages);
     //   console.log("Previous Images:", previousImages);
   }, [displayedImages, previousImages]);
+  useEffect(() => {
+    if (activeTab !== "tab2") {
+      videoRefsN.current.forEach(video => {
+        if (video) {
+          video.pause();
+          video.currentTime = 0;
+        }
+      });
+    }
+  }, [activeTab]);
  
   return (
     <>
@@ -204,7 +223,7 @@ function ProductDetails() {
     </style>
     {showBeautyShowroom ? (
       <BeautyProducts />
-    ) : (
+    ) : isBack ? <Beautyshowrooms /> : (
     <div style={{
       position: 'absolute',
       top: 0,
@@ -277,7 +296,12 @@ function ProductDetails() {
         paddingLeft: "270px"
       }}>
       <section style={{ marginTop: '525px', textAlign: 'left', position:"relative" }}>
-         
+      <img
+            onClick={() => handleack()}
+                                      src={'/backArrow.png'}
+                                      alt={`backArrow`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",position:"relative",zIndex:"9999",top:"-76px",marginRight:"6px",marginTop:"3px"}}
+                                    />
           <div style={{display: "flex",alignItems: "center",justifyContent: "space-between" }}>
           <img
             src={"/Icon1.png"}
@@ -547,7 +571,7 @@ function ProductDetails() {
          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
            {/* Navigation Buttons */}
            <div style={{ display: 'flex', width:"100%",marginBottom: '20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-           <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Collection</span>
+           <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Brand Videos</span>
              <div style={{ display: 'flex' }}>
                <button
                  onClick={prevProduct}
@@ -604,7 +628,7 @@ function ProductDetails() {
                justifyContent: "space-between"
              }}
            >
-             {displayedProducts.map((product, index) => (
+          {displayedVideos.map((video, index) => (
                <div key={index} style={{
                  flex: '0 0 auto',
                  width: '32%',
@@ -613,14 +637,30 @@ function ProductDetails() {
                  borderRadius: '0px',
                  scrollSnapAlign: 'start',
                  transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                 opacity: previousProducts.includes(product) ? 0 : 1, // Hide previous images
+                 opacity: previousProducts.includes(video) ? 0 : 1, // Hide previous images
                }} onClick={() => handleDetailView()}>
-                 <img
+                 {/* <img
                    src={product.img}
                    alt={`Product ${index + 1}`}
                    style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                  />
-                 <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p>
+                 <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
+                  <video
+                        ref={(el) => {
+                          if (el) videoRefs.current[index] = el;
+                        }}
+                        src={video}
+                        controls
+                        muted
+                        style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                        onMouseEnter={() => {
+                          videoRefs.current[index]?.play();
+                        }}
+                        onMouseLeave={() => {
+                          videoRefs.current[index]?.pause();
+                          videoRefs.current[index].currentTime = 0;
+                        }}
+                      />
                </div>
              ))}
            </div>
@@ -689,25 +729,41 @@ function ProductDetails() {
                justifyContent: "space-between"
              }}
            >
-             {displayedAmbassadors.map((ambassador, index) => (
-               <div key={index} style={{
-                 flex: '0 0 auto',
-                 width: '32%',
-                 height: '32%',
-                 marginRight: '10px',
-                 borderRadius: '0px',
-                 scrollSnapAlign: 'start',
-                 transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                 opacity: previousAmbassadors.includes(ambassador) ? 0 : 1, // Hide previous images
-               }} onClick={() => handleDetailView()}>
-                 <img
-                   src={ambassador.img}
-                   alt={`Ambassador ${index + 1}`}
-                   style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                 />
-                 <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{ambassador.Name}</p>
-               </div>
-             ))}
+             {displayedVideos.map((video, index) => (
+                  <div key={index} style={{
+                    flex: '0 0 auto',
+                    width: '32%',
+                    height: '32%',
+                    marginRight: '10px',
+                    borderRadius: '0px',
+                    scrollSnapAlign: 'start',
+                    transition: 'opacity 0.5s ease-in-out', // Add smooth transition
+                    opacity: previousProducts.includes(video) ? 0 : 1, // Hide previous images
+                  }} onClick={() => handleDetailView()}>
+                    {/* <img
+                      src={product.img}
+                      alt={`Product ${index + 1}`}
+                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                    />
+                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
+                        <video
+                            ref={(el) => {
+                              if (el) videoRef3.current[index] = el;
+                            }}
+                            src={video}
+                            controls
+                            muted
+                            style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                            onMouseEnter={() => {
+                              videoRef3.current[index]?.play();
+                            }}
+                            onMouseLeave={() => {
+                              videoRef3.current[index]?.pause();
+                              videoRef3.current[index].currentTime = 0;
+                            }}
+                        />
+                  </div>
+                ))}
            </div>
          </div>
        </section>
@@ -778,7 +834,7 @@ function ProductDetails() {
                   justifyContent: "space-between"
                 }}
               >
-                {displayedProducts.map((product, index) => (
+                {/* {displayedProducts.map((product, index) => (
                   <div key={index} style={{
                     flex: '0 0 auto',
                     width: '32%',
@@ -795,6 +851,41 @@ function ProductDetails() {
                       style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                     />
                     <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p>
+                  </div>
+                ))} */}
+                {displayedVideos.map((video, index) => (
+                  <div key={index} style={{
+                    flex: '0 0 auto',
+                    width: '32%',
+                    height: '32%',
+                    marginRight: '10px',
+                    borderRadius: '0px',
+                    scrollSnapAlign: 'start',
+                    transition: 'opacity 0.5s ease-in-out', // Add smooth transition
+                    opacity: previousProducts.includes(video) ? 0 : 1, // Hide previous images
+                  }} onClick={() => handleDetailView()}>
+                    {/* <img
+                      src={product.img}
+                      alt={`Product ${index + 1}`}
+                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                    />
+                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
+                    <video
+                            ref={(el) => {
+                              if (el) videoRefscoll.current[index] = el;
+                            }}
+                            src={video}
+                            controls
+                            muted
+                            style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                            onMouseEnter={() => {
+                              videoRefscoll.current[index]?.play();
+                            }}
+                            onMouseLeave={() => {
+                              videoRefscoll.current[index]?.pause();
+                              videoRefscoll.current[index].currentTime = 0;
+                            }}
+                          />
                   </div>
                 ))}
               </div>
@@ -951,7 +1042,7 @@ function ProductDetails() {
                   justifyContent: "space-between"
                 }}
               >
-                {displayedAmbassadors.map((ambassador, index) => (
+                {displayedVideos.map((video, index) => (
                   <div key={index} style={{
                     flex: '0 0 auto',
                     width: '32%',
@@ -960,14 +1051,30 @@ function ProductDetails() {
                     borderRadius: '0px',
                     scrollSnapAlign: 'start',
                     transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                    opacity: previousAmbassadors.includes(ambassador) ? 0 : 1, // Hide previous images
+                    opacity: previousProducts.includes(video) ? 0 : 1, // Hide previous images
                   }} onClick={() => handleDetailView()}>
-                    <img
-                      src={ambassador.img}
-                      alt={`Ambassador ${index + 1}`}
+                    {/* <img
+                      src={product.img}
+                      alt={`Product ${index + 1}`}
                       style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                     />
-                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{ambassador.Name}</p>
+                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
+                    <video
+                            ref={(el) => {
+                              if (el) videoRefs2.current[index] = el;
+                            }}
+                            src={video}
+                            controls
+                            muted
+                            style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                            onMouseEnter={() => {
+                              videoRefs2.current[index]?.play();
+                            }}
+                            onMouseLeave={() => {
+                              videoRefs2.current[index]?.pause();
+                              videoRefs2.current[index].currentTime = 0;
+                            }}
+                          />
                   </div>
                 ))}
               </div>

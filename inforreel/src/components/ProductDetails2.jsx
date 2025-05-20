@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import BeautyProducts from './BeautyProducts';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
+import Beautyshowambassadors from './Beautyshowambassadors';
 
 function ProductDetails2() {
   const allImages = [
@@ -110,6 +111,7 @@ function ProductDetails2() {
   const [activeTab, setActiveTab] = useState('tab1');
   const [isOpen, setIsOpen] = useState(false);
   const [isOpensec, setIssec] = useState(false);
+  const [isBack, setBackView] = useState(false);
 
   const toggleDropdown = () => {
       setIsOpen(!isOpen);
@@ -218,6 +220,9 @@ function ProductDetails2() {
     //   console.log("Displayed Images:", displayedImages);
     //   console.log("Previous Images:", previousImages);
   }, [displayedImages, previousImages]);
+  const handleack = () => {
+    setBackView(true);
+  };    
  
   return (
     <>
@@ -307,7 +312,7 @@ function ProductDetails2() {
     </style>
     {showBeautyShowroom ? (
       <BeautyProducts />
-    ) : (
+    ) : isBack ? <Beautyshowambassadors /> : (
     <div style={{
       position: 'absolute',
       top: 0,
@@ -380,8 +385,13 @@ function ProductDetails2() {
         paddingLeft: "270px"
       }}>
       <section style={{ marginTop: '545px', textAlign: 'left', position:"relative" }}>
-         
-          <div style={{display: "flex",alignItems: "center",justifyContent: "space-between",marginTop:"20px", }}>
+      <img
+            onClick={() => handleack()}
+                                      src={'/backArrow.png'}
+                                      alt={`backArrow`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",position:"relative",zIndex:"9999",top:"-115px",marginRight:"6px",marginTop:"3px"}}
+                                    />
+          <div style={{display: "flex",alignItems: "center",justifyContent: "space-between",marginTop:"-35px", }}>
           
             <div style={{display: "flex",alignItems: "flex-start",justifyContent: "flex-start", flexDirection: "column", height:"90px" }}>
               <div style={{display: "flex",alignItems: "flex-start",justifyContent: "flex-start",flexDirection:"column", marginTop:"-58px", position:"relative", zIndex:"99"}}>
@@ -730,7 +740,7 @@ function ProductDetails2() {
          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between'  }}>
            {/* Navigation Buttons */}
            <div style={{ display: 'flex', width: "100%", marginBottom: '20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-             <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>VibeReel</span>
+             <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Post</span>
              <div style={{ display: 'flex' }}>
                <button
                  onClick={prevAmbassador}
@@ -811,6 +821,7 @@ function ProductDetails2() {
         </div>
         <section style={{marginTop:"40px"}}>
           <div style={{display:"flex", background:"#666"}}>
+            
               <div style={{display:"block"}}>
                   <img
                     src={"/profile.png"}

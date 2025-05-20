@@ -4,6 +4,7 @@ import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { useNavigate } from 'react-router-dom';
 import ProductDetails from './ProductDetails';
+import Marketplace from './Marketplace';
 
 function BeautyProducts () {
   const navigate = useNavigate();
@@ -80,7 +81,12 @@ function BeautyProducts () {
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenDrp, setIsOpenDrp] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('');
+  const [isBack, setBackView] = useState(false);
 
+  const handleChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
 
   const nextImage = () => {
     if (imageContainerRef.current && currentIndex + 3 < allImages.length) {
@@ -183,16 +189,30 @@ function BeautyProducts () {
     //   console.log("Displayed Images:", displayedImages);
     //   console.log("Previous Images:", previousImages);
   }, [displayedImages, previousImages]);
-
+  const handleack = () => {
+    setBackView(true);
+  };
   return (
     <>
     <style>
       {`
+      .dropdown {
+        border: 1px solid #ddd;
+        width:200px;
+        height:30px;
+        outline:0;
+        border-radius:4px;
+        background:rgba(0,0,0,0.2);
+        color:#fff;
+      }
       .carousel .control-dots .dot {
         background: #797470; 
         opacity: 0.7;
         margin: 0 2px;
-      }      
+      }
+      .select-box:hover {
+        background-color: #f0f0f0;
+      }   
       .carousel .control-dots .dot.selected {
         background: #fff;
         opacity: 1;
@@ -277,7 +297,7 @@ function BeautyProducts () {
     </style>
     {showBeautyShowroom ? (
       <ProductDetails />
-    ) : (
+    ) : isBack ? <Marketplace /> : (
       <div style={{
         position: 'absolute',
         top: 0,
@@ -304,11 +324,24 @@ function BeautyProducts () {
 
           {/* Shop by Brands Section */}
           <section style={{ marginTop: '71px', textAlign: 'left' }}>
+          <img
+            onClick={() => handleack()}
+                                      src={'/backArrow.png'}
+                                      alt={`backArrow`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",position:"relative",top:"76px",marginRight:"6px",marginTop:"3px"}}
+                                    />
           <h1 style={{ fontSize: '70px', display: 'flex', alignItems:"center", justifyContent:"center" }}>Beauty products</h1>
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end" }}>
               {/* Navigation Buttons */}
-              <div style={{ width:"100%",display: 'flex', marginTop:"20px", marginBottom: '20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' }}>
-              
+              <div style={{ width:"100%",display: 'flex', marginTop:"20px", marginBottom: '20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div>
+                  <select className="dropdown" value={selectedOption} onChange={handleChange}>
+                    <option style={{ backgroundColor: '#868584', color: 'black' }} value="">Category</option>
+                    <option style={{ backgroundColor: '#868584', color: 'black' }} value="option1">All</option>
+                    <option style={{ backgroundColor: '#868584', color: 'black' }} value="option2">Women</option>
+                    <option style={{ backgroundColor: '#868584', color: 'black' }} value="option3">Men </option>
+                  </select>
+                </div>
                 <div style={{ display: 'flex' }}>
                   <button
                     onClick={prevImage}
@@ -1079,85 +1112,85 @@ function BeautyProducts () {
                                     <div style={{display: 'block', marginTop:"15px"}}>
                                       <p style={{display: 'block', fontSize:"16px", marginTop:"5px", color:"#d2d2d2"}}>An anti-aging serum for face and neck, Dior Prestige La Micro-Huile de Rose Activated Serum is the ultimate Dior micro-nutritive supplement for visibly younger, plumper skin.</p>
                                     </div>
-                                    <div style={{display: 'flex', marginTop:"30px"}}>
-                                      <div>
-                                      <span style={{  
-                                        color:"#fff",
-                                        fontSize:"18px",
-                                          }}>Quantity</span>
-                                          <button type='button' style={{  
-                                            background: 'transparent',
-                                            border:"1px solid #d7d7d7",
-                                            padding:"8px 15px",
-                                            display:"flex",
-                                            alignItems:"center",
-                                            justifyContent:"space-between",
-                                            borderRadius:"20px",
-                                            width:"127px",
-                                            height:"49px",
-                                            marginRight:"10px",
-                                            marginTop:"20px",
-                                          }}
-                                        >
-                                          <span style={{fontSize:"20px", color:"#fff", width:"24px",
-                                            height:"24px", display:"flex",
-                                            alignItems:"center",
-                                            justifyContent:"center",}}>-</span>
-                                          <input type='text' value="1" style={{fontSize:"14px",color:"#fff", width:"20px", background:"transparent", border:"none", textAlign:"center"}}/>
-                                          <span style={{fontSize:"20px", color:"#fff", width:"24px",
-                                            height:"24px", display:"flex",
-                                            alignItems:"center",
-                                            justifyContent:"center",}}>+</span>
-                                      </button>
-                                      </div>
-                                      <div>
-                                      <span style={{  
-                                        color:"#fff",
-                                        fontSize:"18px",
-                                        marginLeft:"30px",
-                                          }}>Size</span>
-                                        <div className="dropdown" style={{ position: 'relative', display: 'block' }}>
-                                          <button onClick={toggleDropdown} className="dropdown-button" style={{
-                                            padding: '10px 20px',
-                                            backgroundColor: '#333',
-                                            color: 'white',
-                                            border: "1px solid #d7d7d7",
-                                            cursor: 'pointer',
-                                            background:"transparent",
-                                            display: 'block',
-                                            display:"flex",
-                                            alignItems:"center",
-                                            justifyContent:"space-between",
-                                            borderRadius:"20px",
-                                            width:"127px",
-                                            height:"49px",
-                                            marginLeft:"30px",
-                                            marginTop:"20px",
-
-                                          }}>
-                                            30ml  
-                                            <img
-                                              src={'/downmenu.png'}
-                                              alt={`name`}
-                                              style={{paddingLeft:"15px",width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginTop:"3px"}}
-                                            />
+                                        <div style={{display: 'flex', marginTop:"30px"}}>
+                                          <div>
+                                          <span style={{  
+                                            color:"#fff",
+                                            fontSize:"18px",
+                                              }}>Quantity</span>
+                                              <button type='button' style={{  
+                                                background: 'transparent',
+                                                border:"1px solid #d7d7d7",
+                                                padding:"8px 15px",
+                                                display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"space-between",
+                                                borderRadius:"20px",
+                                                width:"127px",
+                                                height:"49px",
+                                                marginRight:"10px",
+                                                marginTop:"20px",
+                                              }}
+                                            >
+                                              <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                                height:"24px", display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"center",}}>-</span>
+                                              <input type='text' value="1" style={{fontSize:"14px",color:"#fff", width:"20px", background:"transparent", border:"none", textAlign:"center"}}/>
+                                              <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                                height:"24px", display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"center",}}>+</span>
                                           </button>
-                                          {isOpenDrp && (
-                                            <div id="dropdownMenu" className="dropdown-content" style={{
-                                              position: 'absolute',
-                                              backgroundColor: '#000',
-                                              boxShadow: '0px 8px 16px rgba(0,0,0,0.2)',
-                                              minWidth: '100px',
-                                              zIndex: 1,
-                                            }}>
-                                              <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>20ml</button>
-                                              <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>120ml</button>
-                                              <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>150ml</button>
+                                          </div>
+                                          <div>
+                                          <span style={{  
+                                            color:"#fff",
+                                            fontSize:"18px",
+                                            marginLeft:"30px",
+                                              }}>Size</span>
+                                            <div className="dropdown" style={{ position: 'relative', display: 'block' }}>
+                                              <button onClick={toggleDropdown} className="dropdown-button" style={{
+                                                padding: '10px 20px',
+                                                backgroundColor: '#333',
+                                                color: 'white',
+                                                border: "1px solid #d7d7d7",
+                                                cursor: 'pointer',
+                                                background:"transparent",
+                                                display: 'block',
+                                                display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"space-between",
+                                                borderRadius:"20px",
+                                                width:"127px",
+                                                height:"49px",
+                                                marginLeft:"30px",
+                                                marginTop:"20px",
+
+                                              }}>
+                                                30ml  
+                                                <img
+                                                  src={'/downmenu.png'}
+                                                  alt={`name`}
+                                                  style={{paddingLeft:"15px",width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginTop:"3px"}}
+                                                />
+                                              </button>
+                                              {isOpenDrp && (
+                                                <div id="dropdownMenu" className="dropdown-content" style={{
+                                                  position: 'absolute',
+                                                  backgroundColor: '#000',
+                                                  boxShadow: '0px 8px 16px rgba(0,0,0,0.2)',
+                                                  minWidth: '100px',
+                                                  zIndex: 1,
+                                                }}>
+                                                  <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>20ml</button>
+                                                  <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>120ml</button>
+                                                  <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>150ml</button>
+                                                </div>
+                                              )}
                                             </div>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
+                                          </div>
+                                        </div>  
                                   </div>
                               </div> 
                 <div style={{marginTop: '50px'}}>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // Import arrow icons
 import ProductDetails2 from './ProductDetails2';
+import Marketplace from './Marketplace';
 
 function Beautyshowambassadors () {
   const allImages = [
@@ -14,9 +15,10 @@ function Beautyshowambassadors () {
   const allProducts = [
     {img:'/q1.png', Name:"Paulina Porizkova"},
     {img:'/q2.png', Name:"Lisa"},
-    {img:'/q3.png', Name:"Guerlain"},
+    {img:'/q3.png', Name:"Guerlain"},    
     {img:'/q2.png', Name:"Lisa"},
     {img:'/q3.png', Name:"Paulina Porizkova"},
+    {img:'/q1.png', Name:"Paulina Porizkova"},
   ];
   const allAmbassadors = [
     {img:'/r1.png', Name:"Kendall Jenner"},
@@ -54,6 +56,7 @@ function Beautyshowambassadors () {
   const [previousAmbassadors, setPreviousAmbassadors] = useState([]);
   const [previousVideos, setPreviousVideos] = useState([]);
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
+  const [isBack, setBackView] = useState(false);
 
   const nextImage = () => {
     if (imageContainerRef.current && currentIndex + 3 < allImages.length) {
@@ -153,12 +156,15 @@ function Beautyshowambassadors () {
     //   console.log("Displayed Images:", displayedImages);
     //   console.log("Previous Images:", previousImages);
   }, [displayedImages, previousImages]);
+  const handleack = () => {
+    setBackView(true);
+  };
 
   return (
     <>
     {showBeautyShowroom ? (
       <ProductDetails2 />
-    ) : (
+    ) : isBack ? <Marketplace /> : (
       <div style={{
         position: 'absolute',
         top: 0,
@@ -185,6 +191,12 @@ function Beautyshowambassadors () {
 
           {/* Shop by Brands Section */}
           <section style={{ marginTop: '71px', textAlign: 'left' }}>
+          <img
+            onClick={() => handleack()}
+                                      src={'/backArrow.png'}
+                                      alt={`backArrow`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",position:"relative",top:"76px",marginRight:"6px",marginTop:"3px"}}
+                                    />
           <h1 style={{ fontSize: '70px', display: 'flex', alignItems:"center", justifyContent:"center" }}>Beauty brand ambassadors</h1>
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end" }}>
               {/* Navigation Buttons */}

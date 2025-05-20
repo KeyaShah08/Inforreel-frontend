@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // Import arrow icons
 import ProductDetails from './ProductDetails';
+import Marketplace from './Marketplace';
 
 function Beautyshowrooms () {
   const allImages = [
@@ -55,6 +56,7 @@ function Beautyshowrooms () {
   const [previousAmbassadors, setPreviousAmbassadors] = useState([]);
   const [previousVideos, setPreviousVideos] = useState([]);
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
+  const [isBack, setBackView] = useState(false);
 
   const nextImage = () => {
     if (imageContainerRef.current && currentIndex + 3 < allImages.length) {
@@ -150,6 +152,10 @@ function Beautyshowrooms () {
   const handleDetailView = () => {
     setShowBeautyShowroom(true);
   };
+  const handleack = () => {
+    setBackView(true);
+  };
+  
   useEffect(() => {
     //   console.log("Displayed Images:", displayedImages);
     //   console.log("Previous Images:", previousImages);
@@ -159,7 +165,7 @@ function Beautyshowrooms () {
     <>
     {showBeautyShowroom ? (
       <ProductDetails />
-    ) : (
+    ) : isBack ? <Marketplace /> : (
       <div style={{
         position: 'absolute',
         top: 0,
@@ -185,6 +191,12 @@ function Beautyshowrooms () {
 
           {/* Shop by Brands Section */}
           <section style={{ marginTop: '71px', textAlign: 'left' }}>
+            <img
+            onClick={() => handleack()}
+                                      src={'/backArrow.png'}
+                                      alt={`backArrow`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",position:"relative",top:"76px",marginRight:"6px",marginTop:"3px"}}
+                                    />
           <h1 style={{ fontSize: '70px', display: 'flex', alignItems:"center", justifyContent:"center" }}>Beauty showrooms</h1>
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end" }}>
               {/* Navigation Buttons */}
