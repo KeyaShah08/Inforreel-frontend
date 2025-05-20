@@ -15,6 +15,7 @@ import MyCart from "./pages/MyCart"; // ✅ Make sure this line is present
 import PolicyPage from "./pages/PolicyPage";
 import ResetPassword from "./pages/ResetPassword";
 import SignIn from "./pages/SignIn";
+import Thankyou from "./pages/Thankyou";
 import UserProfileSetup from "./pages/UserProfileSetup";
 import UserSignup from "./pages/UserSignup";
 import VerifyAccount from "./pages/VerifyAccount";
@@ -51,6 +52,8 @@ function App() {
         <Route path="/signup/verify-intro" element={<IdentityVerificationIntro />} />
         <Route path="/mycart" element={<MyCart />} /> {/* ✅ Route for MyCart */}
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/thankyou" element={<Thankyou />} />
+
 
 
 
