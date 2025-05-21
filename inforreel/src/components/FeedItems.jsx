@@ -402,10 +402,10 @@ const handleRedirection = () => {
           <div key={item.id} style={{
             display: 'flex',
             alignItems: 'flex-end', // Align video/image and icons to the bottom
-            marginBottom: '70px',
-            width: '100%',
+            marginBottom: '70px', // Reverted to 70px margin bottom
+            width: 'auto', /* Changed to auto so the inner div can control the width */
             position: 'relative', 
-            height:"90vh",
+            // height:"90vh", /* This can be removed or set to 'auto' as inner div will control height */
           }}
           onDoubleClick={() => { // Modified onDoubleClick
             handleLikeClick(item.id); // Always handle like on double click
@@ -419,9 +419,9 @@ const handleRedirection = () => {
           >
             {/* Video/Image Container - Apply fullscreen styles here */}
             <div style={{
-              width: fullscreenItemId === item.id ? '100vw' : 'auto', // Take full viewport width in fullscreen
-              height: fullscreenItemId === item.id ? '87vh' : "9 / 16", // Take full viewport height in fullscreen
-              aspectRatio: fullscreenItemId === item.id ? 'auto' : '4 / 5', // Auto aspect ratio in fullscreen
+              width: fullscreenItemId === item.id ? '100vw' : '310px', // Changed width to 310px
+              height: fullscreenItemId === item.id ? '87vh' : 'auto', // Take full viewport height in fullscreen, or auto otherwise
+              aspectRatio: '9 / 16', // Always maintain 9/16 aspect ratio
               overflow: 'hidden', // Keep overflow hidden for the main container
               borderRadius: fullscreenItemId === item.id ? '0' : '10px', // No border radius in fullscreen
               backgroundColor: fullscreenItemId === item.id ? '#141414' : '#333', // Background color in fullscreen
