@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { useNavigate } from 'react-router-dom';
-import ProductDetails from './ProductDetails';
 import Marketplace from './Marketplace';
+import ProductDetails from './ProductDetails';
 
 function BeautyProducts () {
   const navigate = useNavigate();
@@ -1149,7 +1149,7 @@ function BeautyProducts () {
                                             fontSize:"18px",
                                             marginLeft:"30px",
                                               }}>Size</span>
-                                            <div className="dropdown" style={{ position: 'relative', display: 'block' }}>
+                                            <div >
                                               <button onClick={toggleDropdown} className="dropdown-button" style={{
                                                 padding: '10px 20px',
                                                 backgroundColor: '#333',

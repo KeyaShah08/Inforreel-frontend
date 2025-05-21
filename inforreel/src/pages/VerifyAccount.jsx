@@ -47,7 +47,7 @@ function VerifyAccount() {
 
         try {
           console.log("Attempting initial registration API call from VerifyAccount...");
-          const response = await fetch("http://54.236.192.13:8000/api/users/register", {
+          const response = await fetch("http://54.193.54.116:8000/api/users/register", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -89,7 +89,7 @@ function VerifyAccount() {
 
         try {
             console.log(`Attempting initial resend OTP API call from VerifyAccount (from ${source})...`);
-            const resendApiUrl = "http://54.236.192.13:8000/api/users/resend-otp";
+            const resendApiUrl = "http://54.193.54.116:8000/api/users/resend-otp";
 
             const response = await fetch(resendApiUrl, {
                 method: "POST",
@@ -229,7 +229,7 @@ function VerifyAccount() {
 
     try {
       console.log("Attempting OTP verification API call...");
-      const response = await fetch("http://54.236.192.13:8000/api/users/verify-otp", {
+      const response = await fetch("http://54.193.54.116:8000/api/users/verify-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -284,7 +284,7 @@ function VerifyAccount() {
     setVerifyApiError("");
 
     try {
-      const resendApiUrl = "http://54.236.192.13:8000/api/users/resend-otp";
+      const resendApiUrl = "http://54.193.54.116:8000/api/users/resend-otp";
 
       console.log("Attempting manual resend OTP to email:", email);
       console.log("Resend API URL:", resendApiUrl);

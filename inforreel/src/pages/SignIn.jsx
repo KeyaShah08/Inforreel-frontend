@@ -60,7 +60,7 @@ function SignIn() {
     // Proceed with API call only if client-side validation passes
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch("http://54.236.192.13:8000/api/users/login", {
+        const response = await fetch("http://54.193.54.116:8000/api/users/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

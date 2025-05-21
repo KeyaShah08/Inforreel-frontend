@@ -47,7 +47,7 @@ export default function IdentityVerificationIntro() {
         if (sessionId && !sessionAlreadyHandled) {
             const runFlow = async () => {
                 try {
-                    const response = await fetch(`http://54.236.192.13:8000/identity-complete?session_id=${sessionId}`);
+                    const response = await fetch(`http://54.193.54.116:8000/identity-complete?session_id=${sessionId}`);
                     const data = await response.json();
 
                     if (data.redirectUrl) {
@@ -70,7 +70,7 @@ export default function IdentityVerificationIntro() {
         setIsLoading(true);
         sessionStorage.removeItem("session_verified");
 
-        const apiEndpoint = "http://54.236.192.13:8000/create-session";
+        const apiEndpoint = "http://54.193.54.116:8000/create-session";
         const payload = {
             userId: "681a48835298885fffe60f5b",
             name: "Vendor",

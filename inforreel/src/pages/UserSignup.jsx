@@ -74,7 +74,7 @@ function UserSignup() {
       try {
         const userTypeToSend = "general"; // Define the user type to send
 
-        const response = await fetch("http://54.236.192.13:8000/api/users/register", {
+        const response = await fetch("http://54.193.54.116:8000/api/users/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

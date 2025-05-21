@@ -1,11 +1,24 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ import navigate hook
 import CheckoutComponent from '../components/CheckoutComponent';
 import Header1 from '../components/Header1';
+import Marketplace from '../components/Marketplace';
 import Sidebar from '../components/Sidebar';
 
 const Checkout = () => {
+  const [currentPage, setCurrentPage] = useState('Checkout'); // Default selected
+  const navigate = useNavigate(); // ✅ initialize navigate
+
   const handleNavItemClick = (item) => {
-    console.log('Nav clicked:', item);
+    setCurrentPage(item);
   };
+
+  // ✅ Redirect to /dashboard when Home is clicked
+  useEffect(() => {
+    if (currentPage === 'Home') {
+      navigate('/dashboard');
+    }
+  }, [currentPage, navigate]);
 
   return (
     <div
@@ -15,7 +28,7 @@ const Checkout = () => {
         backgroundColor: '#000',
       }}
     >
-      <Sidebar onNavItemClick={handleNavItemClick} activeItem="Checkout" />
+      <Sidebar onNavItemClick={handleNavItemClick} activeItem={currentPage} />
 
       <div
         style={{
@@ -26,7 +39,17 @@ const Checkout = () => {
         }}
       >
         <Header1 />
-        <CheckoutComponent />
+
+        {/* ✅ Conditional rendering based on selected sidebar item */}
+        {currentPage === 'Checkout' ? (
+          <CheckoutComponent />
+        ) : currentPage === 'Global Showroom' ? (
+          <Marketplace />
+        ) : (
+          <div style={{ color: 'white', padding: '40px' }}>
+            <h2>{currentPage} page coming soon...</h2>
+          </div>
+        )}
       </div>
     </div>
   );

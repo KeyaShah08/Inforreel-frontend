@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ✅ added
+import { useNavigate } from 'react-router-dom';
 
 const steps = ['Address', 'Shipping', 'Payment', 'Review'];
 
@@ -10,7 +10,7 @@ const CheckoutComponent = () => {
     shippingMethod: '', cardName: '', cardNumber: '', expiry: '', cvv: '',
   });
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate(); // ✅ added
+  const navigate = useNavigate();
 
   useEffect(() => {
     const style = document.createElement('style');
@@ -76,29 +76,23 @@ const CheckoutComponent = () => {
             <h2 style={{ fontSize: '20px', marginBottom: '20px' }}>Address</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '398px' }}>
               {renderInput({ name: "email", placeholder: "Email", value: form.email, onChange: handleChange })}
-
               <div style={{ display: 'flex', gap: '10px' }}>
                 {renderInput({ name: "firstName", placeholder: "First Name", value: form.firstName, onChange: handleChange, style: { width: '194px' } })}
                 {renderInput({ name: "lastName", placeholder: "Last Name", value: form.lastName, onChange: handleChange, style: { width: '194px' } })}
               </div>
-
               {renderInput({ name: "address1", placeholder: "Address", value: form.address1, onChange: handleChange })}
               {renderInput({ name: "address2", placeholder: "Apartment, suite, etc (optional)", value: form.address2, onChange: handleChange })}
               {renderInput({ name: "city", placeholder: "City", value: form.city, onChange: handleChange })}
-
               <div style={{ display: 'flex', gap: '5px' }}>
                 {renderInput({ name: "country", placeholder: "Country", value: form.country, onChange: handleChange, style: { width: '130px' } })}
                 {renderInput({ name: "state", placeholder: "State", value: form.state, onChange: handleChange, style: { width: '130px' } })}
                 {renderInput({ name: "zip", placeholder: "ZIP Code", value: form.zip, onChange: handleChange, style: { width: '130px' } })}
               </div>
-
               {renderInput({ name: "phone", placeholder: "Phone Number", value: form.phone, onChange: handleChange })}
-
               <label style={{ fontSize: '13px', color: '#ccc' }}>
                 <input type="checkbox" style={{ marginRight: '8px', accentColor: '#96105E' }} />
                 Save contact information
               </label>
-
               <button onClick={nextStep} style={buttonStyle}>Continue to Shipping</button>
             </div>
           </div>
@@ -108,7 +102,6 @@ const CheckoutComponent = () => {
           <div style={{ flex: 2, marginLeft: '40px' }}>
             <h2 style={{ fontSize: '20px', marginBottom: '30px' }}>Shipping</h2>
             <div style={{ width: '518px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
-              {/* Standard Shipping Option */}
               <label style={shippingLabelStyle}>
                 <div style={shippingLeftStyle}>
                   <input type="radio" name="shippingMethod" value="Standard" checked={form.shippingMethod === 'Standard'} onChange={handleChange} style={shippingInputStyle} />
@@ -119,8 +112,6 @@ const CheckoutComponent = () => {
                 </div>
                 <div style={shippingPrice}>Free</div>
               </label>
-
-              {/* Express Shipping Option */}
               <label style={shippingLabelStyle}>
                 <div style={shippingLeftStyle}>
                   <input type="radio" name="shippingMethod" value="Express" checked={form.shippingMethod === 'Express'} onChange={handleChange} style={shippingInputStyle} />
@@ -131,7 +122,6 @@ const CheckoutComponent = () => {
                 </div>
                 <div style={shippingPrice}>$12.00</div>
               </label>
-
               <button onClick={nextStep} style={{ ...buttonStyle, marginTop: '30px' }}>Continue to Payment</button>
             </div>
           </div>
@@ -198,21 +188,24 @@ const CheckoutComponent = () => {
               <p style={{ margin: 0 }}>Delivery Friday, May 23</p>
               <p style={editStyle}>Edit</p>
             </div>
+
+            {/* ✅ Only visible on Review Step */}
             <button
-              onClick={() => navigate("/thankyou")} // ✅ added
+              onClick={() => navigate("/thankyou")}
               style={{
                 backgroundColor: '#B10263',
                 color: 'white',
                 border: 'none',
                 borderRadius: '4px',
-                padding: '10px 20px',
-                fontSize: '14px',
+                padding: '14px 20px',
+                fontSize: '16px',
                 fontWeight: 'bold',
                 cursor: 'pointer',
-                marginTop: '16px'
+                marginTop: '30px',
+                width: '100%',
               }}
             >
-              Place the order
+              Place Order
             </button>
           </div>
         );
@@ -248,6 +241,7 @@ const CheckoutComponent = () => {
             {renderLeftSection()}
           </div>
 
+          {/* Right Order Summary Section (No button now) */}
           <div style={{ flex: 1, maxWidth: '440px' }}>
             <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '24px' }}>Order Summary</h3>
             <div style={{ display: 'flex', gap: '20px', marginBottom: '16px' }}>
@@ -277,23 +271,6 @@ const CheckoutComponent = () => {
             </div>
             <hr style={{ borderColor: '#555', margin: '12px 0' }} />
             <div style={{ ...summaryRowStyle, fontWeight: 'bold', fontSize: '16px' }}><span>Total</span><span>$100.14</span></div>
-            <button
-              onClick={() => navigate("/thankyou")} // ✅ added
-              style={{
-                marginTop: '20px',
-                width: '100%',
-                backgroundColor: '#B10263',
-                color: 'white',
-                padding: '14px',
-                border: 'none',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                cursor: 'pointer'
-              }}
-            >
-              Place Order
-            </button>
           </div>
         </div>
       </div>
