@@ -493,6 +493,7 @@ const handleRedirection = () => {
                     alignItems: 'center',
                     zIndex: 1, // Ensure visibility
                     color: 'white',
+                    zIndex:"9999"
                   }}>
                     {/* Play/Pause Button */}
                     <div
@@ -551,7 +552,7 @@ const handleRedirection = () => {
                       fontSize: '1.2rem',
                       display: 'flex',
                       justifyContent: 'center',
-                      alignItems: 'center',
+                      alignItems: 'center',                      
                     }}
                     onClick={() => toggleMute(item.id)}
                   >
@@ -566,9 +567,9 @@ const handleRedirection = () => {
                           left: '0',
                           right: '0',
                           height: '16px', // Increased height for text visibility
-                          backgroundColor: 'rgba(255, 255, 255, 0.1)', // Lighter background for better contrast
+                          backgroundColor: 'transparent', // Lighter background for better contrast
                           cursor: 'pointer',
-                          zIndex: 1, // Ensure visibility above the video
+                          zIndex: 9999999, // Ensure visibility above the video
                           display: 'flex', // Use flexbox for internal alignment
                           alignItems: 'center', // Vertically center content
                           paddingLeft: '10px', // Add padding for text
@@ -777,12 +778,18 @@ const handleRedirection = () => {
                   <div style={{
                       position: 'absolute', // Position relative to the main item container
                       // Conditional bottom position based on item type
-                      bottom: item.type === 'video' ? '65px' : '10px', // Increased bottom for video posts
-                      left: '10px', // Left padding
-                      right: '100px', // Right padding (to the left of icons) - Adjust if icons column width differs
+                      bottom: item.type === 'video' ? '0px' : '0px', // Increased bottom for video posts
+                      left: '0', // Left padding
+                      right: '70px', // Right padding (to the left of icons) - Adjust if icons column width differs
                       color: 'white',
                       zIndex: 3, // Increased zIndex to ensure visibility
                       textShadow: '1px 1px 2px rgba(0,0,0,0.5)', // Add shadow for readability
+                      //background:"rgba(0,0,0,0.2)",
+                      background: 'linear-gradient(to bottom, rgba(8, 9, 13, 0) 0%, rgba(8, 9, 13, 0.9) 100%)',
+                      padding: "10px",
+                      paddingBottom:item.type === 'video' ? "75px" : "10px",
+                      borderBottomLeftRadius: "9px",
+                      borderBottomRightRadius: "10px"
                   }}>
                       {/* Profile Name */}
                       <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '2px' }}>

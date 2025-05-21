@@ -36,6 +36,14 @@ function ProductDetails() {
     '/samplevideo5.mp4',
     '/samplevideo6.mp4',  
   ];
+  const allCollection = [    
+    '/samplevideo3.mp4',
+    '/samplevideo4.mp4',    
+    '/samplevideo5.mp4',
+    '/samplevideo6.mp4',  
+    '/samplevideo1.mp4',
+    '/samplevideo4.mp4',
+  ];
   const ListItem = [
     {img:'/Li1.png', Date:"5/1/2025", purchsed:"2K purchased", Name:"Prestige Exceptional Micro-Nutritive and Repairing Ritual "},
     {img:'/Li2.png', Date:"5/5/2025", purchsed:"5K purchased", Name:"Forever Glow Luminizer - Limited Edition"},
@@ -46,6 +54,8 @@ function ProductDetails() {
   const [displayedProducts, setDisplayedProducts] = useState(allProducts.slice(0, 3));
   const [displayedAmbassadors, setDisplayedAmbassadors] = useState(allAmbassadors.slice(0, 3));
   const [displayedVideos, setDisplayedVideos] = useState(allVideos.slice(0, 3));
+  const [displayedCollection, setDisplayedCollection] = useState(allCollection.slice(0, 3));
+  
   const [currentIndex, setCurrentIndex] = useState(0);
   const [productIndex, setProductIndex] = useState(0);
   const [ambassadorIndex, setAmbassadorIndex] = useState(0);
@@ -170,14 +180,8 @@ function ProductDetails() {
     //   console.log("Previous Images:", previousImages);
   }, [displayedImages, previousImages]);
   useEffect(() => {
-    if (activeTab !== "tab2") {
-      videoRefsN.current.forEach(video => {
-        if (video) {
-          video.pause();
-          video.currentTime = 0;
-        }
-      });
-    }
+    // Clear video refs when tab/content changes
+    videoRefscoll.current = [];
   }, [activeTab]);
  
   return (
@@ -189,7 +193,7 @@ function ProductDetails() {
           font-weight:500;
         }
         .tab-panel {
-          opacity: 0;
+          display: none;
           transform: translateY(10px);
           transition: opacity 0.2s ease, transform 1s ease;
           position: absolute;
@@ -201,7 +205,7 @@ function ProductDetails() {
           opacity: 1;
           transform: translateY(0);
           position: relative;
-         
+          display:block;
         }
         .tab-btn {
           background: transparent;
@@ -300,9 +304,9 @@ function ProductDetails() {
             onClick={() => handleack()}
                                       src={'/backArrow.png'}
                                       alt={`backArrow`}
-                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",position:"relative",zIndex:"9999",top:"-76px",marginRight:"6px",marginTop:"3px"}}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",position:"relative",zIndex:"9999",top:"-86px",marginRight:"6px",marginTop:"3px"}}
                                     />
-          <div style={{display: "flex",alignItems: "center",justifyContent: "space-between" }}>
+          <div style={{display: "flex",alignItems: "center",justifyContent: "space-between",marginTop:"-32px" }}>
           <img
             src={"/Icon1.png"}
             alt={`cdiorbeauty`}
@@ -647,18 +651,21 @@ function ProductDetails() {
                  <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
                   <video
                         ref={(el) => {
-                          if (el) videoRefs.current[index] = el;
+                          if (el) videoRefsN.current[index] = el;
                         }}
                         src={video}
                         controls
                         muted
                         style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                         onMouseEnter={() => {
-                          videoRefs.current[index]?.play();
+                          videoRefsN.current[index]?.play();
                         }}
                         onMouseLeave={() => {
-                          videoRefs.current[index]?.pause();
-                          videoRefs.current[index].currentTime = 0;
+                          const video = videoRefsN.current?.[index];
+                          if (video && typeof video.pause === 'function') {
+                            video.pause();
+                            video.currentTime = 0;
+                          }
                         }}
                       />
                </div>
@@ -853,7 +860,7 @@ function ProductDetails() {
                     <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p>
                   </div>
                 ))} */}
-                {displayedVideos.map((video, index) => (
+                {displayedCollection.map((video, index) => (
                   <div key={index} style={{
                     flex: '0 0 auto',
                     width: '32%',
@@ -870,22 +877,25 @@ function ProductDetails() {
                       style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                     />
                     <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
-                    <video
-                            ref={(el) => {
-                              if (el) videoRefscoll.current[index] = el;
-                            }}
-                            src={video}
-                            controls
-                            muted
-                            style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                            onMouseEnter={() => {
-                              videoRefscoll.current[index]?.play();
-                            }}
-                            onMouseLeave={() => {
-                              videoRefscoll.current[index]?.pause();
-                              videoRefscoll.current[index].currentTime = 0;
-                            }}
-                          />
+                      <video
+                        ref={(el) => {
+                          if (el) videoRefs.current[index] = el;
+                        }}
+                        src={video}
+                        controls
+                        muted
+                        style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                        onMouseEnter={() => {
+                          videoRefs.current[index]?.play();
+                        }}
+                        onMouseLeave={() => {
+                          const video = videoRefs.current?.[index];
+                          if (video && typeof video.pause === 'function') {
+                            video.pause();
+                            video.currentTime = 0;
+                          }
+                        }}
+                      />
                   </div>
                 ))}
               </div>

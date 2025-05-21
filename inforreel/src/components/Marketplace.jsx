@@ -37,8 +37,25 @@ function Marketplace() {
     '/samplevideo4.mp4',
     '/samplevideo5.mp4',
     '/samplevideo6.mp4',
-    
   ];
+
+  const allVideosfastChannel = [
+    '/samplevideo5.mp4',
+    '/samplevideo6.mp4',
+    '/samplevideo3.mp4',
+    '/samplevideo4.mp4',
+    '/samplevideo1.mp4',
+    '/samplevideo5.mp4',
+  ];
+  const allVideosonDemand = [
+    '/samplevideo3.mp4',
+    '/samplevideo5.mp4',
+    '/samplevideo6.mp4',    
+    '/samplevideo4.mp4',
+    '/samplevideo1.mp4',
+    '/samplevideo5.mp4',
+  ];
+
   const allVideos = [
     {img:'/bs1.png', Name:"Sports & Athletics",},
     {img:'/bs2.png', Name:"Health & Wellness"},
@@ -70,8 +87,8 @@ function Marketplace() {
   const [displayedProducts, setDisplayedProducts] = useState(allProducts.slice(0, 3));
   const [displayedAmbassadors, setDisplayedAmbassadors] = useState(allAmbassadors.slice(0, 3));
   const [displayedVideos, setDisplayedVideos] = useState(allVideos1.slice(0, 3));
-  const [displayfastChannel, setFastChannel] = useState(fastChannel.slice(0, 3));
-  const [displayvideoonDemand, setvideoonDemand] = useState(videoonDemand.slice(0, 3));
+  const [displayfastChannel, setFastChannel] = useState(allVideosfastChannel.slice(0, 3));
+  const [displayvideoonDemand, setvideoonDemand] = useState(allVideosonDemand.slice(0, 3));
   
   const [currentIndex, setCurrentIndex] = useState(0);
   const [productIndex, setProductIndex] = useState(0);
@@ -96,6 +113,8 @@ function Marketplace() {
   const [showBeautyProd, setShowProduct] = useState(false);
   
   const videoRefs = useRef([]);
+  const videoRefs1 = useRef([]);
+  const videoRefs2 = useRef([]);
 
   const nextImage = () => {
     if (imageContainerRef.current && currentIndex + 3 < allImages.length) {
@@ -778,15 +797,33 @@ function Marketplace() {
                       transition: 'opacity 0.5s ease-in-out', 
                       opacity: previousFastChannel.includes(video) ? 0 : 1, // Hide previous images
                     }} onClick={() => handleDetailView()}>
-
-                      <img
+                        <video
+                          ref={(el) => {
+                            if (el) videoRefs1.current[index] = el;
+                          }}
+                          src={video}
+                          controls
+                          muted
+                          style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                          onMouseEnter={() => {
+                            videoRefs1.current[index]?.play();
+                          }}
+                          onMouseLeave={() => {
+                            videoRefs1.current[index]?.pause();
+                            videoRefs1.current[index].currentTime = 0;
+                          }}
+                        />
+                      {/* <img
                         src={video.img}
                         alt={`Ambassador ${index + 1}`}
                         style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                       />
-                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{video.Name}</p>
+                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{video.Name}</p> */}
                     </div>
                   ))}
+
+
+                  
                 </div>
               </div>
             </section>
@@ -865,13 +902,28 @@ function Marketplace() {
                       transition: 'opacity 0.5s ease-in-out', 
                       opacity: previousVideos.includes(video) ? 0 : 1, // Hide previous images
                     }} onClick={() => handleDetailView()}>
-
-                      <img
+                      <video
+                        ref={(el) => {
+                          if (el) videoRefs2.current[index] = el;
+                        }}
+                        src={video}
+                        controls
+                        muted
+                        style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                        onMouseEnter={() => {
+                          videoRefs2.current[index]?.play();
+                        }}
+                        onMouseLeave={() => {
+                          videoRefs2.current[index]?.pause();
+                          videoRefs2.current[index].currentTime = 0;
+                        }}
+                      />
+                      {/* <img
                         src={video.img}
                         alt={`Ambassador ${index + 1}`}
                         style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                       />
-                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{video.Name}</p>
+                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{video.Name}</p> */}
                     </div>
                   ))}
                 </div>
