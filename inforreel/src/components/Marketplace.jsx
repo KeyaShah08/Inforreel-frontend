@@ -10,9 +10,9 @@ function Marketplace() {
     {img:'/helth.png', Name:"Health & Wellness",},
     {img:'/sport.png', Name:"Sports & Athletics"},
     {img:'/beautyNew.png', Name:"Beauty"},
-    {img:'/sport.png', Name:"Sports & Athletics"},
     {img:'/helth.png', Name:"Health & Wellness"},
     {img:'/beautyNew.png', Name:"Beauty"},
+    {img:'/sport.png', Name:"Sports & Athletics"},
   ];
   const allProducts = [
     {img:'/p1.png', Name:"Beauty",},
@@ -189,70 +189,67 @@ function Marketplace() {
   };
 
   const nextvideoonDemand = () => {
-    if (imageContainerRef.current && videoonDemandIndex + 3 < allAmbassadors.length) {
-      // Store the current images as previous images
-      setPreviousVideos(displayedAmbassadors);
-
-      setvideoonDemandIndex(videoonDemandIndex + 3);
-      const newAmbassadors = allAmbassadors.slice(videoonDemandIndex + 3, Math.min(videoonDemandIndex + 6, allAmbassadors.length));
-      setvideoonDemand(newAmbassadors); //directly set new images, don't accumulate
-      if (videoonDemandIndex + 6 >= allAmbassadors.length) {
-        setIsisvideoNextDisabledNextDisabled(true);
-      }
+    const nextIndex = videoonDemandIndex + 3;
+    if (imageContainerRef.current && nextIndex < allVideosonDemand.length) {
+      const newVideos = allVideosonDemand.slice(nextIndex, nextIndex + 3);
+      setPreviousVideos(displayvideoonDemand);
+      setvideoonDemand(newVideos);
+      setvideoonDemandIndex(nextIndex);
+      setIsVideoNextDisabled(nextIndex + 3 >= allVideosonDemand.length);
     }
   };
 
   const prevvideoonDemand = () => {
-    if (imageContainerRef.current && videoonDemandIndex - 3 >= 0) {
-      setPreviousVideos(displayedAmbassadors);
-      setvideoonDemandIndex(videoonDemandIndex - 3);
-      const newAmbassadors = videoonDemand.slice(Math.max(0, videoonDemandIndex - 3), videoonDemandIndex);
-      setDisplayedVideos(newAmbassadors);
-      setIsisvideoNextDisabledNextDisabled(false);
+    const prevIndex = videoonDemandIndex - 3;
+    if (imageContainerRef.current && prevIndex >= 0) {
+      const newVideos = allVideosonDemand.slice(prevIndex, prevIndex + 3);
+      setPreviousVideos(displayvideoonDemand);
+      setvideoonDemand(newVideos);
+      setvideoonDemandIndex(prevIndex);
+      setIsVideoNextDisabled(false);
     }
   };
 
-
   const nextfastChannel = () => {
-    if (imageContainerRef.current && fastIndex + 3 < videoonDemand.length) {
-      // Store the current images as previous images
+    if (imageContainerRef.current && fastIndex + 3 < allVideosfastChannel.length) {
+      const newIndex = fastIndex + 3;
+      const newVideos = allVideosfastChannel.slice(newIndex, newIndex + 3);
       setPreviousFastChannel(displayfastChannel);
-
-      setFastChannelIndex(fastIndex + 3);
-      const newAmbassadors = videoonDemand.slice(fastIndex + 3, Math.min(fastIndex + 6, videoonDemand.length));
-      setFastChannel(newAmbassadors); //directly set new images, don't accumulate
-      if (fastIndex + 6 >= videoonDemand.length) {
-        setIsFastChannel(true);
-      }
+      setFastChannel(newVideos);
+      setFastChannelIndex(newIndex);
+      setIsFastChannel(newIndex + 3 >= allVideosfastChannel.length);
     }
   };
 
   const prevfastChannel = () => {
     if (imageContainerRef.current && fastIndex - 3 >= 0) {
+      const newIndex = fastIndex - 3;
+      const newVideos = allVideosfastChannel.slice(newIndex, newIndex + 3);
       setPreviousFastChannel(displayfastChannel);
-      setFastChannelIndex(fastIndex - 3);
-      const newAmbassadors = fastChannel.slice(Math.max(0, fastIndex - 3), fastIndex);
-      setFastChannel(newAmbassadors);
+      setFastChannel(newVideos);
+      setFastChannelIndex(newIndex);
       setIsFastChannel(false);
     }
   };
 
   const nextVideo = () => {
-    if (imageContainerRef.current && videoIndex + 3 < allVideos.length) {
+    if (imageContainerRef.current && videoIndex + 3 < allVideos1.length) {
+      const newIndex = videoIndex + 3;
+      const newVideos = allVideos1.slice(newIndex, newIndex + 3);
       setPreviousVideos(displayedVideos);
-      setVideoIndex(videoIndex + 3);
-      const newVideos = allVideos.slice(videoIndex + 3, Math.min(videoIndex + 6, allVideos.length));
       setDisplayedVideos(newVideos);
-      setIsVideoNextDisabled(true);
+      setVideoIndex(newIndex);
+      setIsVideoNextDisabled(newIndex + 3 >= allVideos1.length);
     }
   };
 
   const prevVideo = () => {
     if (imageContainerRef.current && videoIndex - 3 >= 0) {
+      const newIndex = videoIndex - 3;
+      const newVideos = allVideos1.slice(newIndex, newIndex + 3);
       setPreviousVideos(displayedVideos);
-      setVideoIndex(videoIndex - 3);
-      const newVideos = allVideos.slice(Math.max(0, videoIndex - 3), videoIndex);
       setDisplayedVideos(newVideos);
+      setVideoIndex(newIndex);
       setIsVideoNextDisabled(false);
     }
   };
@@ -419,7 +416,8 @@ function Marketplace() {
                   ref={imageContainerRef}
                   style={{
                     display: 'flex',
-                    overflowX: 'auto',
+                    overflowX: 'hidden',
+                    overflowY: 'hidden',
                     paddingBottom: '20px',
                     scrollSnapType: 'x mandatory',
                     WebkitOverflowScrolling: 'touch',
@@ -431,6 +429,8 @@ function Marketplace() {
                       flex: '0 0 auto',
                       width: '32%',
                       height: '32%',
+                      // width:"410px",
+                      // height:"410px",
                       marginRight: '10px',
                       borderRadius: '0px',
                       scrollSnapAlign: 'start',
@@ -678,125 +678,128 @@ function Marketplace() {
                     paddingBottom: '20px',
                     scrollSnapType: 'x mandatory',
                     WebkitOverflowScrolling: 'touch',
-                    justifyContent: "space-between"
+                    justifyContent: "space-between",
+                    width:"100%"
                   }}
                 >
 
                   {displayedVideos.map((video, index) => (
-                    <div key={index} style={{
-                      flex: '0 0 auto',
-                      width: '32%',
-                      height: '32%',
-                      marginRight: '10px',
-                      borderRadius: '0px',
-                      scrollSnapAlign: 'start',
-                      transition: 'opacity 0.5s ease-in-out', 
-                      opacity: previousVideos.includes(video) ? 0 : 1, // Hide previous images
-                    }} onClick={() => handleDetailView()}>
-
-                      {/* <img
-                        src={video.img}
-                        alt={`Ambassador ${index + 1}`}
-                        style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                      />
-                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{video.Name}</p>
-           */}
-                      <video
-                        ref={(el) => {
-                          if (el) videoRefs.current[index] = el;
-                        }}
-                        src={video}
-                        controls
-                        muted
-                        style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                        onMouseEnter={() => {
-                          videoRefs.current[index]?.play();
-                        }}
-                        onMouseLeave={() => {
-                          videoRefs.current[index]?.pause();
-                          videoRefs.current[index].currentTime = 0;
-                        }}
-                      />
-                    </div>
-                  ))}
+                            <div key={index} style={{
+                              flex: '0 0 auto',
+                              width: '32%',
+                              height: '32%',
+                              marginRight: '10px',
+                              borderRadius: '0px',
+                              scrollSnapAlign: 'start',
+                              transition: 'opacity 0.5s ease-in-out', 
+                              // opacity: previousVideos.includes(video) ? 0 : 1, // Hide previous images
+                              opacity: previousVideos.includes(video) ? 1 : 1, // Hide previous images
+                            }} onClick={() => handleDetailView()}>
+                              <video
+                                src={video}
+                                controls
+                                muted
+                                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                                onMouseEnter={(e) => e.target.play()}
+                                onMouseLeave={(e) => {
+                                  e.target.pause();
+                                  e.target.currentTime = 0;
+                                }}
+                              />
+                            </div>
+                          ))}
                 </div>
               </div>
             </section>
 
             {/* Fast channel Section */}
-            <section id="fast-channel" style={{ textAlign: 'left', marginTop: '40px' }}>
-            
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                {/* Navigation Buttons */}
-                <div style={{ display: 'flex', width: "100%",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Fast Channel</span>
-                  <div style={{ display: 'flex' }}>
-                    <button
-                      onClick={prevfastChannel}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '15px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={fastIndex === 0}
-                    >
-                      <ChevronLeft size={32} style={{color: '#333',}}/>
-                    </button>
-                    <button
-                      onClick={nextfastChannel}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={isVideoNextDisabled}
-                    >
-                      <ChevronRight size={32} style={{color: '#333',}}/>
-                    </button>
+              <section id="fast-channel" style={{ textAlign: 'left', marginTop: '40px' }}>
+                <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  {/* Navigation Buttons */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      width: '100%',
+                      marginBottom: '10px',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span style={{ fontWeight: 'bold', color: 'white', fontSize: '20px' }}>Fast Channel</span>
+                    <div style={{ display: 'flex' }}>
+                      <button
+                        onClick={prevfastChannel}
+                        style={{
+                          background: '#9D9A95',
+                          color: 'white',
+                          border: 'none',
+                          padding: '5px',
+                          borderRadius: '50%',
+                          cursor: 'pointer',
+                          zIndex: 10,
+                          marginRight: '15px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '45px',
+                          height: '45px',
+                        }}
+                        disabled={fastIndex === 0}
+                      >
+                        <ChevronLeft size={32} style={{ color: '#333' }} />
+                      </button>
+                      <button
+                        onClick={nextfastChannel}
+                        style={{
+                          background: '#9D9A95',
+                          color: 'white',
+                          border: 'none',
+                          padding: '5px',
+                          borderRadius: '50%',
+                          cursor: 'pointer',
+                          zIndex: 10,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '45px',
+                          height: '45px',
+                        }}
+                        disabled={isfastChannelDisabled}
+                      >
+                        <ChevronRight size={32} style={{ color: '#333' }} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div
-                  ref={imageContainerRef}
-                  style={{
-                    display: 'flex',
-                    overflowX: 'auto',
-                    paddingBottom: '20px',
-                    scrollSnapType: 'x mandatory',
-                    WebkitOverflowScrolling: 'touch',
-                    justifyContent: "space-between",
-                    width:"100%",
-                  }}
-                >
-                  {displayfastChannel.map((video, index) => (
-                    <div key={index} style={{
-                      flex: '0 0 auto',
-                      width: '32%',
-                      height: '32%',
-                      marginRight: '10px',
-                      borderRadius: '0px',
-                      scrollSnapAlign: 'start',
-                      transition: 'opacity 0.5s ease-in-out', 
-                      opacity: previousFastChannel.includes(video) ? 0 : 1, // Hide previous images
-                    }} onClick={() => handleDetailView()}>
+                  <div
+                    ref={imageContainerRef}
+                    style={{
+                      display: 'flex',
+                      overflowX: 'auto',
+                      paddingBottom: '20px',
+                      scrollSnapType: 'x mandatory',
+                      WebkitOverflowScrolling: 'touch',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                    }}
+                  >
+                    {displayfastChannel.map((video, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          flex: '0 0 auto',
+                          width: '32%',
+                          height: '250px',
+                          marginRight: '10px',
+                          borderRadius: '0px',
+                          scrollSnapAlign: 'start',
+                          transition: 'opacity 0.5s ease-in-out',
+                          opacity: previousFastChannel.includes(video) ? 1 : 1,
+                        }}
+                        onClick={() => {
+                          console.log('Open detail view for video:', video);
+                        }}
+                      >
                         <video
                           ref={(el) => {
                             if (el) videoRefs1.current[index] = el;
@@ -804,7 +807,13 @@ function Marketplace() {
                           src={video}
                           controls
                           muted
-                          style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                          style={{
+                            cursor: 'pointer',
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: '0px',
+                            objectFit: 'cover',
+                          }}
                           onMouseEnter={() => {
                             videoRefs1.current[index]?.play();
                           }}
@@ -813,28 +822,25 @@ function Marketplace() {
                             videoRefs1.current[index].currentTime = 0;
                           }}
                         />
-                      {/* <img
-                        src={video.img}
-                        alt={`Ambassador ${index + 1}`}
-                        style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                      />
-                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{video.Name}</p> */}
-                    </div>
-                  ))}
-
-
-                  
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </section>
-
+              </section>
             {/* Video on demoand Section */}
             <section id="vod" style={{ textAlign: 'left', marginTop: '40px' }}>
-            
               <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                {/* Navigation Buttons */}
-                <div style={{ display: 'flex', width: "100%",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Video On demand</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    width: '100%',
+                    marginBottom: '10px',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Video On Demand</span>
                   <div style={{ display: 'flex' }}>
                     <button
                       onClick={prevvideoonDemand}
@@ -855,7 +861,7 @@ function Marketplace() {
                       }}
                       disabled={videoonDemandIndex === 0}
                     >
-                      <ChevronLeft size={32} style={{color: '#333',}}/>
+                      <ChevronLeft size={32} style={{ color: '#333' }} />
                     </button>
                     <button
                       onClick={nextvideoonDemand}
@@ -875,7 +881,7 @@ function Marketplace() {
                       }}
                       disabled={isVideoNextDisabled}
                     >
-                      <ChevronRight size={32} style={{color: '#333',}}/>
+                      <ChevronRight size={32} style={{ color: '#333' }} />
                     </button>
                   </div>
                 </div>
@@ -887,21 +893,27 @@ function Marketplace() {
                     paddingBottom: '20px',
                     scrollSnapType: 'x mandatory',
                     WebkitOverflowScrolling: 'touch',
-                    justifyContent: "space-between",
-                    width:"100%",
+                    justifyContent: 'space-between',
+                    width: '100%',
                   }}
                 >
                   {displayvideoonDemand.map((video, index) => (
-                    <div key={index} style={{
-                      flex: '0 0 auto',
-                      width: '32%',
-                      height: '32%',
-                      marginRight: '10px',
-                      borderRadius: '0px',
-                      scrollSnapAlign: 'start',
-                      transition: 'opacity 0.5s ease-in-out', 
-                      opacity: previousVideos.includes(video) ? 0 : 1, // Hide previous images
-                    }} onClick={() => handleDetailView()}>
+                    <div
+                      key={index}
+                      style={{
+                        flex: '0 0 auto',
+                        width: '32%',
+                        height: '250px',
+                        marginRight: '10px',
+                        borderRadius: '0px',
+                        scrollSnapAlign: 'start',
+                        transition: 'opacity 0.5s ease-in-out',
+                        opacity: previousVideos.includes(video) ? 1 : 1,
+                      }}
+                      onClick={() => {
+                        console.log('View VOD detail:', video);
+                      }}
+                    >
                       <video
                         ref={(el) => {
                           if (el) videoRefs2.current[index] = el;
@@ -909,7 +921,13 @@ function Marketplace() {
                         src={video}
                         controls
                         muted
-                        style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                        style={{
+                          cursor: 'pointer',
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: '0px',
+                          objectFit: 'cover',
+                        }}
                         onMouseEnter={() => {
                           videoRefs2.current[index]?.play();
                         }}
@@ -918,12 +936,6 @@ function Marketplace() {
                           videoRefs2.current[index].currentTime = 0;
                         }}
                       />
-                      {/* <img
-                        src={video.img}
-                        alt={`Ambassador ${index + 1}`}
-                        style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                      />
-                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{video.Name}</p> */}
                     </div>
                   ))}
                 </div>

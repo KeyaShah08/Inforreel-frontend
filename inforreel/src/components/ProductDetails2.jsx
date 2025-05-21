@@ -93,19 +93,23 @@ function ProductDetails2() {
   const [displayedImages, setDisplayedImages] = useState(allImages.slice(0, 3));
   const [displayedProducts, setDisplayedProducts] = useState(allProducts.slice(0, 3));
   const [displayedAmbassadors, setDisplayedAmbassadors] = useState(allAmbassadors.slice(0, 3));
+  const [displayedPost, setDisplayedPost] = useState(allPost.slice(0, 3));
   const [displayedVideos, setDisplayedVideos] = useState(allVideos.slice(0, 3));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [productIndex, setProductIndex] = useState(0);
   const [ambassadorIndex, setAmbassadorIndex] = useState(0);
+  const [postIndex, setPostIndex] = useState(0);
   const [videoIndex, setVideoIndex] = useState(0);
   const imageContainerRef = useRef(null);
   const [isNextDisabled, setIsNextDisabled] = useState(allImages.length <= 3);
   const [isProductNextDisabled, setIsProductNextDisabled] = useState(allProducts.length <= 3);
   const [isAmbassadorNextDisabled, setIsAmbassadorNextDisabled] = useState(allAmbassadors.length <= 3);
+  const [isallPostNextDisabled, setIsallPostNextDisabled] = useState(allPost.length <= 3);
   const [isVideoNextDisabled, setIsVideoNextDisabled] = useState(allVideos.length <= 3);
   const [previousImages, setPreviousImages] = useState([]); // Track previously displayed images
   const [previousProducts, setPreviousProducts] = useState([]);
   const [previousAmbassadors, setPreviousAmbassadors] = useState([]);
+  const [previousPost, setPreviousPost] = useState([]);
   const [previousVideos, setPreviousVideos] = useState([]);
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [activeTab, setActiveTab] = useState('tab1');
@@ -193,6 +197,33 @@ function ProductDetails2() {
       setIsAmbassadorNextDisabled(false);
     }
   };
+
+
+  const nextPost = () => {
+    if (imageContainerRef.current && postIndex + 3 < allAmbassadors.length) {
+      // Store the current images as previous images
+      setPreviousPost(displayedPost);
+
+      setPostIndex(postIndex + 3);
+      const newAmbassadors = allAmbassadors.slice(postIndex + 3, Math.min(postIndex + 6, allAmbassadors.length));
+      setDisplayedPost(newAmbassadors); //directly set new images, don't accumulate
+      if (postIndex + 6 >= allAmbassadors.length) {
+        setIsallPostNextDisabled(true);
+      }
+    }
+  };
+
+  const prevPost = () => {
+    if (imageContainerRef.current && postIndex - 3 >= 0) {
+      setPreviousPost(displayedPost);
+      setPostIndex(postIndex - 3);
+      const newAmbassadors = allAmbassadors.slice(Math.max(0, postIndex - 3), postIndex);
+      setDisplayedPost(newAmbassadors);
+      setIsallPostNextDisabled(false);
+    }
+  };
+  
+  
 
   const nextVideo = () => {
     if (imageContainerRef.current && videoIndex + 3 < allVideos.length) {
@@ -743,7 +774,7 @@ function ProductDetails2() {
              <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Post</span>
              <div style={{ display: 'flex' }}>
                <button
-                 onClick={prevAmbassador}
+                 onClick={prevPost}
                  style={{
                    background: 'rgba(0, 0, 0, 0.5)',
                    color: 'white',
@@ -764,7 +795,7 @@ function ProductDetails2() {
                  <ChevronLeft size={20} />
                </button>
                <button
-                 onClick={nextAmbassador}
+                 onClick={nextPost}
                  style={{
                    background: 'rgba(0, 0, 0, 0.5)',
                    color: 'white',
@@ -779,7 +810,7 @@ function ProductDetails2() {
                    width: '48px',
                    height: '48px',
                  }}
-                 disabled={isAmbassadorNextDisabled}
+                 disabled={isallPostNextDisabled}
                >
                  <ChevronRight size={20} />
                </button>
@@ -796,7 +827,7 @@ function ProductDetails2() {
                justifyContent: "space-between"
              }}
            >
-             {allPost.map((allPost, index) => (
+             {displayedPost.map((allPost, index) => (
                <div key={index} style={{
                  flex: '0 0 auto',
                  width: '33%',
@@ -805,7 +836,7 @@ function ProductDetails2() {
                  borderRadius: '0px',
                  scrollSnapAlign: 'start',
                  transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                 opacity: previousAmbassadors.includes(allPost) ? 0 : 1, // Hide previous images
+                 opacity: previousPost.includes(allPost) ? 0 : 1, // Hide previous images
                }} onClick={toggleDropdown}>
                  <img
                    src={allPost.img}
