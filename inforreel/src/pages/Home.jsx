@@ -102,6 +102,7 @@ function Home() {
           />
         </div>
 
+        {/* TEXT SECTION START */}
         <div
           style={{
             position: "relative",
@@ -112,19 +113,21 @@ function Home() {
             boxSizing: "border-box",
           }}
         >
-          <h1>Welcome to InforReel</h1>
-          <h2>Where Brands, Fans & Influencers Collide</h2>
-          <h2>Vibe. Promote. Earn.</h2>
-          <h2>Your journey into social commerce and entertainment</h2>
-          <h2> begins now.</h2>
-          <br />
-          <p style={{ marginTop: "0.5rem", fontSize: "1rem", color: "#ddd" }}>
+          <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "1rem" }}>
+            Welcome to InforReel
+          </h1>
+          <p style={{ fontSize: "0.9rem", marginBottom: "1rem" }}>
+            Where Brands, Fans & Influencers Collide. Vibe. Promote. Earn.
+          </p>
+          
+
+          <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "#ddd" }}>
             Join InforReel — your journey into curated commerce and entertainment starts here.
           </p>
 
           <div
             style={{
-              marginTop: "1.5rem",
+              marginTop: "1rem",
               display: "flex",
               justifyContent: "center",
               maxWidth: "500px",
@@ -160,8 +163,13 @@ function Home() {
             </button>
           </div>
 
-          {error && <p style={{ color: "red", fontSize: "0.9rem", marginTop: "0.5rem" }}>{error}</p>}
+          {error && (
+            <p style={{ color: "red", fontSize: "0.9rem", marginTop: "0.5rem" }}>
+              {error}
+            </p>
+          )}
         </div>
+        {/* TEXT SECTION END */}
       </section>
 
       <section style={{ padding: "2rem 1rem", backgroundColor: "#000", maxWidth: "1200px", margin: "auto" }}>
