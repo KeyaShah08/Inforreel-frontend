@@ -23,23 +23,22 @@ const formatTime = (timeInSeconds) => {
 
 function FeedItems() {
   const [mediaItems, setMediaItems] = useState([
-    // Added text fields: profileName, username, caption
-    { id: 1, type: 'image', src: '/sample1.jpg', liked: false, saved: false, profileName: 'Fashionista', username: '@style guru', caption: 'Loving this look! #ootd #fashion #style' },
-    // Added text fields to video items as well
-    { id: 2, type: 'video', src: '/samplevideo1.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Workout Tips', username: '@fitlife', caption: 'Try this plank variation! #fitness #workout #exercise' },
-    { id: 4, type: 'image', src: '/sample3.jpg', liked: false, saved: false, profileName: 'Travel Vibes', username: '@exploreworld', caption: 'Beautiful sunset in Greece. #travel #sunset #greece' },
-    // Added text fields
-    { id: 5, type: 'video', src: '/samplevideo3.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Coding Tutorials', username: '@dev_coder', caption: 'Quick React hook explanation. #coding #react #programming' },
-    { id: 6, type: 'image', src: '/sample4.jpg', liked: false, saved: false, profileName: 'Foodie Fun', username: '@eatlover', caption: 'Amazing homemade pizza! #food #pizza #cooking' },
-    { id: 7, type: 'image', src: '/sample5.jpg', liked: false, saved: false, profileName: 'Art Gallery', username: '@creativemind', caption: 'Abstract expressionism piece. #art #painting #abstract' },
-    // Added text fields
-    { id: 8, type: 'video', src: '/samplevideo4.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Music Channel', username: '@beatsmaker', caption: 'New track release! Check it out. #music #producer #newrelease' },
-    { id: 9, type: 'video', src: '/samplevideo5.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Nature Lover', username: '@greenworld', caption: 'Hiking in the mountains. Stunning views. #nature #hiking #mountains' },
-    { id: 10, type: 'video', src: '/samplevideo6.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Tech Reviews', username: '@gadgetguru', caption: 'Unboxing the latest smartphone. #tech #review #smartphone' },
-    { id: 11, type: 'video', src: '/samplevideo7.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'DIY Projects', username: '@craftymaker', caption: 'How to build a wooden shelf. Easy tutorial. #diy #crafts #woodworking' },
-    { id: 12, type: 'video', src: '/samplevideo8.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Gaming Highlights', username: '@gamerpro', caption: 'Epic win moment! #gaming #fortnite #victory' },
-    { id: 13, type: 'image', src: '/sample6.jpg', liked: false, saved: false, profileName: 'Photography', username: '@shutterbug', caption: 'Urban exploration shot. #photography #city #exploration' },
-  ]);
+  { id: 1, type: 'video', src: '/health/health2.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 2, type: 'video', src: '/Beauty/beauty2.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 3, type: 'video', src: '/Fashion/fashion2.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 4, type: 'video', src: '/Fitness/fitness2.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 5, type: 'video', src: '/health/health3.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 6, type: 'video', src: '/Beauty/beauty3.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 7, type: 'video', src: '/Fashion/fashion3.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 8, type: 'video', src: '/Fitness/fitness3.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 9, type: 'video', src: '/health/health4.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 10, type: 'video', src: '/Beauty/beauty4.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 11, type: 'video', src: '/Fashion/fashion4.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 12, type: 'video', src: '/Fitness/fitness4.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 13, type: 'video', src: '/Beauty/beauty1.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 14, type: 'video', src: '/Fashion/fashion1.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' },
+  { id: 15, type: 'video', src: '/Fitness/fitness1.mp4', muted: true, liked: false, saved: false, playing: false, userPaused: false, currentTime: 0, duration: 0, profileName: 'Dior', username: '@zara_elan', caption: '#ZaraElanStyle #Beauty #SkincareRoutine', logo: '/icons/dior.png' }
+]);
 
   const [fadingHeartVisible, setFadingHeartVisible] = useState({});
   // State to track the ID of the item currently in fullscreen
@@ -279,7 +278,36 @@ function FeedItems() {
     document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
     // Clean up event listeners on component unmount
-    return () => {
+    
+<style>{`
+  @media screen and (max-width: 768px) {
+    .feed-item-container {
+      width: 90vw !important;
+    }
+
+    .feed-item-content {
+      width: 100% !important;
+      height: auto !important;
+      border-radius: 10px !important;
+    }
+
+    .brand-logo {
+      width: 28px !important;
+      height: 28px !important;
+      margin-right: 6px !important;
+    }
+
+    .brand-info div {
+      font-size: 0.85rem !important;
+    }
+
+    .hashtag-text {
+      font-size: 0.8rem !important;
+    }
+  }
+`}</style>
+
+return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
@@ -374,18 +402,7 @@ const handleRedirection = () => {
 }
   return (
     <>
-    <style>
-      {`
-        video::-webkit-media-controls {
-          display: none !important;
-          -webkit-appearance: none;
-        }
-        
-        video::-moz-media-controls {
-          display: none !important;
-        }
-      `}
-    </style>
+    
     {isRedirectioin ? <BeautyProducts /> :
       <>
       <div style={{
@@ -399,7 +416,7 @@ const handleRedirection = () => {
       }}>
         {mediaItems.map(item => (
           // Main container for each item - Position relative for text overlay
-          <div key={item.id} style={{
+          <div key={item.id} className='feed-item-container' style={{
             display: 'flex',
             alignItems: 'flex-end', // Align video/image and icons to the bottom
             marginBottom: '70px', // Reverted to 70px margin bottom
@@ -421,7 +438,7 @@ const handleRedirection = () => {
             <div style={{
               width: fullscreenItemId === item.id ? '100vw' : '310px', // Changed width to 310px
               height: fullscreenItemId === item.id ? '87vh' : 'auto', // Take full viewport height in fullscreen, or auto otherwise
-              aspectRatio: '9 / 16', // Always maintain 9/16 aspect ratio
+              aspectRatio: '9 / 16', className: 'feed-item-content', // Always maintain 9/16 aspect ratio
               overflow: 'hidden', // Keep overflow hidden for the main container
               borderRadius: fullscreenItemId === item.id ? '0' : '10px', // No border radius in fullscreen
               backgroundColor: fullscreenItemId === item.id ? '#141414' : '#333', // Background color in fullscreen
@@ -706,11 +723,10 @@ const handleRedirection = () => {
                 >
                     {/* EMBEDDED SVG for dynamic color change */}
                     <img
-                      src="/Heart.png"
-                      alt="Heart Icon"
-                      style={{ marginBottom: 0, width: smallestActionIconSize, height: smallestActionIconSize, cursor: 'pointer' }}
-                      onClick={() => handleCommentClick(item.id)}
-                    />
+  src={item.liked ? "/icons/filledlike.svg" : "/icons/like.svg"}
+  alt="Like Icon"
+  style={{ marginBottom: 0, width: smallestActionIconSize, height: smallestActionIconSize, cursor: 'pointer' }}
+/>
                   </div>
                   {/* Static Like Count */}
                   <div style={{ marginBottom: "20px", fontSize: '14px', color: 'white', textAlign: 'center' }}>
@@ -722,7 +738,7 @@ const handleRedirection = () => {
                   src="/comment.png"
                   alt="Comment Icon"
                   style={{ marginBottom: reducedSpacing, width: smallestActionIconSize, height: smallestActionIconSize, cursor: 'pointer' }}
-                  onClick={() => handleCommentClick(item.id)}
+                  
                 />
                   {/* Static Comment Count */}
                   <div style={{ marginBottom: "20px", fontSize: '14px', color: 'white', textAlign: 'center' }}>
@@ -774,37 +790,40 @@ const handleRedirection = () => {
             )}
 
             {/* Text Overlay Container - Positioned absolutely within the main item container */}
-            {fullscreenItemId !== item.id && ( // Hide text overlay in fullscreen
-                  <div style={{
-                      position: 'absolute', // Position relative to the main item container
-                      // Conditional bottom position based on item type
-                      bottom: item.type === 'video' ? '0px' : '0px', // Increased bottom for video posts
-                      left: '0', // Left padding
-                      right: '70px', // Right padding (to the left of icons) - Adjust if icons column width differs
-                      color: 'white',
-                      zIndex: 3, // Increased zIndex to ensure visibility
-                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)', // Add shadow for readability
-                      //background:"rgba(0,0,0,0.2)",
-                      background: 'linear-gradient(to bottom, rgba(8, 9, 13, 0) 0%, rgba(8, 9, 13, 0.9) 100%)',
-                      padding: "10px",
-                      paddingBottom:item.type === 'video' ? "75px" : "10px",
-                      borderBottomLeftRadius: "9px",
-                      borderBottomRightRadius: "10px"
-                  }}>
-                      {/* Profile Name */}
-                      <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '2px' }}>
-                          {item.profileName}
-                      </div>
-                      {/* Username */}
-                      <div style={{ fontSize: '0.9rem', marginBottom: '4px' }}>
-                          {item.username}
-                      </div>
-                      {/* Caption */}
-                      <div style={{ fontSize: '0.9rem', lineHeight: '1.3' }}>
-                          {item.caption}
-                      </div>
-                  </div>
-              )}
+{fullscreenItemId !== item.id && (
+  <div style={{
+    position: 'absolute',
+    bottom: item.type === 'video' ? '0px' : '0px',
+    left: '0',
+    right: '70px',
+    color: 'white',
+    zIndex: 3,
+    textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+    background: 'linear-gradient(to bottom, rgba(8, 9, 13, 0) 0%, rgba(8, 9, 13, 0.9) 100%)',
+    padding: "10px",
+    paddingBottom: item.type === 'video' ? "75px" : "10px",
+    borderBottomLeftRadius: "9px",
+    borderBottomRightRadius: "10px"
+  }}>
+    {/* Logo + Brand Info Section */}
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '6px' }}>
+      <img
+        src={item.logo}
+        alt="brand logo"
+        className='brand-logo' style={{ width: '36px', height: '36px', objectFit: 'contain', marginRight: '10px', borderRadius: '4px' }}
+      />
+      <div className='brand-info'>
+        <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '2px' }}>{item.profileName}</div>
+        <div style={{ fontSize: '0.9rem', color: '#ccc' }}>{item.username}</div>
+      </div>
+    </div>
+
+    {/* Hashtags */}
+    <div className='hashtag-text' style={{ fontSize: '0.9rem', lineHeight: '1.3', marginTop: '4px' }}>
+      {item.caption}
+    </div>
+  </div>
+)}
           </div>
         ))}
 
