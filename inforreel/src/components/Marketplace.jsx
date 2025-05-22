@@ -754,7 +754,7 @@ function Marketplace() {
             flexDirection: 'column',
             alignItems: 'center'
           }}
-          onClick={() => handleDetailView4()}
+          onClick={() => handleDetailView2()}
         >
           <img
             src={amb.img}

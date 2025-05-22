@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { FaExpand, FaPause, FaPlay, FaVolumeMute, FaVolumeUp } from 'react-icons/fa';
-import "../App.css";
-import BeautyProducts from './BeautyProducts';
-// You might need to install react-icons if you haven't already: npm install react-icons
+// Removed react-icons/fa import as it's not resolvable in this environment.
+// All icons will be replaced with inline SVGs or simple text/emojis.
+// import "../App.css"; // Removed App.css import as it's not resolvable.
+// import BeautyProducts from './BeautyProducts'; // Removed BeautyProducts import as it's not resolvable.
 
 // Helper function to format time in seconds to MM:SS or HH:MM:SS
 const formatTime = (timeInSeconds) => {
@@ -44,6 +44,9 @@ function FeedItems() {
   // State to track the ID of the item currently in fullscreen
   const [fullscreenItemId, setFullscreenItemId] = useState(null);
   const [showOpenCart, setOpenCart] = useState(false);
+  // NEW STATE: To control the visibility of the three-dots pop-out menu
+  const [showThreeDotsMenu, setShowThreeDotsMenu] = useState(null);
+
 
   const videoRefs = useRef({});
   const clickTimeoutRef = useRef(null); // Ref to store the click timeout ID
@@ -98,6 +101,8 @@ function FeedItems() {
       } else {
         console.log(`Item ${id} unsaved.`);
       }
+      // Close the three-dots menu after saving/unsaving
+      setShowThreeDotsMenu(null);
   };
 
   // Placeholder functions for other icon clicks
@@ -107,14 +112,20 @@ function FeedItems() {
   };
 
   const handleCommentClick = (id) => {
-    console.log(`Comment clicked for item ${id}`);
-  };
+  setOpenCart(true);
+  console.log(`Comment clicked for item ${id}`);
+};
 
   const handleShareClick = (id) => {
     console.log(`Share clicked for item ${id}`);
   };
   const toggleDropdown = () => {
     setIsOpenDrp(!isOpenDrp);
+  };
+
+  // NEW FUNCTION: To toggle the three-dots menu visibility
+  const toggleThreeDotsMenu = (id) => {
+    setShowThreeDotsMenu(showThreeDotsMenu === id ? null : id);
   };
 
   // Function to toggle play/pause for a specific video
@@ -207,7 +218,7 @@ function FeedItems() {
 
   // Function to toggle fullscreen for a specific video
   const toggleFullscreen = (id) => {
-    const videoContainer = videoRefs.current[id]?.parentElement; // Get the parent div holding the video
+    const videoContainer = videoRefs.current[id]?.closest('.media-aspect-ratio-container'); // Get the aspect ratio container
 
     if (videoContainer) {
       // Check if fullscreen is currently active for any element in the document
@@ -278,36 +289,7 @@ function FeedItems() {
     document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
     // Clean up event listeners on component unmount
-    
-<style>{`
-  @media screen and (max-width: 768px) {
-    .feed-item-container {
-      width: 90vw !important;
-    }
-
-    .feed-item-content {
-      width: 100% !important;
-      height: auto !important;
-      border-radius: 10px !important;
-    }
-
-    .brand-logo {
-      width: 28px !important;
-      height: 28px !important;
-      margin-right: 6px !important;
-    }
-
-    .brand-info div {
-      font-size: 0.85rem !important;
-    }
-
-    .hashtag-text {
-      font-size: 0.8rem !important;
-    }
-  }
-`}</style>
-
-return () => {
+    return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
@@ -352,7 +334,7 @@ return () => {
         });
       },
       // Keep the threshold at 0.8 or adjust as needed
-      { threshold: 0.8 }
+      { threshold: 0.5 }
     );
 
     mediaItems.forEach(item => {
@@ -402,628 +384,782 @@ const handleRedirection = () => {
 }
   return (
     <>
-    
-    {isRedirectioin ? <BeautyProducts /> :
-      <>
-      <div style={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        maxWidth: '550px',
-        width: '100%',
-        marginTop:"50px"
-      }}>
-        {mediaItems.map(item => (
-          // Main container for each item - Position relative for text overlay
-          <div key={item.id} className='feed-item-container' style={{
+    {/* Global Styles for responsiveness */}
+    <style>{`
+      /* Base styles for feed item container */
+      .feed-item-container {
+        display: flex;
+        flex-direction: row; /* Default to row for larger screens */
+        align-items: flex-end;
+        margin-bottom: 70px;
+        width: 100%; /* Take full width of parent */
+        max-width: 550px; /* Max width for the entire post */
+        position: relative;
+      }
+
+      /* Media query for smaller screens (e.g., mobile) */
+      @media screen and (max-width: 768px) {
+        .feed-item-container {
+          flex-direction: column; /* Stack video and icons vertically */
+          align-items: center; /* Center items when stacked */
+          margin-bottom: 40px; /* Adjust margin for mobile */
+        }
+
+        .media-aspect-ratio-container {
+          width: 90vw !important; /* Use 90% of viewport width for video/image */
+          padding-top: calc(16 / 9 * 90vw) !important; /* Maintain 9:16 aspect ratio based on 90vw */
+          border-radius: 10px !important;
+        }
+
+        .brand-logo {
+          width: 28px !important;
+          height: 28px !important;
+          margin-right: 6px !important;
+        }
+
+        .brand-info div {
+          font-size: 0.85rem !important;
+        }
+
+        .hashtag-text {
+          font-size: 0.8rem !important;
+        }
+
+        /* Adjust icons container for mobile */
+        .icons-container {
+          flex-direction: row !important; /* Arrange icons horizontally */
+          margin-left: 0 !important; /* Remove left margin */
+          margin-top: 20px; /* Add top margin when stacked */
+          width: 100%; /* Take full width */
+          justify-content: space-around; /* Distribute icons evenly */
+          padding: 0 10px; /* Add some horizontal padding */
+        }
+
+        /* Adjust text overlay for mobile */
+        .text-overlay-container {
+          right: 0 !important; /* Extend text overlay to full width */
+          padding-bottom: 75px; /* Ensure space for video controls */
+          border-bottom-left-radius: 9px;
+          border-bottom-right-radius: 9px;
+        }
+      }
+
+      @keyframes fade-in-out {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(0.8);
+        }
+        20% {
+          opacity: 0.5;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        80% {
+          opacity: 0.5;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(1.2);
+        }
+      }
+
+      /* Fullscreen styles (handled by inline style and global CSS) */
+      :-webkit-full-screen .media-aspect-ratio-container {
+          width: 100vw !important;
+          height: 100vh !important;
+          padding-top: 0 !important; /* Remove padding-top when in fullscreen */
+          background-color: #141414 !important;
+          border-radius: 0 !important;
+      }
+      :-moz-full-screen .media-aspect-ratio-container {
+          width: 100vw !important;
+          height: 100vh !important;
+          padding-top: 0 !important;
+          background-color: #141414 !important;
+          border-radius: 0 !important;
+      }
+      :fullscreen .media-aspect-ratio-container {
+          width: 100vw !important;
+          height: 100vh !important;
+          padding-top: 0 !important;
+          background-color: #141414 !important;
+          border-radius: 0 !important;
+      }
+      :-ms-fullscreen .media-aspect-ratio-container {
+          width: 100vw !important;
+          height: 100vh !important;
+          padding-top: 0 !important;
+          background-color: #141414 !important;
+          border-radius: 0 !important;
+      }
+
+      :-webkit-full-screen .media-aspect-ratio-container video {
+          object-fit: contain !important;
+      }
+      :-moz-full-screen .media-aspect-ratio-container video {
+          object-fit: contain !important;
+      }
+      :fullscreen .media-aspect-ratio-container video {
+          object-fit: contain !important;
+      }
+      :-ms-fullscreen .media-aspect-ratio-container video {
+          object-fit: contain !important;
+      }
+    `}</style>
+
+    {isRedirectioin ? (
+        <div style={{
             display: 'flex',
-            alignItems: 'flex-end', // Align video/image and icons to the bottom
-            marginBottom: '70px', // Reverted to 70px margin bottom
-            width: 'auto', /* Changed to auto so the inner div can control the width */
-            position: 'relative', 
-            // height:"90vh", /* This can be removed or set to 'auto' as inner div will control height */
-          }}
-          onDoubleClick={() => { // Modified onDoubleClick
-            handleLikeClick(item.id); // Always handle like on double click
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            color: 'white',
+            fontSize: '24px'
+        }}>
+            BeautyProducts Component Placeholder
+        </div>
+    ) : (
+      <>
+        <div style={{
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          maxWidth: '550px', /* Max width for the entire feed column */
+          width: '100%',
+          marginTop:"50px"
+        }}>
+          {mediaItems.map(item => (
+            // Main container for each item - Position relative for text overlay
+            <div key={item.id} className='feed-item-container'
+            onDoubleClick={() => { // Modified onDoubleClick
+              handleLikeClick(item.id); // Always handle like on double click
 
-            // If it's a video and a single click timeout is pending, clear it
-            if (item.type === 'video' && clickTimeoutRef.current) {
-              clearTimeout(clickTimeoutRef.current);
-              clickTimeoutRef.current = null;
-            }
-          }}
-          >
-            {/* Video/Image Container - Apply fullscreen styles here */}
-            <div style={{
-              width: fullscreenItemId === item.id ? '100vw' : '310px', // Changed width to 310px
-              height: fullscreenItemId === item.id ? '87vh' : 'auto', // Take full viewport height in fullscreen, or auto otherwise
-              aspectRatio: '9 / 16', className: 'feed-item-content', // Always maintain 9/16 aspect ratio
-              overflow: 'hidden', // Keep overflow hidden for the main container
-              borderRadius: fullscreenItemId === item.id ? '0' : '10px', // No border radius in fullscreen
-              backgroundColor: fullscreenItemId === item.id ? '#141414' : '#333', // Background color in fullscreen
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              position: 'relative', // Keep relative for absolute positioning of controls and progress bar
-              flexGrow: fullscreenItemId === item.id ? 0 : 1, // Don't grow in fullscreen relative to other items
-              transition: 'all 0.3s ease', // Smooth transition
-            }}>
-              {item.type === 'image' ? (
-                <img
-                  src={item.src}
-                  alt={`Feed item ${item.id}`}
-                  style={{
-                    display: 'block',
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                  }}
-                  onError={(e) => { e.target.onerror = null; e.target.src = 'placeholder_image_url'; }}
-                />
-              ) : (
-                <>
-                  <video
-                    ref={el => videoRefs.current[item.id] = el}
-                    // controls are removed for custom controls
-                    style={{
-                      display: 'block',
-                      // Use 'contain' in fullscreen, 'cover' otherwise
-                      objectFit: fullscreenItemId === item.id ? 'contain' : 'cover',
-                      width: '100%', // Video should fill container
-                      height: '100%', // Video should fill container
-                    }}
-                    controls={false}
-                    controlsList="nodownload nofullscreen noremoteplayback"
-                    onContextMenu={e => e.preventDefault()}
-                    onTouchStart={e => e.preventDefault()}
-                    muted={item.muted}
-                    onError={(e) => { e.target.onerror = null; e.target.src = 'placeholder_video_url'; }}
-                    loop
-                    // Always call togglePlayPause on click on the video element
-                    onClick={() => { // Modified onClick for video
-                      if (clickTimeoutRef.current) {
-                        clearTimeout(clickTimeoutRef.current);
-                        clickTimeoutRef.current = null;
-                        // This is the second click of a double-click, do nothing here
-                      } else {
-                        // This is the first click, set a timeout
-                        clickTimeoutRef.current = setTimeout(() => {
-                          togglePlayPause(item.id);
-                          clickTimeoutRef.current = null;
-                        }, 300); // 300ms threshold
-                      }
-                    }}
-                  >
-                    <source src={item.src} type={`video/${item.src.split('.').pop()}`} />
-                    Your browser does not support the video tag.
-                  </video>
-
-                  {/* Custom Video Controls Overlay - Adjusted bottom position */}
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '22px', // Positioned above the progress bar and text (approx. 16px bar/text + 6px spacing)
-                    left: '10px',
-                    right: '10px',
-                    display: 'flex',
-                    justifyContent: 'space-between', // Space out the controls
-                    alignItems: 'center',
-                    zIndex: 1, // Ensure visibility
-                    color: 'white',
-                    zIndex:"9999"
-                  }}>
-                    {/* Play/Pause Button */}
-                    <div
-                      style={{
-                        backgroundColor: customControlBackgroundColor,
-                        borderRadius: '50%',
-                        padding: customControlPadding,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: customControlSize,
-                        height: customControlSize,
-                      }}
-                      onClick={() => togglePlayPause(item.id)}
-                    >
-                      {item.playing ? <FaPause /> : <FaPlay />}
-                    </div>
-
-                    {/* Spacer (to push fullscreen button to the right) */}
-                    <div style={{ flexGrow: 1 }}></div>
-
-                    {/* Fullscreen Button */}
-                    <div
-                      style={{
-                        backgroundColor: customControlBackgroundColor,
-                        borderRadius: '50%',
-                        padding: customControlPadding,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        width: customControlSize,
-                        height: customControlSize,
-                      }}
-                      onClick={() => toggleFullscreen(item.id)}
-                    >
-                      <FaExpand />
-                    </div>
-                  </div>
-
-
-                  {/* Mute/Unmute Icon Overlay - Still using react-icons */}
-                  {/* Positioned separately from the bottom control bar */}
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '10px',
-                      right: '10px',
-                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                      borderRadius: '50%',
-                      padding: '8px',
-                      cursor: 'pointer',
-                      zIndex: 1, // Ensure visibility
-                      color: 'white',
-                      fontSize: '1.2rem',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',                      
-                    }}
-                    onClick={() => toggleMute(item.id)}
-                  >
-                    {item.muted ? <FaVolumeMute /> : <FaVolumeUp />}
-                  </div>
-
-                  {/* Progress Bar Container (Visible for video items in both normal and fullscreen) */}
-                  {item.type === 'video' && ( // Progress bar visible in fullscreen too
-                      <div style={{
-                          position: 'absolute', // Position relative to the video container
-                          bottom: '4px', // Move slightly up from the very bottom
-                          left: '0',
-                          right: '0',
-                          height: '16px', // Increased height for text visibility
-                          backgroundColor: 'transparent', // Lighter background for better contrast
-                          cursor: 'pointer',
-                          zIndex: 9999999, // Ensure visibility above the video
-                          display: 'flex', // Use flexbox for internal alignment
-                          alignItems: 'center', // Vertically center content
-                          paddingLeft: '10px', // Add padding for text
-                          paddingRight: '10px', // Add padding for dot/fill
-                      }}
-                      onClick={(e) => handleSeek(item.id, e)}
-                      >
-                          {/* Current time / Duration text - Positioned within the progress bar container */}
-                        <div style={{
-                            color: 'white',
-                            fontSize: '0.7rem', // Slightly smaller font for fit
-                            marginRight: 'auto', // Push time text to the left
-                            textShadow: '1px 1px 2px rgba(0,0,0,0.5)', // Add shadow for readability
-                            pointerEvents: 'none', // Prevent clicks on text from interfering with seek
-                            zIndex: 2, // Ensure text is above the fill and background
-                        }}>
-                            {formatTime(item.currentTime)} / {formatTime(item.duration)}
-                        </div>
-
-                        {/* Progress Bar Visual */}
-                        <div style={{
-                            flexGrow: 1, // Allows the bar to take up remaining space
-                            height: '4px', // Height of the progress bar line itself
-                            backgroundColor: 'rgba(255, 255, 255, 0.3)', // Background of the bar line
-                            borderRadius: '2px', // Rounded corners for the bar line
-                            position: 'relative', // Needed for positioning the dot
-                            marginLeft: '10px', // Space between time text and bar
-                        }}>
-                              {/* Progress Fill */}
-                            <div style={{
-                                height: '100%',
-                                width: item.duration > 0 ? `${(item.currentTime / item.duration) * 100}%` : '0%',
-                                backgroundColor: '#96105E', // Color of the filled progress
-                                borderRadius: '2px', // Match parent border radius
-                                transition: 'width 0.2s linear', // Smooth transition
-                                position: 'relative', // Needed for the dot
-                            }}>
-                            </div>
-                              {/* Progress Dot - Positioned relative to the fill's parent (the bar visual div) */}
-                              {item.duration > 0 && ( // Only show dot if duration is known
-                                  <div style={{
-                                      position: 'absolute',
-                                      left: item.duration > 0 ? `${(item.currentTime / item.duration) * 100}%` : '0%', // Position based on progress percentage
-                                      top: '50%',
-                                      transform: 'translate(-50%, -50%)', // Center the dot
-                                      width: '12px', // Size of the dot
-                                      height: '12px', // Size of the dot
-                                      borderRadius: '50%',
-                                      backgroundColor: 'white', // Color of the dot
-                                      zIndex: 3, // Ensure dot is above everything in the bar
-                                      pointerEvents: 'none', // Prevent clicks on dot from interfering with seek
-                                  }}></div>
-                              )}
-                        </div>
-                      </div>
-                  )}
-                </>
-              )}
-
-              {/* Fading Heart Icon - Conditionally rendered and animated */}
-              {fadingHeartVisible[item.id] && (
+              // If it's a video and a single click timeout is pending, clear it
+              if (item.type === 'video' && clickTimeoutRef.current) {
+                clearTimeout(clickTimeoutRef.current);
+                clickTimeoutRef.current = null;
+              }
+            }}
+            >
+              {/* Video/Image Container - Apply fullscreen styles here */}
+              {/* This div uses padding-top for the 9:16 aspect ratio */}
+              <div className='media-aspect-ratio-container' style={{
+                position: 'relative',
+                // Use calc to leave space for the icons column on larger screens
+                width: fullscreenItemId === item.id ? '100vw' : 'calc(100% - 80px)',
+                // 9:16 aspect ratio: height = (16/9) * width.
+                // padding-top creates vertical space equal to a percentage of the width.
+                paddingTop: fullscreenItemId === item.id ? 'calc(16 / 9 * 100vh)' : 'calc(16 / 9 * (100% - 80px))',
+                overflow: 'hidden',
+                borderRadius: fullscreenItemId === item.id ? '0' : '10px',
+                backgroundColor: fullscreenItemId === item.id ? '#141414' : '#333',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexShrink: 0, // Prevent shrinking
+                transition: 'all 0.3s ease',
+              }}>
+                {/* Inner div to hold the actual media and controls, positioned absolutely */}
                 <div style={{
                   position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: 2, // Ensure it's above video and controls/progress bar
-                  animation: 'fade-in-out 1s ease-out',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}>
-                  {/* EMBEDDED SVG for the large fading heart */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="#96105E"
-                    width={fadingHeartSize}
-                    height={fadingHeartSize}
+                  {item.type === 'image' ? (
+                    <img
+                      src={item.src}
+                      alt={`Feed item ${item.id}`}
+                      style={{
+                        display: 'block',
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                      }}
+                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/501x890/333/white?text=Image+Error'; }}
+                    />
+                  ) : (
+                    <>
+                      <video
+                        ref={el => videoRefs.current[item.id] = el}
+                        // controls are removed for custom controls
+                        style={{
+                          display: 'block',
+                          // Use 'contain' in fullscreen, 'cover' otherwise
+                          objectFit: fullscreenItemId === item.id ? 'contain' : 'cover',
+                          width: '100%', // Video should fill container
+                          height: '100%', // Video should fill container
+                        }}
+                        controls={false}
+                        controlsList="nodownload nofullscreen noremoteplayback"
+                        onContextMenu={e => e.preventDefault()}
+                        onTouchStart={e => e.preventDefault()}
+                        muted={item.muted}
+                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/501x890/333/white?text=Video+Error'; }}
+                        loop
+                        // Always call togglePlayPause on click on the video element
+                        onClick={() => { // Modified onClick for video
+                          if (clickTimeoutRef.current) {
+                            clearTimeout(clickTimeoutRef.current);
+                            clickTimeoutRef.current = null;
+                            // This is the second click of a double-click, do nothing here
+                          } else {
+                            // This is the first click, set a timeout
+                            clickTimeoutRef.current = setTimeout(() => {
+                              togglePlayPause(item.id);
+                              clickTimeoutRef.current = null;
+                            }, 300); // 300ms threshold
+                          }
+                        }}
+                      >
+                        <source src={item.src} type={`video/${item.src.split('.').pop()}`} />
+                        Your browser does not support the video tag.
+                      </video>
+
+                      {/* Custom Video Controls Overlay - Adjusted bottom position */}
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '22px', // Positioned above the progress bar and text (approx. 16px bar/text + 6px spacing)
+                        left: '10px',
+                        right: '10px',
+                        display: 'flex',
+                        justifyContent: 'space-between', // Space out the controls
+                        alignItems: 'center',
+                        zIndex: 1, // Ensure visibility
+                        color: 'white',
+                      }}>
+                        {/* Play/Pause Button */}
+                        <div
+                          style={{
+                            backgroundColor: customControlBackgroundColor,
+                            borderRadius: '50%',
+                            padding: customControlPadding,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: customControlSize,
+                            height: customControlSize,
+                          }}
+                          onClick={() => togglePlayPause(item.id)}
+                        >
+                          {item.playing ? (
+                              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M14 19V5h4v14zm-8 0V5h4v14z"/></svg>
+                          ) : (
+                              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                          )}
+                        </div>
+
+                        {/* Spacer (to push fullscreen button to the right) */}
+                        <div style={{ flexGrow: 1 }}></div>
+
+                        {/* Fullscreen Button */}
+                        <div
+                          style={{
+                            backgroundColor: customControlBackgroundColor,
+                            borderRadius: '50%',
+                            padding: customControlPadding,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: customControlSize,
+                            height: customControlSize,
+                          }}
+                          onClick={() => toggleFullscreen(item.id)}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7zM5 10h2V7h3V5H5zm12 7h-3v2h5v-5h-2zM14 5v2h3v3h2V5z"/></svg>
+                        </div>
+                      </div>
+
+
+                      {/* Mute/Unmute Icon Overlay - Still using react-icons */}
+                      {/* Positioned separately from the bottom control bar */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '10px',
+                          right: '10px',
+                          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                          borderRadius: '50%',
+                          padding: '8px',
+                          cursor: 'pointer',
+                          zIndex: 1, // Ensure visibility
+                          color: 'white',
+                          fontSize: '1.2rem',
+                          display: 'flex',
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}
+                        onClick={() => toggleMute(item.id)}
+                      >
+                        {item.muted ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .9-.2 1.75-.54 2.54l1.47 1.47A9.994 9.994 0 0 0 22 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+                        ) : (
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM19 12c0 2.59-1.72 4.79-4.11 5.33L16.89 19A10 10 0 0 0 22 12c0-4.41-3.59-8-8-8v2c2.98 0 5.45 2.18 5.92 5h-2.02c-.45-1.77-2.01-3-3.9-3-2.21 0-4 1.79-4 4s1.79 4 4 4c1.89 0 3.45-1.23 3.9-3H19z"/></svg>
+                        )}
+                      </div>
+
+                      {/* Progress Bar Container (Visible for video items in both normal and fullscreen) */}
+                      {item.type === 'video' && ( // Progress bar visible in fullscreen too
+                          <div style={{
+                              position: 'absolute', // Position relative to the video container
+                              bottom: '4px', // Move slightly up from the very bottom
+                              left: '0',
+                              right: '0',
+                              height: '16px', // Increased height for text visibility
+                              backgroundColor: 'transparent', // Lighter background for better contrast
+                              cursor: 'pointer',
+                              zIndex: 9999999, // Ensure visibility above the video
+                              display: 'flex', // Use flexbox for internal alignment
+                              alignItems: 'center', // Vertically center content
+                              paddingLeft: '10px', // Add padding for text
+                              paddingRight: '10px', // Add padding for dot/fill
+                          }}
+                          onClick={(e) => handleSeek(item.id, e)}
+                          >
+                              {/* Current time / Duration text - Positioned within the progress bar container */}
+                            <div style={{
+                                color: 'white',
+                                fontSize: '0.7rem', // Slightly smaller font for fit
+                                marginRight: 'auto', // Push time text to the left
+                                textShadow: '1px 1px 2px rgba(0,0,0,0.5)', // Add shadow for readability
+                                pointerEvents: 'none', // Prevent clicks on text from interfering with seek
+                                zIndex: 2, // Ensure text is above the fill and background
+                            }}>
+                                {formatTime(item.currentTime)} / {formatTime(item.duration)}
+                            </div>
+
+                            {/* Progress Bar Visual */}
+                            <div style={{
+                                flexGrow: 1, // Allows the bar to take up remaining space
+                                height: '4px', // Height of the progress bar line itself
+                                backgroundColor: 'rgba(255, 255, 255, 0.3)', // Background of the bar line
+                                borderRadius: '2px', // Rounded corners for the bar line
+                                position: 'relative', // Needed for positioning the dot
+                                marginLeft: '10px', // Space between time text and bar
+                            }}>
+                                  {/* Progress Fill */}
+                                <div style={{
+                                    height: '100%',
+                                    width: item.duration > 0 ? `${(item.currentTime / item.duration) * 100}%` : '0%',
+                                    backgroundColor: '#96105E', // Color of the filled progress
+                                    borderRadius: '2px', // Match parent border radius
+                                    transition: 'width 0.2s linear', // Smooth transition
+                                    position: 'relative', // Needed for the dot
+                                }}>
+                                </div>
+                                  {/* Progress Dot - Positioned relative to the fill's parent (the bar visual div) */}
+                                  {item.duration > 0 && ( // Only show dot if duration is known
+                                      <div style={{
+                                          position: 'absolute',
+                                          left: item.duration > 0 ? `${(item.currentTime / item.duration) * 100}%` : '0%', // Position based on progress percentage
+                                          top: '50%',
+                                          transform: 'translate(-50%, -50%)', // Center the dot
+                                          width: '12px', // Size of the dot
+                                          height: '12px', // Size of the dot
+                                          borderRadius: '50%',
+                                          backgroundColor: 'white', // Color of the dot
+                                          zIndex: 3, // Ensure dot is above everything in the bar
+                                          pointerEvents: 'none', // Prevent clicks on dot from interfering with seek
+                                      }}></div>
+                                  )}
+                            </div>
+                          </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* Fading Heart Icon - Conditionally rendered and animated */}
+                  {fadingHeartVisible[item.id] && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      zIndex: 2, // Ensure it's above video and controls/progress bar
+                      animation: 'fade-in-out 1s ease-out',
+                    }}>
+                      {/* EMBEDDED SVG for the large fading heart */}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="#96105E"
+                        width={fadingHeartSize}
+                        height={fadingHeartSize}
+                      >
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                      </svg>
+                      </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Icons Container - Hide icons container when a video is in fullscreen */}
+              {fullscreenItemId !== item.id && (
+                <div className='icons-container' style={{
+                  display: 'flex',
+                  flexDirection: 'column', // Default to column for larger screens
+                  marginLeft: '20px',
+                  alignItems: 'center',
+                  flexShrink: 0, // Prevent shrinking
+                }}>
+
+                  {/* Profile Icon (Large size) */}
+                  <div style={{
+                      marginBottom: standardSpacing,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      width: profileIconSize,
+                      height: profileIconSize,
+                  }}
+                  onClick={() => console.log(`Profile icon clicked for item ${item.id}`)}
                   >
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                  </svg>
+                      <img
+                          src="/icons/profileicon.svg"
+                          alt="Profile Icon"
+                          style={{
+                              display: 'block',
+                              width: '100%',
+                              height: '100%',
+                              }}
+                          />
                   </div>
+
+
+                  {/* Action Icons (Sizes adjusted based on visual reference) */}
+
+                  {/* Shopping Cart Icon - Medium size */}
+                  <button type='button' style={{padding:"0",marginBottom: "20px", background:"#666", borderRadius:"50%", width:"45px",height:"45px", border:"none"}}>
+                      <img
+                       src="/cart1.png"
+                       alt="Add to Cart Icon"
+                       style={{ marginBottom: 0, width: "50%", height: "auto", cursor: 'pointer',margin:"auto", display:"flex", alignItems:"center",justifyContent:"center"}}
+                       onClick={() => handleAddToCartClick(item.id)}
+                       />
+                </button>
+                  {/* Like Icon and Count - Slightly larger base size */}
+                  <div
+                    style={{ marginBottom: "0px", cursor: 'pointer' }}
+                    onClick={() => handleLikeClick(item.id)}
+                  >
+                      {/* EMBEDDED SVG for dynamic color change */}
+                      <img
+    src={item.liked ? "/icons/filledlike.svg" : "/icons/like.svg"}
+    alt="Like Icon"
+    style={{ marginBottom: 0, width: '40px', height: '40px', cursor: 'pointer' }}
+/>
+                    </div>
+                    {/* Static Like Count */}
+                    <div style={{ marginBottom: "20px", fontSize: '14px', color: 'white', textAlign: 'center' }}>
+                      247K
+                    </div>
+
+                  {/* Comment Icon and Count - Smallest size */}
+                  <img
+                    src="/comment.png"
+                    alt="Comment Icon"
+                    style={{ marginBottom: reducedSpacing, width: smallestActionIconSize, height: smallestActionIconSize, cursor: 'pointer' }}
+                    onClick={() => handleCommentClick(item.id)}
+                  />
+                    {/* Static Comment Count */}
+                    <div style={{ marginBottom: "20px", fontSize: '14px', color: 'white', textAlign: 'center' }}>
+                      1,495
+                    </div>
+
+                  {/* Share Icon - Smallest size */}
+                  <img
+                    src="/shared.png"
+                    alt="Share Icon"
+                    style={{ marginBottom: "20px", width: engagementIconSize, height: engagementIconSize, cursor: 'pointer' }}
+                    onClick={() => handleShareClick(item.id)}
+                  />
+
+                  {/* Save Icon (three dots) - Changed to handle pop-out menu */}
+                  <div
+                    style={{ marginBottom: '0', cursor: 'pointer', position: 'relative' }} // Added position: relative for the pop-out
+                    onClick={() => toggleThreeDotsMenu(item.id)} // Toggle the menu for this item
+                  >
+                    <img
+                          src="/dots.png"
+                          alt="More options"
+                          style={{
+                              display: 'block',
+                              width: '100%',
+                              height: '100%',
+                              }}
+                          />
+                    {/* Three Dots Pop-out Menu - Conditionally rendered */}
+                    {showThreeDotsMenu === item.id && (
+                      <div style={{
+                        position: 'absolute',
+                        bottom: 'calc(70%)', // Position above the three dots icon
+                        left: '170%', // Align to the right of the three dots
+                        backgroundColor: '#333', // Dark background for the menu
+                        borderRadius: '8px',
+                        padding: '0', // Set padding to 0, individual item padding will control spacing
+                        boxShadow: '0px 4px 10px rgba(0,0,0,0.5)',
+                        zIndex: 10, // Ensure it's above other elements
+                        width: '273px', // Fixed width for the menu
+                        height: '172px', // Fixed height for the menu
+                        textAlign: 'left',
+                        display: 'flex', // Use flexbox for vertical alignment
+                        flexDirection: 'column', // Arrange items in a column
+                        justifyContent: 'space-around', // Distribute space equally
+                        overflow: 'hidden', // Added to ensure content respects the border-radius
+
+                      }}>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '0px 15px', // Only horizontal padding for items
+                            color: 'white',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            transition: 'background-color 0.2s ease',
+                            flexGrow: 1, // Allow each item to grow and fill available space
+                            justifyContent: 'flex-start', // Align content to the start
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#555'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#333'}
+                          onClick={() => handleSaveClick(item.id)} // Call handleSaveClick
+                        >
+                          <img
+                            src="/icons/saveoption.svg" // Use the provided save option icon
+                            alt="Save"
+                            style={{ width: '20px', height: '20px', marginRight: '10px' }}
+                          />
+                          {item.saved ? 'Unsave' : 'Save'}
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '0px 15px',
+                            color: 'white',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            transition: 'background-color 0.2s ease',
+                            flexGrow: 1, // Allow each item to grow and fill available space
+                            justifyContent: 'flex-start', // Align content to the start
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#555'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#333'}
+                          onClick={() => { console.log(`Don't recommend this channel clicked for item ${item.id}`); setShowThreeDotsMenu(null); }}
+                        >
+                          <img
+                            src="/icons/dontrecommend.svg" // Placeholder or actual icon for "Don't recommend"
+                            alt="Don't recommend"
+                            style={{ width: '20px', height: '20px', marginRight: '10px' }}
+                          />
+                          Don't recommend this channel
+                        </div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '0px 15px',
+                            color: 'white',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            transition: 'background-color 0.2s ease',
+                            flexGrow: 1, // Allow each item to grow and fill available space
+                            justifyContent: 'flex-start', // Align content to the start
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#555'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#333'}
+                          onClick={() => { console.log(`Report clicked for item ${item.id}`); setShowThreeDotsMenu(null); }}
+                        >
+                          <img
+                            src="/icons/saveoption.svg" // Placeholder or actual icon for "Report"
+                            alt="Report"
+                            style={{ width: '20px', height: '20px', marginRight: '10px' }}
+                          />
+                          Report
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+
+                </div>
+              )}
+
+              {/* Text Overlay Container - Positioned absolutely within the main item container */}
+              {fullscreenItemId !== item.id && (
+                <div className='text-overlay-container' style={{
+                  position: 'absolute',
+                  bottom: item.type === 'video' ? '0px' : '0px',
+                  left: '0',
+                  right: '70px', // Default for larger screens to leave space for icons
+                  color: 'white',
+                  zIndex: 3,
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                  background: 'linear-gradient(to bottom, rgba(8, 9, 13, 0) 0%, rgba(8, 9, 13, 0.9) 100%)',
+                  padding: "10px",
+                  paddingBottom: item.type === 'video' ? "75px" : "10px",
+                  borderBottomLeftRadius: "9px",
+                  borderBottomRightRadius: "10px"
+                }}>
+                  {/* Logo + Brand Info Section */}
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '6px' }}>
+                    <img
+                      src={item.logo}
+                      alt="brand logo"
+                      className='brand-logo' style={{ width: '36px', height: '36px', objectFit: 'contain', marginRight: '10px', borderRadius: '4px' }}
+                    />
+                    <div className='brand-info'>
+                      <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '2px' }}>{item.profileName}</div>
+                      <div style={{ fontSize: '0.9rem', color: '#ccc' }}>{item.username}</div>
+                    </div>
+                  </div>
+
+                  {/* Hashtags */}
+                  <div className='hashtag-text' style={{ fontSize: '0.9rem', lineHeight: '1.3', marginTop: '4px' }}>
+                    {item.caption}
+                  </div>
+                </div>
               )}
             </div>
-
-            {/* Icons Container - Hide icons container when a video is in fullscreen */}
-            {fullscreenItemId !== item.id && (
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                marginLeft: '20px',
-                alignItems: 'center',
-                // paddingBottom: standardSpacing,
-                paddingBottom: 0,
-              }}>
-
-                {/* Profile Icon (Large size) */}
-                <div style={{
-                    marginBottom: standardSpacing,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: profileIconSize,
-                    height: profileIconSize,
-                }}
-                onClick={() => console.log(`Profile icon clicked for item ${item.id}`)}
-                >
-                    <img
-                        src="/icons/profileicon.svg"
-                        alt="Profile Icon"
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            height: '100%',
-                            }}
-                        />
-                </div>
-
-
-                {/* Action Icons (Sizes adjusted based on visual reference) */}
-
-                {/* Shopping Cart Icon - Medium size */}
-                <button type='buttn' style={{padding:"0",marginBottom: "20px", background:"#666", borderRadius:"50%", width:"45px",height:"45px", border:"none"}}>
-                    <img
-                     src="/cart1.png"
-                     alt="Add to Cart Icon"
-                     style={{ marginBottom: 0, width: "50%", height: "auto", cursor: 'pointer',margin:"auto", display:"flex", alignItems:"center",justifyContent:"center"}}
-                     onClick={() => handleAddToCartClick(item.id)}
-                     />
-              </button>
-                {/* Like Icon and Count - Slightly larger base size */}
-                <div
-                  style={{ marginBottom: "0px", cursor: 'pointer' }}
-                  onClick={() => handleLikeClick(item.id)}
-                >
-                    {/* EMBEDDED SVG for dynamic color change */}
-                    <img
-  src={item.liked ? "/icons/filledlike.svg" : "/icons/like.svg"}
-  alt="Like Icon"
-  style={{ marginBottom: 0, width: smallestActionIconSize, height: smallestActionIconSize, cursor: 'pointer' }}
-/>
-                  </div>
-                  {/* Static Like Count */}
-                  <div style={{ marginBottom: "20px", fontSize: '14px', color: 'white', textAlign: 'center' }}>
-                    247K
-                  </div>
-
-                {/* Comment Icon and Count - Smallest size */}
-                <img
-                  src="/comment.png"
-                  alt="Comment Icon"
-                  style={{ marginBottom: reducedSpacing, width: smallestActionIconSize, height: smallestActionIconSize, cursor: 'pointer' }}
-                  
-                />
-                  {/* Static Comment Count */}
-                  <div style={{ marginBottom: "20px", fontSize: '14px', color: 'white', textAlign: 'center' }}>
-                    1,495
-                  </div>
-
-                {/* Share Icon - Smallest size */}
-                <img
-                  src="/shared.png"
-                  alt="Share Icon"
-                  style={{ marginBottom: "20px", width: engagementIconSize, height: engagementIconSize, cursor: 'pointer' }}
-                  onClick={() => handleShareClick(item.id)}
-                />
-
-                {/* Save Icon - Slightly larger base size */}
-                <div
-                  style={{ marginBottom: '20px', cursor: 'pointer' }}
-                  onClick={() => handleSaveClick(item.id)}
-                >
-                  {/* EMBEDDED SVG for dynamic color change */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth={item.saved ? "4" : "2"}
-                    width={engagementIconSize}
-                    height={engagementIconSize}
-                  >
-                    <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z"/>
-                  </svg>
-                </div>
-                <div
-                  style={{ marginBottom: '0', cursor: 'pointer' }}
-                >
+          ))}
+        </div>
+        {showOpenCart ?
+          <div style={{display:"block",position:"fixed", top:"0px",zIndex:"9999", right:"0", height:"100vh", width:"100%", background:"rgba(20,20,20,0.5)"}}>
+            <div style={{display:"block",position:"fixed", top:"58.5px",zIndex:"99999", right:"0", height:"100vh", width:"340px", background:"rgba(20,20,20,1)"}}>
+              <div style={{margin:"15px", borderBottom:"1px solid #454545"}}>
+                <button style={{ paddingBottom:"15px",background:"transparent", width:"100%", border:"none",  display:"flex", justifyContent:"flex-end"}} onClick={() => {setOpenCart(false)}}>
                   <img
-                        src="/dots.png"
-                        alt="Profile Icon"
-                        style={{
-                            display: 'block',
-                            width: '100%',
-                            height: '100%',
-                            }}
-                        />
-                </div>
-                
-
+                    src={"/closeicon.png"}
+                    alt={`cdiorbeauty`}
+                    style={{ width: 'auto', height: 'auto', borderRadius: '0px' }}
+                  />
+                </button>
               </div>
-            )}
-
-            {/* Text Overlay Container - Positioned absolutely within the main item container */}
-{fullscreenItemId !== item.id && (
-  <div style={{
-    position: 'absolute',
-    bottom: item.type === 'video' ? '0px' : '0px',
-    left: '0',
-    right: '70px',
-    color: 'white',
-    zIndex: 3,
-    textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-    background: 'linear-gradient(to bottom, rgba(8, 9, 13, 0) 0%, rgba(8, 9, 13, 0.9) 100%)',
-    padding: "10px",
-    paddingBottom: item.type === 'video' ? "75px" : "10px",
-    borderBottomLeftRadius: "9px",
-    borderBottomRightRadius: "10px"
-  }}>
-    {/* Logo + Brand Info Section */}
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '6px' }}>
-      <img
-        src={item.logo}
-        alt="brand logo"
-        className='brand-logo' style={{ width: '36px', height: '36px', objectFit: 'contain', marginRight: '10px', borderRadius: '4px' }}
-      />
-      <div className='brand-info'>
-        <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '2px' }}>{item.profileName}</div>
-        <div style={{ fontSize: '0.9rem', color: '#ccc' }}>{item.username}</div>
-      </div>
-    </div>
-
-    {/* Hashtags */}
-    <div className='hashtag-text' style={{ fontSize: '0.9rem', lineHeight: '1.3', marginTop: '4px' }}>
-      {item.caption}
-    </div>
-  </div>
-)}
-          </div>
-        ))}
-
-        <style>{`
-          @keyframes fade-in-out {
-            0% {
-              opacity: 0;
-              transform: translate(-50%, -50%) scale(0.8);
-            }
-            20% {
-              opacity: 0.5;
-              transform: translate(-50%, -50%) scale(1);
-            }
-            80% {
-              opacity: 0.5;
-              transform: translate(-50%, -50%) scale(1);
-            }
-            100% {
-              opacity: 0;
-              transform: translate(-50%, -50%) scale(1.2);
-            }
-          }
-
-          /* Note: The fullscreen styling is handled inline in the JSX
-                  to dynamically apply based on the fullscreenItemId state.
-                  The commented out CSS below is an alternative approach
-                  if you preferred using standard CSS pseudo-classes.
-          */
-          /*
-          :-webkit-full-screen .video-container {
-              width: 100vw !important;
-              height: 100vh !important;
-              background-color: #141414 !important;
-              border-radius: 0 !important;
-          }
-          :-moz-full-screen .video-container {
-              width: 100vw !important;
-              height: 100vh !important;
-              background-color: #141414 !important;
-              border-radius: 0 !important;
-          }
-          :fullscreen .video-container {
-              width: 100vw !important;
-              height: 100vh !important;
-              background-color: #141414 !important;
-              border-radius: 0 !important;
-          }
-          :-ms-fullscreen .video-container {
-              width: 100vw !important;
-              height: 100vh !important;
-              background-color: #141414 !important;
-              border-radius: 0 !important;
-          }
-
-          :-webkit-full-screen video {
-              object-fit: contain !important;
-          }
-          :-moz-full-screen video {
-              object-fit: contain !important;
-          }
-          :fullscreen video {
-              object-fit: contain !important;
-          }
-          :-ms-fullscreen video {
-              object-fit: contain !important;
-          }
-          */
-        `}</style>
-      </div>
-      {showOpenCart ? 
-        <div style={{display:"block",position:"fixed", top:"0px",zIndex:"9999", right:"0", height:"100vh", width:"100%", background:"rgba(20,20,20,0.5)"}}>
-          <div style={{display:"block",position:"fixed", top:"58.5px",zIndex:"99999", right:"0", height:"100vh", width:"340px", background:"rgba(20,20,20,1)"}}>
-            <div style={{margin:"15px", borderBottom:"1px solid #454545"}}>
-              <button style={{ paddingBottom:"15px",background:"transparent", width:"100%", border:"none",  display:"flex", justifyContent:"flex-end"}} onClick={() => {setOpenCart(false)}}>
-                <img
-                  src={"/closeicon.png"}
-                  alt={`cdiorbeauty`}
-                  style={{ width: 'auto', height: 'auto', borderRadius: '0px' }}
-                />
-              </button>
-            </div>
-            <div style={{padding:"0 15px",}}>
-              <div style={{display: 'flex',alignItems:"center",justifyContent: 'space-between', marginTop:"25px"}}>                                  
-                              <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start',}}>    
-                                      <img
-                                          src={'/gucci.png'}
-                                          alt={`Brand`}
-                                          style={{width: "auto",cursor:"pointer",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"15px",}}
-                                        />
-                                      <span style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', fontWeight:"bold", fontSize:"20px", color:"#fff"}}>Dior</span>
-                                      </div>
-                                      <div onClick={() => handleRedirection()} style={{display: 'flex',alignItems:"center",justifyContent: 'flex-end',cursor:"pointer"}}>    
+              <div style={{padding:"0 15px",}}>
+                <div style={{display: 'flex',alignItems:"center",justifyContent: 'space-between', marginTop:"25px"}}>
+                                <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start',}}>
                                         <img
-                                          src={"/back.png"}
-                                          alt={`cdiorbeauty`}
-                                          style={{ width: 'auto', height: 'auto', borderRadius: '0px' }}
-                                        />
+                                            src={'/gucci.png'}
+                                            alt={`Brand`}
+                                            style={{width: "auto",cursor:"pointer",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"15px",}}
+                                          />
+                                        <span style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', fontWeight:"bold", fontSize:"20px", color:"#fff"}}>Dior</span>
+                                        </div>
+                                        <div onClick={() => handleRedirection()} style={{display: 'flex',alignItems:"center",justifyContent: 'flex-end',cursor:"pointer"}}>
+                                          <img
+                                            src={"/back.png"}
+                                            alt={`cdiorbeauty`}
+                                            style={{ width: 'auto', height: 'auto', borderRadius: '0px' }}
+                                          />
+                                        </div>
                                       </div>
-                                    </div>
-                                    <div style={{display: 'block', marginTop:"15px"}}>
-                                      <p style={{display: 'block', fontSize:"18px", marginTop:"10px", color:"#d2d2d2",width:"330px", whiteSpace: "nowrap",overflow: "hidden", textOverflow: "ellipsis"}}>Dior Prestige La Micro-Huile de Rose Activated Serum</p>
-                                    </div>
-                                    <div style={{display: 'flex', color:"#fff",alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>
-                                      <p style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginRight:"20px",fontSize:"px"}}>$100.00</p>
-                                      <img
-                                          src={'/star.png'}
-                                          alt={`Brand`}
-                                          style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"6px",marginTop:"3px"}}
-                                        />
-                                        <p style={{fontSize:"13px", marginTop:"3px"}}>( 32 review )</p>
-                                    </div>
-                                    <div style={{display: 'flex', marginTop:"30px"}}>
-                                          <div>
-                                          <span style={{  
-                                            color:"#fff",
-                                            fontSize:"18px",
-                                              }}>Quantity</span>
-                                              <button type='button' style={{  
-                                                background: 'transparent',
-                                                border:"1px solid #d7d7d7",
-                                                padding:"8px 15px",
-                                                display:"flex",
-                                                alignItems:"center",
-                                                justifyContent:"space-between",
-                                                borderRadius:"20px",
-                                                width:"127px",
-                                                height:"49px",
-                                                marginRight:"10px",
-                                                marginTop:"20px",
-                                              }}
-                                            >
-                                              <span style={{fontSize:"20px", color:"#fff", width:"24px",
-                                                height:"24px", display:"flex",
-                                                alignItems:"center",
-                                                justifyContent:"center",}}>-</span>
-                                              <input type='text' value="1" style={{fontSize:"14px",color:"#fff", width:"20px", background:"transparent", border:"none", textAlign:"center"}}/>
-                                              <span style={{fontSize:"20px", color:"#fff", width:"24px",
-                                                height:"24px", display:"flex",
-                                                alignItems:"center",
-                                                justifyContent:"center",}}>+</span>
-                                          </button>
-                                          </div>
-                                          <div>
-                                          <span style={{  
-                                            color:"#fff",
-                                            fontSize:"18px",
-                                            marginLeft:"30px",
-                                              }}>Size</span>
-                                            <div className="dropdown" style={{ position: 'relative', display: 'block' }}>
-                                              <button onClick={toggleDropdown} className="dropdown-button" style={{
-                                                padding: '10px 20px',
-                                                backgroundColor: '#333',
-                                                color: 'white',
-                                                border: "1px solid #d7d7d7",
-                                                cursor: 'pointer',
-                                                background:"transparent",
-                                                display: 'block',
-                                                display:"flex",
-                                                alignItems:"center",
-                                                justifyContent:"space-between",
-                                                borderRadius:"20px",
-                                                width:"127px",
-                                                height:"49px",
-                                                marginLeft:"30px",
-                                                marginTop:"20px",
+                                      <div style={{display: 'block', marginTop:"15px"}}>
+                                        <p style={{display: 'block', fontSize:"18px", marginTop:"10px", color:"#d2d2d2",width:"330px", whiteSpace: "nowrap",overflow: "hidden", textOverflow: "ellipsis"}}>Dior Prestige La Micro-Huile de Rose Activated Serum</p>
+                                      </div>
+                                      <div style={{display: 'flex', color:"#fff",alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>
+                                        <p style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginRight:"20px",fontSize:"px"}}>$100.00</p>
+                                        <img
+                                            src={'/star.png'}
+                                            alt={`Brand`}
+                                            style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"6px",marginTop:"3px"}}
+                                          />
+                                          <p style={{fontSize:"13px", marginTop:"3px"}}>( 32 review )</p>
+                                      </div>
+                                      <div style={{display: 'flex', marginTop:"30px"}}>
+                                            <div>
+                                            <span style={{
+                                              color:"#fff",
+                                              fontSize:"18px",
+                                                }}>Quantity</span>
+                                                <button type='button' style={{
+                                                  background: 'transparent',
+                                                  border:"1px solid #d7d7d7",
+                                                  padding:"8px 15px",
+                                                  display:"flex",
+                                                  alignItems:"center",
+                                                  justifyContent:"space-between",
+                                                  borderRadius:"20px",
+                                                  width:"127px",
+                                                  height:"49px",
+                                                  marginRight:"10px",
+                                                  marginTop:"20px",
+                                                }}
+                                              >
+                                                <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                                  height:"24px", display:"flex",
+                                                  alignItems:"center",
+                                                  justifyContent:"center",}}>-</span>
+                                                <input type='text' value="1" style={{fontSize:"14px",color:"#fff", width:"20px", background:"transparent", border:"none", textAlign:"center"}}/>
+                                                <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                                  height:"24px", display:"flex",
+                                                  alignItems:"center",
+                                                  justifyContent:"center",}}>+</span>
+                                            </button>
+                                            </div>
+                                            <div>
+                                            <span style={{
+                                              color:"#fff",
+                                              fontSize:"18px",
+                                              marginLeft:"30px",
+                                                }}>Size</span>
+                                              <div className="dropdown" style={{ position: 'relative', display: 'block' }}>
+                                                <button onClick={toggleDropdown} className="dropdown-button" style={{
+                                                  padding: '10px 20px',
+                                                  backgroundColor: '#333',
+                                                  color: 'white',
+                                                  border: "1px solid #d7d7d7",
+                                                  cursor: 'pointer',
+                                                  display:"flex",
+                                                  alignItems:"center",
+                                                  justifyContent:"space-between",
+                                                  borderRadius:"20px",
+                                                  width:"127px",
+                                                  height:"49px",
+                                                  marginLeft:"30px",
+                                                  marginTop:"20px",
 
-                                              }}>
-                                                30ml  
-                                                <img
-                                                  src={'/downmenu.png'}
-                                                  alt={`name`}
-                                                  style={{paddingLeft:"15px",width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginTop:"3px"}}
-                                                />
-                                              </button>
-                                              {isOpenDrp && (
-                                                <div id="dropdownMenu" className="dropdown-content" style={{
-                                                  position: 'absolute',
-                                                  backgroundColor: '#000',
-                                                  boxShadow: '0px 8px 16px rgba(0,0,0,0.2)',
-                                                  minWidth: '100px',
-                                                  zIndex: 1,
                                                 }}>
-                                                  <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>20ml</button>
-                                                  <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>120ml</button>
-                                                  <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>150ml</button>
-                                                </div>
-                                              )}
+                                                  30ml
+                                                  <img
+                                                    src={'/downmenu.png'}
+                                                    alt={`name`}
+                                                    style={{paddingLeft:"15px",width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginTop:"3px"}}
+                                                  />
+                                                </button>
+                                                {isOpenDrp && (
+                                                  <div id="dropdownMenu" className="dropdown-content" style={{
+                                                    position: 'absolute',
+                                                    backgroundColor: '#000',
+                                                    boxShadow: '0px 8px 16px rgba(0,0,0,0.2)',
+                                                    minWidth: '100px',
+                                                    zIndex: 1,
+                                                  }}>
+                                                    <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>20ml</button>
+                                                    <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>120ml</button>
+                                                    <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>150ml</button>
+                                                  </div>
+                                                )}
+                                              </div>
                                             </div>
                                           </div>
-                                        </div>
-                                        <div style={{ display:"flex",alignItems:"center", justifyContent:"center",textAlign: 'center', }} >
-                                        <button style={{ marginTop:"30px", display:"flex",alignItems:"center", justifyContent:"center",marginLeft:"auto",marginRigth:"auto",textAlign: 'center', background:'#96105E', color:'#fff', height:'50px', width:'100%', borderRadius:'30px', border:'1px solid #96105E', fontSize:'16px' }} type='button'>Add to Cart</button>
-                                        </div>
-                                        
+                                          <div style={{ display:"flex",alignItems:"center", justifyContent:"center",textAlign: 'center', }} >
+                                          <button style={{ marginTop:"30px", display:"flex",alignItems:"center", justifyContent:"center",marginLeft:"auto",marginRigth:"auto",textAlign: 'center', background:'#96105E', color:'#fff', height:'50px', width:'100%', borderRadius:'30px', border:'1px solid #96105E', fontSize:'16px' }} type='button'>Add to Cart</button>
+                                          </div>
+
+              </div>
             </div>
           </div>
-        </div>
-      :""}
+        :""}
       </>
-      }
+    )}
     </>
   );
 }

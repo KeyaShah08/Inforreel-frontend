@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // Import arrow icons
-import ProductDetails from './ProductDetails';
+import { useEffect, useRef, useState } from 'react';
 import Marketplace from './Marketplace';
+import ProductDetails from './ProductDetails';
 
 function Beautyshowrooms () {
   const allImages = [
