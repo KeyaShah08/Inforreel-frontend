@@ -16,10 +16,7 @@ function Beautyshowrooms () {
     {img:'/i2.png', Name:"Mac Cosmetics", Smallimg:'/i_12.png'},
     {img:'/i3.png', Name:"Guerlain", Smallimg:'/i_13.png'},
     
-        {img:'/beauty2.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
-
-
-
+    {img:'/beauty2.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
   ];
 
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
@@ -54,8 +51,18 @@ function Beautyshowrooms () {
           left: 0,
           width: '100%',
           minHeight: '100vh',
-          backgroundColor: '#141414'
+          backgroundColor: '#141414',
+          overflowY: 'scroll',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
         }}>
+          <style>
+            {`
+              ::-webkit-scrollbar {
+                display: none;
+              }
+            `}
+          </style>
           <div style={{
             position: 'absolute',
             top: 0,
@@ -132,7 +139,6 @@ function Beautyshowrooms () {
                     </div>
                   ))}
 
-                  {/* Fill empty columns to keep spacing */}
                   {Array.from({ length: 3 - row.length }).map((_, i) => (
                     <div
                       key={`placeholder-${i}`}
