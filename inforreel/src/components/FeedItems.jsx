@@ -1,8 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-// Removed react-icons/fa import as it's not resolvable in this environment.
-// All icons will be replaced with inline SVGs or simple text/emojis.
-// import "../App.css"; // Removed App.css import as it's not resolvable.
-// import BeautyProducts from './BeautyProducts'; // Removed BeautyProducts import as it's not resolvable.
 
 // Helper function to format time in seconds to MM:SS or HH:MM:SS
 const formatTime = (timeInSeconds) => {
@@ -385,128 +381,89 @@ const handleRedirection = () => {
   return (
     <>
     {/* Global Styles for responsiveness */}
-    <style>{`
-      /* Base styles for feed item container */
-      .feed-item-container {
-        display: flex;
-        flex-direction: row; /* Default to row for larger screens */
-        align-items: flex-end;
-        margin-bottom: 70px;
-        width: 100%; /* Take full width of parent */
-        max-width: 550px; /* Max width for the entire post */
-        position: relative;
-      }
+<style>{`
+  .feed-item-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    margin-bottom: 70px;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+  }
 
-      /* Media query for smaller screens (e.g., mobile) */
-      @media screen and (max-width: 768px) {
-        .feed-item-container {
-          flex-direction: column; /* Stack video and icons vertically */
-          align-items: center; /* Center items when stacked */
-          margin-bottom: 40px; /* Adjust margin for mobile */
-        }
+  .media-aspect-ratio-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
 
-        .media-aspect-ratio-container {
-          width: 90vw !important; /* Use 90% of viewport width for video/image */
-          padding-top: calc(16 / 9 * 90vw) !important; /* Maintain 9:16 aspect ratio based on 90vw */
-          border-radius: 10px !important;
-        }
+  /* Feed wrapper centered within remaining 80% of screen (after 20% sidebar) */
+  .feed-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    margin-left: 20%;
+    padding-top: 50px;
+    max-width: 1440px;
+    
+  }
 
-        .brand-logo {
-          width: 28px !important;
-          height: 28px !important;
-          margin-right: 6px !important;
-        }
+  @media screen and (min-width: 1440px) {
+    .media-aspect-ratio-container {
+      width: 340px;
+      height: 605.7px;
+    }
+  }
 
-        .brand-info div {
-          font-size: 0.85rem !important;
-        }
+  @media screen and (min-width: 1280px) and (max-width: 1439px) {
+    .media-aspect-ratio-container {
+      width: 310px;
+      height: 551.1px;
+    }
+  }
 
-        .hashtag-text {
-          font-size: 0.8rem !important;
-        }
+  @media screen and (min-width: 1024px) and (max-width: 1279px) {
+    .media-aspect-ratio-container {
+      width: 270px;
+      height: 480px;
+    }
+  }
 
-        /* Adjust icons container for mobile */
-        .icons-container {
-          flex-direction: row !important; /* Arrange icons horizontally */
-          margin-left: 0 !important; /* Remove left margin */
-          margin-top: 20px; /* Add top margin when stacked */
-          width: 100%; /* Take full width */
-          justify-content: space-around; /* Distribute icons evenly */
-          padding: 0 10px; /* Add some horizontal padding */
-        }
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    .media-aspect-ratio-container {
+      width: 210px;
+      height: 373.3px;
+    }
+  }
 
-        /* Adjust text overlay for mobile */
-        .text-overlay-container {
-          right: 0 !important; /* Extend text overlay to full width */
-          padding-bottom: 75px; /* Ensure space for video controls */
-          border-bottom-left-radius: 9px;
-          border-bottom-right-radius: 9px;
-        }
-      }
+  @media screen and (max-width: 767px) {
+    .feed-item-container {
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 40px;
+    }
 
-      @keyframes fade-in-out {
-        0% {
-          opacity: 0;
-          transform: translate(-50%, -50%) scale(0.8);
-        }
-        20% {
-          opacity: 0.5;
-          transform: translate(-50%, -50%) scale(1);
-        }
-        80% {
-          opacity: 0.5;
-          transform: translate(-50%, -50%) scale(1);
-        }
-        100% {
-          opacity: 0;
-          transform: translate(-50%, -50%) scale(1.2);
-        }
-      }
+    .feed-wrapper {
+      width: 100%;
+      margin-left: 0;
+      padding-top: 50px;
+    }
 
-      /* Fullscreen styles (handled by inline style and global CSS) */
-      :-webkit-full-screen .media-aspect-ratio-container {
-          width: 100vw !important;
-          height: 100vh !important;
-          padding-top: 0 !important; /* Remove padding-top when in fullscreen */
-          background-color: #141414 !important;
-          border-radius: 0 !important;
-      }
-      :-moz-full-screen .media-aspect-ratio-container {
-          width: 100vw !important;
-          height: 100vh !important;
-          padding-top: 0 !important;
-          background-color: #141414 !important;
-          border-radius: 0 !important;
-      }
-      :fullscreen .media-aspect-ratio-container {
-          width: 100vw !important;
-          height: 100vh !important;
-          padding-top: 0 !important;
-          background-color: #141414 !important;
-          border-radius: 0 !important;
-      }
-      :-ms-fullscreen .media-aspect-ratio-container {
-          width: 100vw !important;
-          height: 100vh !important;
-          padding-top: 0 !important;
-          background-color: #141414 !important;
-          border-radius: 0 !important;
-      }
-
-      :-webkit-full-screen .media-aspect-ratio-container video {
-          object-fit: contain !important;
-      }
-      :-moz-full-screen .media-aspect-ratio-container video {
-          object-fit: contain !important;
-      }
-      :fullscreen .media-aspect-ratio-container video {
-          object-fit: contain !important;
-      }
-      :-ms-fullscreen .media-aspect-ratio-container video {
-          object-fit: contain !important;
-      }
-    `}</style>
-
+    .media-aspect-ratio-container {
+      width: 80vw;
+      height: auto;
+      aspect-ratio: 9 / 16;
+    }
+  }
+`}</style>
     {isRedirectioin ? (
         <div style={{
             display: 'flex',
@@ -525,7 +482,7 @@ const handleRedirection = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          maxWidth: '550px', /* Max width for the entire feed column */
+          maxWidth: '1440px', /* Set max width for the entire feed column for the Figma design */
           width: '100%',
           marginTop:"50px"
         }}>
@@ -546,11 +503,9 @@ const handleRedirection = () => {
               {/* This div uses padding-top for the 9:16 aspect ratio */}
               <div className='media-aspect-ratio-container' style={{
                 position: 'relative',
-                // Use calc to leave space for the icons column on larger screens
-                width: fullscreenItemId === item.id ? '100vw' : 'calc(100% - 80px)',
-                // 9:16 aspect ratio: height = (16/9) * width.
-                // padding-top creates vertical space equal to a percentage of the width.
-                paddingTop: fullscreenItemId === item.id ? 'calc(16 / 9 * 100vh)' : 'calc(16 / 9 * (100% - 80px))',
+                width: '320px', // Fixed width for video
+                height: '569px', // Fixed height for video
+                paddingTop: '0', // No padding-top needed when height is fixed
                 overflow: 'hidden',
                 borderRadius: fullscreenItemId === item.id ? '0' : '10px',
                 backgroundColor: fullscreenItemId === item.id ? '#141414' : '#333',
@@ -592,6 +547,7 @@ const handleRedirection = () => {
                           display: 'block',
                           // Use 'contain' in fullscreen, 'cover' otherwise
                           objectFit: fullscreenItemId === item.id ? 'contain' : 'cover',
+                          pointerEvents: 'auto',
                           width: '100%', // Video should fill container
                           height: '100%', // Video should fill container
                         }}
@@ -620,6 +576,18 @@ const handleRedirection = () => {
                         <source src={item.src} type={`video/${item.src.split('.').pop()}`} />
                         Your browser does not support the video tag.
                       </video>
+                      {/* Gradient Overlay Behind Buttons but Above Video */}
+                      <div style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: '180px',
+                        background: 'linear-gradient(to top, rgba(8, 9, 13, 0.7) 0%, rgba(8, 9, 13, 0.4) 40%, rgba(8, 9, 13, 0.1) 75%, transparent 100%)',
+                        zIndex: 2,
+                        pointerEvents: 'none',
+                      }}></div>
+
 
                       {/* Custom Video Controls Overlay - Adjusted bottom position */}
                       <div style={{
@@ -637,6 +605,7 @@ const handleRedirection = () => {
                         <div
                           style={{
                             backgroundColor: customControlBackgroundColor,
+                            zIndex: 999999,
                             borderRadius: '50%',
                             padding: customControlPadding,
                             cursor: 'pointer',
@@ -662,6 +631,7 @@ const handleRedirection = () => {
                         <div
                           style={{
                             backgroundColor: customControlBackgroundColor,
+                            zIndex: 999999,
                             borderRadius: '50%',
                             padding: customControlPadding,
                             cursor: 'pointer',
@@ -765,7 +735,8 @@ const handleRedirection = () => {
                                           height: '12px', // Size of the dot
                                           borderRadius: '50%',
                                           backgroundColor: 'white', // Color of the dot
-                                          zIndex: 3, // Ensure dot is above everything in the bar
+                                          zIndex: 3,
+  pointerEvents: 'none', // Ensure dot is above everything in the bar
                                           pointerEvents: 'none', // Prevent clicks on dot from interfering with seek
                                       }}></div>
                                   )}
@@ -805,7 +776,7 @@ const handleRedirection = () => {
                 <div className='icons-container' style={{
                   display: 'flex',
                   flexDirection: 'column', // Default to column for larger screens
-                  marginLeft: '20px',
+                  marginLeft: '20px', // Spacing between video and icons
                   alignItems: 'center',
                   flexShrink: 0, // Prevent shrinking
                 }}>
@@ -997,15 +968,15 @@ const handleRedirection = () => {
               {fullscreenItemId !== item.id && (
                 <div className='text-overlay-container' style={{
                   position: 'absolute',
-                  bottom: item.type === 'video' ? '0px' : '0px',
+                  bottom: item.type === 'video' ? '70px' : '70px',
                   left: '0',
                   right: '70px', // Default for larger screens to leave space for icons
                   color: 'white',
                   zIndex: 3,
+  pointerEvents: 'none',
                   textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-                  background: 'linear-gradient(to bottom, rgba(8, 9, 13, 0) 0%, rgba(8, 9, 13, 0.9) 100%)',
+                  background: 'none', // Removed gradient as requested
                   padding: "10px",
-                  paddingBottom: item.type === 'video' ? "75px" : "10px",
                   borderBottomLeftRadius: "9px",
                   borderBottomRightRadius: "10px"
                 }}>
@@ -1018,7 +989,7 @@ const handleRedirection = () => {
                     />
                     <div className='brand-info'>
                       <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: '2px' }}>{item.profileName}</div>
-                      <div style={{ fontSize: '0.9rem', color: '#ccc' }}>{item.username}</div>
+                      <div style={{ fontSize: '0.9rem', color: 'white' }}>{item.username}</div>
                     </div>
                   </div>
 
