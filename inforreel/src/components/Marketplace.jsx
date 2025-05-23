@@ -110,6 +110,13 @@ function Marketplace() {
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [showBeautyShow, setShowBeauty] = useState(false);
   const [showBeautyProd, setShowProduct] = useState(false);
+  const [activeSection, setActiveSection] = useState('all');
+
+const handleNavClick = (section) => {
+  setActiveSection(section);
+  scrollToSection(section);
+};
+
   
   const videoRefs = useRef([]);
   const videoRefs1 = useRef([]);
@@ -269,6 +276,44 @@ function Marketplace() {
     //   console.log("Previous Images:", previousImages);
   }, [displayedImages, previousImages]);
 
+  useEffect(() => {
+  const sections = [
+    { id: 'all', label: 'All' },
+    { id: 'all1', label: 'Shop by Brands' },
+    { id: 'brands', label: 'Shop by Products' },
+    { id: 'ambassadors', label: 'Shop by Ambassador' },
+    { id: 'brand-video', label: 'Brand Video' },
+    { id: 'fast-channel', label: 'Fast Channel' },
+    { id: 'vod', label: 'Video On demand' },
+  ];
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+      if (visible.length > 0) {
+        setActiveSection(visible[0].target.id);
+      }
+    },
+    { threshold: 0.6 }
+  );
+
+  sections.forEach((section) => {
+    const el = document.getElementById(section.id);
+    if (el) observer.observe(el);
+  });
+
+  return () => {
+    sections.forEach((section) => {
+      const el = document.getElementById(section.id);
+      if (el) observer.unobserve(el);
+    });
+  };
+}, []);
+
+
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -285,15 +330,41 @@ function Marketplace() {
       <BeautyProducts />
     :(
       <>
-        <ul className='Shownone' style={{margin:"0", padding:"0", listStyle:"none", display:"flex", position: "fixed", top: "20px", zIndex: "9999",  alignItems: "center", justifyContent: "center", left: "25%"}}>
-          <li onClick={() => scrollToSection('all')} style={{cursor:"pointer",fontSize:"14px",color:"#96105E", borderBottom:"1px solid #96105E", padding:"0", margin:"0", fontWeight:"bold"}}>All</li>
-          <li onClick={() => scrollToSection('brands')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Shop by Brands</li>
-          <li onClick={() => scrollToSection('ambassador')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Shop by Ambassador</li>
-          <li onClick={() => scrollToSection('brand-video')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Brand Video</li>
-          <li onClick={() => scrollToSection('fast-channel')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Fast Channel</li>
-          <li onClick={() => scrollToSection('vod')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Video On demand</li>
-        </ul>
-        <div style={{
+        <ul
+  className='Shownone'
+  style={{
+    margin: "0", padding: "0", listStyle: "none", display: "flex",
+    position: "fixed", top: "20px", zIndex: "9999", alignItems: "center", justifyContent: "center", left: "25%"
+  }}
+>
+  {[
+    { id: 'all', label: 'All' },
+    { id: 'all1', label: 'Shop by Brands' },
+    { id: 'brands', label: 'Shop by Products' },
+    { id: 'ambassadors', label: 'Shop by Ambassador' },
+    { id: 'brand-video', label: 'Brand Video' },
+    { id: 'fast-channel', label: 'Fast Channel' },
+    { id: 'vod', label: 'Video On demand' },
+  ].map((item, index) => (
+    <li
+      key={item.id}
+      onClick={() => handleNavClick(item.id)}
+      style={{
+        cursor: "pointer",
+        fontSize: "14px",
+        color: activeSection === item.id ? "#96105E" : "#fff",
+        borderBottom: activeSection === item.id ? "1px solid #96105E" : "none",
+        padding: "0",
+        margin: "0",
+        marginLeft: index === 0 ? "0" : "20px",
+        fontWeight: activeSection === item.id ? "bold" : "normal"
+      }}
+    >
+      {item.label}
+    </li>
+  ))}
+</ul>
+        <div id= "all" style={{
           position: 'absolute',
           top: 0,
           left: 0,
@@ -364,7 +435,7 @@ function Marketplace() {
 
 {/* Shop by Brands Section */}
 {/* Shop by Brands Section */}
-<section id="all" style={{ marginTop: '100vh', textAlign: 'left', position: 'relative' }}>
+<section id="all1" style={{ marginTop: '100vh', textAlign: 'left', position: 'relative' }}>
   <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between" }}>
     <div style={{ display: 'flex', width: "100%", marginTop: '60px', marginBottom: '40px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
       <span style={{ fontWeight: 'bold', color: 'White', fontSize: '32px' }}>Shop by Brands</span>
@@ -517,7 +588,7 @@ function Marketplace() {
             {/* Shop by Product Section */}
 
 {/* Shop by Product Section */}
-<section id="brands" style={{ textAlign: 'left', marginTop: '60px', position: 'relative' }}>
+<section id="brands" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
   <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between" }}>
     <div style={{ display: 'flex', width: "100%", marginTop: '60px', marginBottom: '40px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
       <span style={{ fontWeight: 'bold', color: 'White', fontSize: '32px' }}>Shop by Products</span>
@@ -777,7 +848,7 @@ function Marketplace() {
             
             
 
-<section id="brand-video" style={{ textAlign: 'left', marginTop: '60px', marginBottom: '25px', position: 'relative' }}>
+<section id="brand-video" style={{ textAlign: 'left', marginTop: '40px', marginBottom: '25px', position: 'relative' }}>
   <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
     {/* Title */}
     <div style={{
@@ -944,7 +1015,7 @@ function Marketplace() {
 
 
 {/* Fast Channel Section */}
-<section id="fast-channel" style={{ textAlign: 'left', marginTop: '60px', marginBottom: '25px', position: 'relative' }}>
+<section id="fast-channel" style={{ textAlign: 'left', marginTop: '40px', marginBottom: '25px', position: 'relative' }}>
   <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
     {/* Title */}
     <div style={{
@@ -1109,7 +1180,7 @@ function Marketplace() {
 </section>
 
 {/* Video On Demand Section */}
-<section id="vod" style={{ textAlign: 'left', marginTop: '60px', marginBottom: '25px', position: 'relative' }}>
+<section id="vod" style={{ textAlign: 'left', marginTop: '40px', marginBottom: '25px', position: 'relative' }}>
   <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
     {/* Title */}
     <div style={{
