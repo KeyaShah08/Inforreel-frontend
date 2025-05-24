@@ -3,14 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import BeautyProducts from './BeautyProducts';
 import Beautyshowambassadors from './Beautyshowambassadors';
 import Beautyshowrooms from './Beautyshowrooms';
-<<<<<<< HEAD
-import ProductDetails from './ProductDetails';
-import BeautyProducts from './BeautyProducts';
-import { useKeenSlider } from 'keen-slider/react';
-import 'keen-slider/keen-slider.min.css';
-=======
-
->>>>>>> 8c03216f084dc96ceaa3f04b21d2828eb8710171
 function Marketplace() {
  const allImages = [
     {img:'/helth.png', Name:"Health & Wellness",},
@@ -118,17 +110,6 @@ function Marketplace() {
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [showBeautyShow, setShowBeauty] = useState(false);
   const [showBeautyProd, setShowProduct] = useState(false);
-<<<<<<< HEAD
-  const sliderRef = useRef(null);
-  const [sliderInstanceRef, slider] = useKeenSlider({
-    slides: {
-      perView: 3,
-      spacing: 15,
-    },
-    loop: false,
-    mode: "snap",
-  });
-=======
   const [activeSection, setActiveSection] = useState('all');
 
 const handleNavClick = (section) => {
@@ -136,7 +117,6 @@ const handleNavClick = (section) => {
   scrollToSection(section);
 };
 
->>>>>>> 8c03216f084dc96ceaa3f04b21d2828eb8710171
   
   const videoRefs = useRef([]);
   const videoRefs1 = useRef([]);
