@@ -42,12 +42,15 @@ function FeedItems() {
   const [showOpenCart, setOpenCart] = useState(false);
   // NEW STATE: To control the visibility of the three-dots pop-out menu
   const [showThreeDotsMenu, setShowThreeDotsMenu] = useState(null);
+  // NEW STATE: To control the visibility of the comments overlay
+  const [showCommentsOverlay, setShowCommentsOverlay] = useState(false);
 
 
   const videoRefs = useRef({});
   const clickTimeoutRef = useRef(null); // Ref to store the click timeout ID
   const [isOpenDrp, setIsOpenDrp] = useState(false);
   const [isRedirectioin, setRedirection] = useState(false);
+  const [selectedSize, setSelectedSize] = useState('30ml'); // New state for selected size
 
 
   // Function to toggle mute state for a specific video
@@ -108,15 +111,26 @@ function FeedItems() {
   };
 
   const handleCommentClick = (id) => {
-  setOpenCart(true);
-  console.log(`Comment clicked for item ${id}`);
-};
+    setOpenCart(false); // Close cart if open
+    setShowCommentsOverlay(true); // Open comments overlay
+    console.log(`Comment clicked for item ${id}`);
+  };
+
+  const handleCloseCommentsOverlay = () => {
+    setShowCommentsOverlay(false);
+  };
 
   const handleShareClick = (id) => {
     console.log(`Share clicked for item ${id}`);
   };
   const toggleDropdown = () => {
     setIsOpenDrp(!isOpenDrp);
+  };
+
+  // Function to handle size selection
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+    setIsOpenDrp(false); // Close dropdown after selection
   };
 
   // NEW FUNCTION: To toggle the three-dots menu visibility
@@ -294,54 +308,47 @@ function FeedItems() {
   }, []); // Empty dependency array means this effect runs only once on mount and cleans up on unmount
 
 
-  // Effect to set up Intersection Observer for video autoplay/pause and attach time/metadata listeners
+  // *******************************************************************
+  // MODIFIED useEffect for hover-to-play/pause and time/metadata listeners
+  // *******************************************************************
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.target.tagName === 'VIDEO') {
-            const itemId = parseInt(entry.target.dataset.itemId); // Get item ID from data attribute
-            // Find the item in the current state
-            const currentItem = mediaItems.find(item => item.id === itemId);
+    // Function to play video on hover
+    const handleMouseEnter = (itemId) => {
+      const videoElement = videoRefs.current[itemId];
+      if (videoElement && !fullscreenItemId) { // Don't autoplay if in fullscreen
+        videoElement.play().catch(error => console.error(`Video ${itemId} play failed on hover:`, error));
+        setMediaItems(prevItems =>
+          prevItems.map(item =>
+            item.id === itemId && item.type === 'video' ? { ...item, playing: true, userPaused: false } : item
+          )
+        );
+      }
+    };
 
-            if (entry.isIntersecting) {
-              // Only play if the video is intersecting AND the user hasn't manually paused it
-              // Also, prevent autoplay if currently in fullscreen mode
-              if (currentItem?.type === 'video' && !currentItem.userPaused && fullscreenItemId !== itemId) {
-                 entry.target.play().catch(error => console.error('Video play failed:', error));
-                 setMediaItems(prevItems =>
-                  prevItems.map(item =>
-                    item.id === itemId && item.type === 'video' ? { ...item, playing: true } : item
-                  )
-                );
-              }
-            } else {
-              // Always pause when not intersecting
-               if (currentItem?.type === 'video') { // Added check for video type
-                  entry.target.pause();
-                  setMediaItems(prevItems =>
-                    prevItems.map(item =>
-                      item.id === itemId && item.type === 'video' ? { ...item, playing: false } : item
-                    )
-                  );
-               }
-            }
-          }
-        });
-      },
-      // Keep the threshold at 0.8 or adjust as needed
-      { threshold: 0.5 }
-    );
+    // Function to pause video on mouse leave
+    const handleMouseLeave = (itemId) => {
+      const videoElement = videoRefs.current[itemId];
+      if (videoElement) {
+        videoElement.pause();
+        setMediaItems(prevItems =>
+          prevItems.map(item =>
+            item.id === itemId && item.type === 'video' ? { ...item, playing: false } : item
+          )
+        );
+      }
+    };
 
     mediaItems.forEach(item => {
       if (item.type === 'video' && videoRefs.current[item.id]) {
         const videoElement = videoRefs.current[item.id];
-        // Add a data attribute to easily get the item ID in the observer
-        videoElement.dataset.itemId = item.id;
-        observer.observe(videoElement);
+        const container = videoElement.closest('.feed-item-container');
 
-        // Add event listeners for time update and loaded metadata
-        // Pass item.id to the handlers
+        if (container) {
+          container.addEventListener('mouseenter', () => handleMouseEnter(item.id));
+          container.addEventListener('mouseleave', () => handleMouseLeave(item.id));
+        }
+
+        // Keep timeupdate and loadedmetadata listeners
         videoElement.addEventListener('timeupdate', (e) => handleTimeUpdate(item.id, e));
         videoElement.addEventListener('loadedmetadata', (e) => handleLoadedMetadata(item.id, e));
       }
@@ -351,16 +358,22 @@ function FeedItems() {
       mediaItems.forEach(item => {
         if (item.type === 'video' && videoRefs.current[item.id]) {
            const videoElement = videoRefs.current[item.id];
-          observer.unobserve(videoElement);
-          // Clean up event listeners
+           const container = videoElement.closest('.feed-item-container');
+
+            if (container) {
+                container.removeEventListener('mouseenter', () => handleMouseEnter(item.id));
+                container.removeEventListener('mouseleave', () => handleMouseLeave(item.id));
+            }
+
           videoElement.removeEventListener('timeupdate', (e) => handleTimeUpdate(item.id, e));
           videoElement.removeEventListener('loadedmetadata', (e) => handleLoadedMetadata(item.id, e));
         }
       });
     };
-    // Depend on mediaItems and fullscreenItemId as state changes affect observer behavior
-  }, [mediaItems, fullscreenItemId]);
+    // Depend on mediaItems and fullscreenItemId as state changes affect hover behavior
+  }, [mediaItems, fullscreenItemId]); // Keep dependencies relevant to video state
 
+  // *******************************************************************
 
   const smallestActionIconSize = '28px';
   const engagementIconSize = '22px';
@@ -413,7 +426,7 @@ const handleRedirection = () => {
     margin-left: 20%;
     padding-top: 50px;
     max-width: 1440px;
-    
+
   }
 
   @media screen and (min-width: 1440px) {
@@ -489,6 +502,36 @@ const handleRedirection = () => {
           {mediaItems.map(item => (
             // Main container for each item - Position relative for text overlay
             <div key={item.id} className='feed-item-container'
+            // Add onMouseEnter and onMouseLeave here for the hover effect
+            // Only add for video items, as images don't 'play'
+            onMouseEnter={() => {
+              if (item.type === 'video') {
+                const video = videoRefs.current[item.id];
+                // Only play if not already playing and not in fullscreen
+                if (video && video.paused && fullscreenItemId !== item.id) {
+                  video.play().catch(error => console.error(`Video ${item.id} play failed on hover:`, error));
+                  setMediaItems(prevItems =>
+                    prevItems.map(mediaItem =>
+                      mediaItem.id === item.id ? { ...mediaItem, playing: true, userPaused: false } : mediaItem
+                    )
+                  );
+                }
+              }
+            }}
+            onMouseLeave={() => {
+              if (item.type === 'video') {
+                const video = videoRefs.current[item.id];
+                // Always pause on mouse leave
+                if (video) {
+                  video.pause();
+                  setMediaItems(prevItems =>
+                    prevItems.map(mediaItem =>
+                      mediaItem.id === item.id ? { ...mediaItem, playing: false } : mediaItem
+                    )
+                  );
+                }
+              }
+            }}
             onDoubleClick={() => { // Modified onDoubleClick
               handleLikeClick(item.id); // Always handle like on double click
 
@@ -605,7 +648,6 @@ const handleRedirection = () => {
                         <div
                           style={{
                             backgroundColor: customControlBackgroundColor,
-                            zIndex: 999999,
                             borderRadius: '50%',
                             padding: customControlPadding,
                             cursor: 'pointer',
@@ -631,7 +673,6 @@ const handleRedirection = () => {
                         <div
                           style={{
                             backgroundColor: customControlBackgroundColor,
-                            zIndex: 999999,
                             borderRadius: '50%',
                             padding: customControlPadding,
                             cursor: 'pointer',
@@ -685,7 +726,7 @@ const handleRedirection = () => {
                               height: '16px', // Increased height for text visibility
                               backgroundColor: 'transparent', // Lighter background for better contrast
                               cursor: 'pointer',
-                              zIndex: 9999999, // Ensure visibility above the video
+                              zIndex: 2, // Ensure visibility above the video
                               display: 'flex', // Use flexbox for internal alignment
                               alignItems: 'center', // Vertically center content
                               paddingLeft: '10px', // Add padding for text
@@ -720,7 +761,7 @@ const handleRedirection = () => {
                                     width: item.duration > 0 ? `${(item.currentTime / item.duration) * 100}%` : '0%',
                                     backgroundColor: '#96105E', // Color of the filled progress
                                     borderRadius: '2px', // Match parent border radius
-                                    transition: 'width 0.2s linear', // Smooth transition
+                                    transition: 'width 0.1s linear', // Smooth transition
                                     position: 'relative', // Needed for the dot
                                 }}>
                                 </div>
@@ -808,7 +849,7 @@ const handleRedirection = () => {
                   {/* Action Icons (Sizes adjusted based on visual reference) */}
 
                   {/* Shopping Cart Icon - Medium size */}
-                  <button type='button' style={{padding:"0",marginBottom: "20px", background:"#666", borderRadius:"50%", width:"45px",height:"45px", border:"none"}}>
+                  <button type='button' style={{padding:"0",marginBottom: "20px", background:"#666666", borderRadius:"50%", width:"45px",height:"45px", border:"none"}}>
                       <img
                        src="/cart1.png"
                        alt="Add to Cart Icon"
@@ -873,7 +914,7 @@ const handleRedirection = () => {
                         position: 'absolute',
                         bottom: 'calc(70%)', // Position above the three dots icon
                         left: '170%', // Align to the right of the three dots
-                        backgroundColor: '#333', // Dark background for the menu
+                        backgroundColor: '#333333', // Dark background for the menu
                         borderRadius: '8px',
                         padding: '0', // Set padding to 0, individual item padding will control spacing
                         boxShadow: '0px 4px 10px rgba(0,0,0,0.5)',
@@ -1004,7 +1045,8 @@ const handleRedirection = () => {
         </div>
         {showOpenCart ?
           <div style={{display:"block",position:"fixed", top:"0px",zIndex:"9999", right:"0", height:"100vh", width:"100%", background:"rgba(20,20,20,0.5)"}}>
-            <div style={{display:"block",position:"fixed", top:"58.5px",zIndex:"99999", right:"0", height:"100vh", width:"340px", background:"rgba(20,20,20,1)"}}>
+            <div style={{display:"block",position:"fixed", top:"58.5px",zIndex:"99999", right:"0", height:"100vh", width:"340px", background:"rgba(20,20,20,1)",             border: "1px solid rgba(224, 224, 224, 0.2)", // Very subtle light grey with some transparency
+}}>
               <div style={{margin:"15px", borderBottom:"1px solid #454545"}}>
                 <button style={{ paddingBottom:"15px",background:"transparent", width:"100%", border:"none",  display:"flex", justifyContent:"flex-end"}} onClick={() => {setOpenCart(false)}}>
                   <img
@@ -1015,7 +1057,7 @@ const handleRedirection = () => {
                 </button>
               </div>
               <div style={{padding:"0 15px",}}>
-                <div style={{display: 'flex',alignItems:"center",justifyContent: 'space-between', marginTop:"25px"}}>
+                <div style={{display: 'flex',alignItems:"center",justifyContent: 'space-between', marginTop:"25px", }}>
                                 <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start',}}>
                                         <img
                                             src={'/gucci.png'}
@@ -1045,36 +1087,7 @@ const handleRedirection = () => {
                                           <p style={{fontSize:"13px", marginTop:"3px"}}>( 32 review )</p>
                                       </div>
                                       <div style={{display: 'flex', marginTop:"30px"}}>
-                                            <div>
-                                            <span style={{
-                                              color:"#fff",
-                                              fontSize:"18px",
-                                                }}>Quantity</span>
-                                                <button type='button' style={{
-                                                  background: 'transparent',
-                                                  border:"1px solid #d7d7d7",
-                                                  padding:"8px 15px",
-                                                  display:"flex",
-                                                  alignItems:"center",
-                                                  justifyContent:"space-between",
-                                                  borderRadius:"20px",
-                                                  width:"127px",
-                                                  height:"49px",
-                                                  marginRight:"10px",
-                                                  marginTop:"20px",
-                                                }}
-                                              >
-                                                <span style={{fontSize:"20px", color:"#fff", width:"24px",
-                                                  height:"24px", display:"flex",
-                                                  alignItems:"center",
-                                                  justifyContent:"center",}}>-</span>
-                                                <input type='text' value="1" style={{fontSize:"14px",color:"#fff", width:"20px", background:"transparent", border:"none", textAlign:"center"}}/>
-                                                <span style={{fontSize:"20px", color:"#fff", width:"24px",
-                                                  height:"24px", display:"flex",
-                                                  alignItems:"center",
-                                                  justifyContent:"center",}}>+</span>
-                                            </button>
-                                            </div>
+                                            
                                             <div>
                                             <span style={{
                                               color:"#fff",
@@ -1084,7 +1097,7 @@ const handleRedirection = () => {
                                               <div className="dropdown" style={{ position: 'relative', display: 'block' }}>
                                                 <button onClick={toggleDropdown} className="dropdown-button" style={{
                                                   padding: '10px 20px',
-                                                  backgroundColor: '#333',
+                                                  backgroundColor: '#141414', // Changed to #141414
                                                   color: 'white',
                                                   border: "1px solid #d7d7d7",
                                                   cursor: 'pointer',
@@ -1098,7 +1111,7 @@ const handleRedirection = () => {
                                                   marginTop:"20px",
 
                                                 }}>
-                                                  30ml
+                                                  {selectedSize}
                                                   <img
                                                     src={'/downmenu.png'}
                                                     alt={`name`}
@@ -1113,9 +1126,9 @@ const handleRedirection = () => {
                                                     minWidth: '100px',
                                                     zIndex: 1,
                                                   }}>
-                                                    <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>20ml</button>
-                                                    <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>120ml</button>
-                                                    <button style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>150ml</button>
+                                                    <button onClick={() => handleSizeSelect('20ml')} style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>20ml</button>
+                                                    <button onClick={() => handleSizeSelect('120ml')} style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>120ml</button>
+                                                    <button onClick={() => handleSizeSelect('150ml')} style={{ background:"transparent",border:"none",display: 'block', padding: '12px 16px', color: '#fff' }}>150ml</button>
                                                   </div>
                                                 )}
                                               </div>
@@ -1129,6 +1142,153 @@ const handleRedirection = () => {
             </div>
           </div>
         :""}
+
+        {/* Comments Overlay */}
+        {showCommentsOverlay ? (
+            <div style={{
+                display: 'block',
+                position: 'fixed',
+                top: '0px',
+                zIndex: '9999',
+                right: '0',
+                height: '100vh',
+                width: '100%',
+                background: 'rgba(20,20,20,0.5)' // Semi-transparent background for the overlay
+            }}>
+                <div style={{
+                    display: 'block',
+                    position: 'fixed',
+                    top: '58.5px', // Adjust as needed to align with your design
+                    zIndex: '99999',
+                    right: '0',
+                    height: '100vh',
+                    width: '340px', // Width similar to the cart
+                    background: 'rgba(20,20,20,1)', // Solid background for the comments panel
+                    color: 'white', // Text color
+                    paddingBottom: '60px', // Add space for the input at the bottom
+                                border: "1px solid rgba(224, 224, 224, 0.2)", // Very subtle light grey with some transparency
+
+                }}>
+<div style={{ margin: '15px', borderBottom: '1px solid #454545', paddingBottom: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <h2 style={{ fontSize: '20px', textAlign: 'left', margin: 0 }}>Comments</h2> {/* Add margin: 0 to remove default h2 margin */}
+    <button style={{ background: 'transparent', border: 'none', display: 'flex', justifyContent: 'flex-end', padding: 0 }} onClick={handleCloseCommentsOverlay}> {/* Removed width: '100%' and padding here as flexbox will handle alignment */}
+        <img
+            src={"/closeicon.png"} // Make sure you have this icon available in your public/icons folder
+            alt="Close"
+            style={{ width: 'auto', height: 'auto', borderRadius: '0px' }}
+        />
+    </button>
+</div>
+                    <div style={{ padding: '0 15px', overflowY: 'auto', maxHeight: 'calc(100% - 140px)' }}> {/* Adjusted maxHeight for scrolling */}
+                        {/* Placeholder for individual comments */}
+                        <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'flex-start' }}>
+                            <img
+                                src="/icons/profileicon.svg" // Placeholder for user avatar
+                                alt="User Avatar"
+                                style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
+                            />
+                            <div>
+                                <span style={{ fontWeight: 'bold', fontSize: '14px' }}>Dior@zara_elan</span>
+                                <p style={{ fontSize: '14px', marginTop: '5px' }}>This is an awesome product! Love it! 👍</p>
+                                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px', color: '#ccc', marginTop: '5px' }}>
+                                    <span style={{ marginRight: '15px' }}>1d</span>
+                                    <span style={{ marginRight: '15px', cursor: 'pointer' }}>Reply</span>
+                                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                                        <img
+                                            src="/icons/like.svg" // Placeholder for like icon
+                                            alt="Like Comment"
+                                            style={{ width: '15px', height: '15px', marginRight: '5px', cursor: 'pointer' }}
+                                        />
+                                        15
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Add more comments here as needed */}
+                        <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'flex-start' }}>
+                            <img
+                                src="/icons/profileicon.svg"
+                                alt="User Avatar"
+                                style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
+                            />
+                            <div>
+                                <span style={{ fontWeight: 'bold', fontSize: '14px' }}>BeautyLover</span>
+                                <p style={{ fontSize: '14px', marginTop: '5px' }}>Where can I buy this?</p>
+                                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px', color: '#ccc', marginTop: '5px' }}>
+                                    <span style={{ marginRight: '15px' }}>3h</span>
+                                    <span style={{ marginRight: '15px', cursor: 'pointer' }}>Reply</span>
+                                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                                        <img
+                                            src="/icons/like.svg"
+                                            alt="Like Comment"
+                                            style={{ width: '15px', height: '15px', marginRight: '5px', cursor: 'pointer' }}
+                                        />
+                                        7
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                         <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'flex-start' }}>
+                            <img
+                                src="/icons/profileicon.svg"
+                                alt="User Avatar"
+                                style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
+                            />
+                            <div>
+                                <span style={{ fontWeight: 'bold', fontSize: '14px' }}>SkincareQueen</span>
+                                <p style={{ fontSize: '14px', marginTop: '5px' }}>Obsessed with this routine! ✨</p>
+                                <div style={{ display: 'flex', alignItems: 'center', fontSize: '12px', color: '#ccc', marginTop: '5px' }}>
+                                    <span style={{ marginRight: '15px' }}>10m</span>
+                                    <span style={{ marginRight: '15px', cursor: 'pointer' }}>Reply</span>
+                                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                                        <img
+                                            src="/icons/like.svg"
+                                            alt="Like Comment"
+                                            style={{ width: '15px', height: '15px', marginRight: '5px', cursor: 'pointer' }}
+                                        />
+                                        22
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Add comment input area at the bottom */}
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '0',
+                        left: '0',
+                        right: '0',
+                        padding: '15px',
+                        borderTop: '1px solid #454545',
+                        background: 'rgba(20,20,20,1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                    }}>
+                        <img
+                            src="/icons/profileicon.svg" // Placeholder for current user's avatar
+                            alt="My Avatar"
+                            style={{ width: '30px', height: '30px', borderRadius: '50%', marginRight: '10px' }}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Add a comment..."
+                            style={{
+                                flexGrow: 1,
+                                padding: '10px',
+                                borderRadius: '20px',
+                                border: '1px solid #555',
+                                background: '#333',
+                                color: 'white',
+                                outline: 'none',
+                            }}
+                        />
+                        <button style={{ background: 'none', border: 'none', color: '#96105E', marginLeft: '10px', cursor: 'pointer' }}>
+                            Post
+                        </button>
+                    </div>
+                </div>
+            </div>
+        ) : null}
       </>
     )}
     </>

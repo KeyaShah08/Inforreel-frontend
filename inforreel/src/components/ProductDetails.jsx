@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import BeautyProducts from './BeautyProducts';
 import Beautyshowrooms from './Beautyshowrooms';
 

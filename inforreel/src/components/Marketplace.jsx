@@ -527,17 +527,18 @@ const handleNavClick = (section) => {
         `}
       </style>
 
-      {[
-  { src: '/health/health1.mp4', label: 'Health & Wellness' },
-  { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+      {[  { src: '/Beauty/beauty2.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion2.mp4', label: 'Fashion' },
+
   { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness1.mp4', label: 'Fitness' },
   { src: '/health/health2.mp4', label: 'Health & Wellness' },
-  { src: '/Beauty/beauty2.mp4', label: 'Beauty' },
-  { src: '/Fashion/fashion2.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness2.mp4', label: 'Fitness' },
   { src: '/health/health3.mp4', label: 'Health & Wellness' },
   { src: '/Beauty/beauty3.mp4', label: 'Beauty' },
+    { src: '/health/health1.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+
   { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
   { src: '/health/health4.mp4', label: 'Health & Wellness' },
@@ -1125,8 +1126,6 @@ const handleNavClick = (section) => {
   { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
   { src: '/health/health4.mp4', label: 'Health & Wellness' },
-  { src: '/Beauty/beauty4.mp4', label: 'Beauty' },
-  { src: '/Fashion/fashion4.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness4.mp4', label: 'Fitness' },
   { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
   { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
