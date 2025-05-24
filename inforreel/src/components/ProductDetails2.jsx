@@ -116,13 +116,13 @@ function ProductDetails2() {
   const [isOpen, setIsOpen] = useState(false);
   const [isOpensec, setIssec] = useState(false);
   const [isBack, setBackView] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
   const toggleDropdown = () => {
       setIsOpen(!isOpen);
       setIssec(false);
   };
   const toggleDropdown2 = () => {
-    debugger
     setIssec(!isOpensec);
     setIsOpen(false);
   };
@@ -254,7 +254,9 @@ function ProductDetails2() {
   const handleack = () => {
     setBackView(true);
   };    
- 
+  const handleClickActive = () => {
+    setIsActive(!isActive);
+  };
   return (
     <>
      <style>
@@ -339,6 +341,9 @@ function ProductDetails2() {
             transform: translateY(0);
           }
         }
+        .ActiveBtn {
+          background: #912664 !important;
+        }
       `}
     </style>
     {showBeautyShowroom ? (
@@ -413,7 +418,7 @@ function ProductDetails2() {
         textAlign: 'center',
         boxSizing: 'border-box',
         background: 'rgba(78, 77, 75, 0.45)',
-        paddingLeft: "270px"
+        paddingLeft: "280px"
       }}>
       <section style={{ marginTop: '545px', textAlign: 'left', position:"relative" }}>
       <img
@@ -889,7 +894,8 @@ function ProductDetails2() {
       </div>
     </div>
     )}
-    {(isOpen || isOpensec) && (
+    //first modal 
+    {isOpen  && (
         <div className="modal-overlay">
           <div className="modal" style={{position:"relative"}}>
           <div className="modal-body" style={{position:"relative"}}>
@@ -901,7 +907,6 @@ function ProductDetails2() {
               >
               X
             </button>
-            {isOpen && 
             <div className='FirstSection'>
               <div style={{position:"relative"}}>
                 <Carousel 
@@ -919,12 +924,24 @@ function ProductDetails2() {
                       </div>
                     ))}
                 </Carousel>
-                <div style={{position:"absolute",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.1)", padding:"2px 15px"}}>
+                <div style={{position:"absolute",zIndex: "999",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.1)", padding:"2px 15px"}}>
                   <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
-                    <img
-                      src={"/Icon_12.png"}
-                      alt={`cdiorbeauty`}
-                    />
+                  <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
+                    <button onClick={handleClickActive} className={`${isActive ? "" : "ActiveBtn"}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopLeftRadius:"15px",borderBottomLeftRadius:"15px", height:"21px", borderTopRightRadius:"0",borderBottomRightRadius:"0"}}>
+                      <img
+                        src={"/ImageShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                    <button onClick={handleClickActive} className={`${isActive ? "ActiveBtn" : ""}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopRightRadius:"15px",borderBottomRightRadius:"15px", height:"21px",borderTopLeftRadius:"0",borderBottomLeftRadius:"0"}}>
+                      <img
+                        src={"/videoShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                  </div>
                     <img
                       src={"/zoom.png"}
                       alt={`cdiorbeauty`}
@@ -1087,8 +1104,24 @@ function ProductDetails2() {
                     </div>
                   </div>
                 </div>
-              </div>}
-            {isOpensec && (
+              </div>
+            </div>
+          </div>
+          </div>
+      )}
+// second modal
+{isOpensec && (
+        <div className="modal-overlay">
+          <div className="modal" style={{position:"relative"}}>
+          <div className="modal-body" style={{position:"relative"}}>
+            <button
+                onClick={() => {
+                  setIsOpen(false);
+                  setIssec(false);}}
+                style={{position:"absolute", right:"15px", top:"15px", zIndex:"111111111", background:"#181818", color:"#fff", borderRadius:"50%", width:"36px", height:"36px", border:"none", cursor:"pointer  "}}
+              >
+              X
+            </button>
              <div className='SecondSection'>
               <div style={{position:"relative"}}>
                 <Carousel 
@@ -1106,12 +1139,24 @@ function ProductDetails2() {
                       </div>
                     ))}
                 </Carousel>
-                <div style={{position:"absolute",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.1)", padding:"2px 15px"}}>
+                <div style={{position:"absolute",zIndex: "999",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.1)", padding:"2px 15px"}}>
                   <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
-                    <img
-                      src={"/Icon_12.png"}
-                      alt={`cdiorbeauty`}
-                    />
+                  <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
+                    <button onClick={handleClickActive} className={`${isActive ? "" : "ActiveBtn"}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopLeftRadius:"15px",borderBottomLeftRadius:"15px", height:"21px", borderTopRightRadius:"0",borderBottomRightRadius:"0"}}>
+                      <img
+                        src={"/ImageShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                    <button onClick={handleClickActive} className={`${isActive ? "ActiveBtn" : ""}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopRightRadius:"15px",borderBottomRightRadius:"15px", height:"21px",borderTopLeftRadius:"0",borderBottomLeftRadius:"0"}}>
+                      <img
+                        src={"/videoShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                  </div>
                     <img
                       src={"/zoom.png"}
                       alt={`cdiorbeauty`}
@@ -1426,7 +1471,7 @@ function ProductDetails2() {
                     </div>
                   </div>
                 </div>
-              </div>)}
+              </div>
             </div>
           </div>
           </div>

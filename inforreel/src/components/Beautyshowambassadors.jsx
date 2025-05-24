@@ -74,7 +74,7 @@ function Beautyshowambassadors () {
             textAlign: 'center',
             boxSizing: 'border-box',
             background: 'linear-gradient(to bottom, rgba(177, 165, 150, 0.65) 5%, rgba(78, 77, 75, 0.65) 25%, rgba(20, 20, 20, 0.65) 35%)',
-            paddingLeft: "270px"
+            paddingLeft: "280px"
           }}>
 
             <section style={{ marginTop: '71px', textAlign: 'left' }}>
