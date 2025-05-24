@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import BeautyProducts from './BeautyProducts';
 import Beautyshowambassadors from './Beautyshowambassadors';
 import Beautyshowrooms from './Beautyshowrooms';
+
 function Marketplace() {
  const allImages = [
     {img:'/helth.png', Name:"Health & Wellness",},
@@ -81,7 +82,6 @@ function Marketplace() {
     {img:'/vd3.png', Name:"Sports & Athletics"}, 
   ];
 
-
   const [displayedImages, setDisplayedImages] = useState(allImages.slice(0, 3));
   const [displayedProducts, setDisplayedProducts] = useState(allProducts.slice(0, 3));
   const [displayedAmbassadors, setDisplayedAmbassadors] = useState(allAmbassadors.slice(0, 3));
@@ -121,17 +121,7 @@ const handleNavClick = (section) => {
   const videoRefs = useRef([]);
   const videoRefs1 = useRef([]);
   const videoRefs2 = useRef([]);
-  const playOnHover = (index) => {
-    videoRefs.current[index]?.play();
-  };
 
-  const pauseOnLeave = (index) => {
-    const video = videoRefs.current[index];
-    if (video) {
-      video.pause();
-      video.currentTime = 0;
-    }
-  };
   const nextImage = () => {
     if (imageContainerRef.current && currentIndex + 3 < allImages.length) {
       // Store the current images as previous images
@@ -330,25 +320,6 @@ const handleNavClick = (section) => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  const navBtnStyle = {
-    background: '#9D9A95',
-    border: 'none',
-    borderRadius: '50%',
-    padding: 10,
-    marginLeft: 8,
-    color: '#333',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  };
-  
-  const slideStyle = {
-    height: '200px',
-    borderRadius: '10px',
-    overflow: 'hidden',
-    cursor: 'pointer',
-  };
   return (
     <>
     {showBeautyShowroom ? (
@@ -459,19 +430,6 @@ const handleNavClick = (section) => {
             paddingLeft: "270px"
           }}>
 
-<div style={{marginTop:"900px"}}>
-<button
-            onClick={() => slider?.prev()}
-            style={navBtnStyle}
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <button
-            onClick={() => slider?.next()}
-            style={navBtnStyle}
-          >
-            <ChevronRight size={20} />
-          </button>
 
 
 
@@ -569,17 +527,18 @@ const handleNavClick = (section) => {
         `}
       </style>
 
-      {[
-  { src: '/health/health1.mp4', label: 'Health & Wellness' },
-  { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+      {[  { src: '/Beauty/beauty2.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion2.mp4', label: 'Fashion' },
+
   { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness1.mp4', label: 'Fitness' },
   { src: '/health/health2.mp4', label: 'Health & Wellness' },
-  { src: '/Beauty/beauty2.mp4', label: 'Beauty' },
-  { src: '/Fashion/fashion2.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness2.mp4', label: 'Fitness' },
   { src: '/health/health3.mp4', label: 'Health & Wellness' },
   { src: '/Beauty/beauty3.mp4', label: 'Beauty' },
+    { src: '/health/health1.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+
   { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
   { src: '/health/health4.mp4', label: 'Health & Wellness' },
@@ -1167,8 +1126,6 @@ const handleNavClick = (section) => {
   { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
   { src: '/health/health4.mp4', label: 'Health & Wellness' },
-  { src: '/Beauty/beauty4.mp4', label: 'Beauty' },
-  { src: '/Fashion/fashion4.mp4', label: 'Fashion' },
   { src: '/Fitness/fitness4.mp4', label: 'Fitness' },
   { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
   { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
