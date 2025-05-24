@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import BeautyProducts from './BeautyProducts';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { useEffect, useRef, useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { useNavigate } from 'react-router-dom';
+import BeautyProducts from './BeautyProducts';
 import Beautyshowambassadors from './Beautyshowambassadors';
+
 
 function ProductDetails2() {
   const allImages = [
@@ -117,6 +119,8 @@ function ProductDetails2() {
   const [isOpensec, setIssec] = useState(false);
   const [isBack, setBackView] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const navigate = useNavigate();
+
 
   const toggleDropdown = () => {
       setIsOpen(!isOpen);
@@ -1260,8 +1264,13 @@ function ProductDetails2() {
                                     </div>
                                     <div>
                                     <div style={{position:"relative", display:"flex", marginTop:"25px"}}>
-                                      <button style={{ marginRight: '20px', textAlign: 'center', background:"#96105E", color:"#fff", height:"50px", width:"166px",borderRadius:"10px", border:"1px solid #96105E", fontSize:"16px"}} type='button'>Add to Cart</button>
-                                      <button style={{ marginRight: '0px', textAlign: 'center', background:"transparent", color:"#fff", height:"50px", width:"166px",borderRadius:"10px", border:"1px solid #7B7B7B", fontSize:"16px"}} type='button'>Buy Now</button>
+<button
+    style={{ marginRight: '20px', textAlign: 'center', background:'#96105E', color:'#fff', height:'50px', width:'166px', borderRadius:'10px', border:'1px solid #96105E', fontSize:'16px' }}
+    type='button'
+    onClick={() => navigate('/mycart')} // Add this line
+>
+    Add to Cart
+</button>                                      <button style={{ marginRight: '0px', textAlign: 'center', background:"transparent", color:"#fff", height:"50px", width:"166px",borderRadius:"10px", border:"1px solid #7B7B7B", fontSize:"16px"}} type='button'>Buy Now</button>
                                     </div>
                                     <div style={{display: 'block', marginTop:"15px"}}>
                                       <p style={{display: 'block', fontSize:"16px", marginTop:"5px", color:"#d2d2d2"}}>An anti-aging serum for face and neck, Dior Prestige La Micro-Huile de Rose Activated Serum is the ultimate Dior micro-nutritive supplement for visibly younger, plumper skin.</p>
