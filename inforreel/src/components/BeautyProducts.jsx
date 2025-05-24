@@ -83,6 +83,7 @@ function BeautyProducts () {
   const [selectedOption, setSelectedOption] = useState(''); // State for selected dropdown option
   const [isBack, setBackView] = useState(false); // State for back view
   const [activeFilter, setActiveFilter] = useState("All");
+  const [isActive, setIsActive] = useState(false);
 
 
   const handleChange = (e) => { // Handler for dropdown change
@@ -192,6 +193,9 @@ function BeautyProducts () {
   }, [displayedImages, previousImages]);
   const handleack = () => { // Function to handle back action
     setBackView(true);
+  };
+  const handleClickActive = () => {
+    setIsActive(!isActive);
   };
   return (
     <>
@@ -306,6 +310,9 @@ function BeautyProducts () {
     body {
       overflow-y: scroll;
     }
+    .ActiveBtn {
+      background: #912664 !important;
+    }
   `}
 </style>
 
@@ -331,7 +338,7 @@ function BeautyProducts () {
           textAlign: 'center',
           boxSizing: 'border-box',
           background: 'linear-gradient(to bottom, rgba(177, 165, 150, 0.65) 5%, rgba(78, 77, 75, 0.65) 25%, rgba(20, 20, 20, 0.65) 35%)',
-          paddingLeft: "270px"
+          paddingLeft: "280px"
         }}>
 
 
@@ -1484,12 +1491,24 @@ function BeautyProducts () {
                     </div>
                   ))}
               </Carousel>
-              <div style={{position:"absolute",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.5)", padding:"2px 15px"}}>
+              <div style={{position:"absolute",zIndex: "999",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.5)", padding:"2px 15px"}}>
                 <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
-                  <img
-                    src={"/Icon_12.png"}
-                    alt={`cdiorbeauty`}
-                  />
+                <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
+                    <button onClick={handleClickActive} className={`${isActive ? "" : "ActiveBtn"}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopLeftRadius:"15px",borderBottomLeftRadius:"15px", height:"21px", borderTopRightRadius:"0",borderBottomRightRadius:"0"}}>
+                      <img
+                        src={"/ImageShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                    <button onClick={handleClickActive} className={`${isActive ? "ActiveBtn" : ""}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopRightRadius:"15px",borderBottomRightRadius:"15px", height:"21px",borderTopLeftRadius:"0",borderBottomLeftRadius:"0"}}>
+                      <img
+                        src={"/videoShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                  </div>
                   <img
                     src={"/zoom.png"}
                     alt={`cdiorbeauty`}

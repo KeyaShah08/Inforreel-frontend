@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import BeautyProducts from './BeautyProducts';
 import Beautyshowrooms from './Beautyshowrooms';
+import { Carousel } from 'react-responsive-carousel'; // Import Carousel component
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // Import carousel styles
 
 function ProductDetails() {
   const allImages = [
@@ -44,11 +46,43 @@ function ProductDetails() {
     '/samplevideo1.mp4',
     '/samplevideo4.mp4',
   ];
+  const slides = [
+    { src: "/sl1.png"},
+    { src: "/b13.png"},
+    { src: "/b11.png"},
+    { src: "/sl1.png"},
+    { src: "/b13.png"},
+    { src: "/b11.png"},
+  ];
+  const slides2 = [
+    { src: "/sl1.png"},
+    { src: "/sl2.png"},
+    { src: "/sl3.png"},
+    { src: "/sl1.png"},
+    { src: "/sl2.png"},
+    { src: "/sl3.png"},
+  ];
   const ListItem = [
     {img:'/Li1.png', Date:"5/1/2025", purchsed:"2K purchased", Name:"Prestige Exceptional Micro-Nutritive and Repairing Ritual "},
     {img:'/Li2.png', Date:"5/5/2025", purchsed:"5K purchased", Name:"Forever Glow Luminizer - Limited Edition"},
     {img:'/Li3.png', Date:"5/9/2025", purchsed:"10K purchased", Name:"Diorshow 5 Couleurs - Limited Edition"},
     {img:'/Li4.png', Date:"5/10/2025", purchsed:"12K purchased", Name:"Rouge Dior"},
+  ];
+  const allImagesBottom = [
+    {img:'/b11.png', Name:"Gucci", Smallimg:'/gucci.png'},
+    {img:'/b12.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
+    {img:'/b13.png', Name:"Armani", Smallimg:'/armani.png'},
+    {img:'/b12.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
+    {img:'/b13.png', Name:"Gucci", Smallimg:'/gucci.png'},
+    {img:'/b11.png', Name:"Armani", Smallimg:'/armani.png'},
+  ];
+  const allImagesBottom2 = [
+    {img:'/sp1.png', Name:"Gucci", Smallimg:'/gucci.png'},
+    {img:'/sp2.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
+    {img:'/sp3.png', Name:"Armani", Smallimg:'/armani.png'},
+    {img:'/sp4.png', Name:"Fenty Beauty", Smallimg:'/fentyBeauty.png'},
+    {img:'/sp5.png', Name:"Gucci", Smallimg:'/gucci.png'},
+    {img:'/sp6.png', Name:"Armani", Smallimg:'/armani.png'},
   ];
   const [displayedImages, setDisplayedImages] = useState(allImages.slice(0, 3));
   const [displayedProducts, setDisplayedProducts] = useState(allProducts.slice(0, 3));
@@ -72,6 +106,10 @@ function ProductDetails() {
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [activeTab, setActiveTab] = useState('tab1');
   const [isBack, setBackView] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); 
+  const [isOpensec, setIssec] = useState(false);
+  const [isOpenDrp, setIsOpenDrp] = useState(false); // State for dropdown open status  
+  const [isActive, setIsActive] = useState(false);
   const videoRefs = useRef([]);
   const videoRefsN = useRef([]);
   const videoRefscoll = useRef([]);
@@ -183,11 +221,131 @@ function ProductDetails() {
     // Clear video refs when tab/content changes
     videoRefscoll.current = [];
   }, [activeTab]);
- 
+
+  const toggleDropdown = () => { 
+    setIsOpenDrp(!isOpenDrp);
+    setIssec(false);
+  };
+  const toggleDropdown2 = () => {
+    setIssec(!isOpensec);
+    setIsOpen(false);
+  };
+  const handleClickActive = () => {
+    setIsActive(!isActive);
+  };
   return (
     <>
      <style>
       {`
+      .dropdown {
+        border: 1px solid #ddd;
+        width:200px;
+        height:30px;
+        outline:0;
+        border-radius:4px;
+        background:rgba(0,0,0,0.2);
+        color:#fff;
+      }
+      .carousel .control-dots .dot {
+        background: #797470; 
+        opacity: 0.7;
+        margin: 0 2px;
+      }
+      .select-box:hover {
+        background-color: #f0f0f0;
+      }   
+      .carousel .control-dots .dot.selected {
+        background: #fff;
+        opacity: 1;
+      }
+      .carousel .control-dots .dot:hover {
+        background: #666;
+      }
+      .slide img {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+      }
+      .Effect:nth-of-type(1) .HoverEffect {
+        left:0; 
+      }
+      .Effect:nth-of-type(2) .HoverEffect { 
+        left:auto;
+        right: auto;
+      }
+      .Effect:nth-of-type(n+3) .HoverEffect {
+        right: 20px;
+      }
+      .OnHover .HoverEffect {
+        display:none;
+        transition:all 1s ease-in-out;
+      }
+      .OnHover:hover .HoverEffect {
+        display:block;
+        transition:all 1s ease-in-out;
+      }
+      .HoverEffect {
+        width:36%;
+        position: absolute;
+        z-index:9999;
+        top:0;
+      }
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 11111;
+      }
+      .modal {
+        background: #000;
+        border-radius: 7px;
+        max-width: 78%;
+        width: 90%;
+        max-height: 90vh; 
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        animation: fadeIn 0.3s ease-out;
+        overflow: hidden;
+      }
+      .modal-body {
+        max-height: 92vh;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none; 
+      }
+      .modal-body::-webkit-scrollbar {
+        display: none;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .ImagesAll:nth-child(3n) {
+        margin-right: 0 !important;
+      }
+  
+      /* Hide vertical scrollbar for the whole page */
+      ::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+      }
+      html {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      body {
+        overflow-y: scroll;
+      }
         .custom-input::placeholder {
           color: #000;
           font-weight:500;
@@ -223,6 +381,9 @@ function ProductDetails() {
           color:#96105E;  
           border-bottom: 2px solid #96105E;
         }
+        .ActiveBtn {
+          background: #912664 !important;
+        }
       `}
     </style>
     {showBeautyShowroom ? (
@@ -256,7 +417,8 @@ function ProductDetails() {
         }}>
           <source src="/hero-bg.mp4" type="video/mp4" />
           Your browser does not support the video tag.
-        </video> */}
+        </video> */}    
+        
                   <img
                     src={"/cdiorbeauty.png"}
                     alt={`cdiorbeauty`}
@@ -297,7 +459,7 @@ function ProductDetails() {
         textAlign: 'center',
         boxSizing: 'border-box',
         background: 'linear-gradient(rgba(243, 180, 97, 0.55) 0%, rgba(78, 77, 75, 0.45) 30%, rgba(20, 20, 20, 0.55) 100%)',
-        paddingLeft: "270px"
+        paddingLeft: "280px"
       }}>
       <section style={{ marginTop: '525px', textAlign: 'left', position:"relative" }}>
       <img
@@ -557,7 +719,8 @@ function ProductDetails() {
                     scrollSnapAlign: 'start',
                     transition: 'opacity 0.5s ease-in-out', // Add smooth transition
                     opacity: previousImages.includes(image) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView()}>
+                  }} onClick={() => setIsOpen(true)}>
+                    {/* onClick={() => handleDetailView()} */}
                     <img
                       src={image.img}
                       alt={`Brand ${index + 1}`}
@@ -1097,6 +1260,739 @@ function ProductDetails() {
       </div>
     </div>
     )}
+
+    //first modal 
+    {isOpen && (
+        <div className="modal-overlay">
+          <div className="modal" style={{position:"relative"}}>
+          <div className="modal-body" style={{position:"relative"}}>
+            <button
+                onClick={() => setIsOpen(false)}
+                style={{position:"absolute", right:"15px", top:"15px", zIndex:"111111111", background:"#181818", color:"#fff", borderRadius:"50%", width:"36px", height:"36px", border:"none", cursor:"pointer  "}}
+              >
+              X
+            </button>
+            <div style={{position:"relative"}}>
+              <Carousel 
+                autoPlay
+                interval={2000} 
+                infiniteLoop 
+                howStatus={false} 
+                showArrows={false} 
+                showThumbs={false} 
+                showStatus={false} 
+              >
+                  {slides.map((slide, index) => (
+                    <div key={index}>
+                      <img src={slide.src} alt={`Slide ${index + 1}`} />
+                    </div>
+                  ))}
+              </Carousel>
+              <div style={{position:"absolute", zIndex: "999",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.5)", padding:"2px 15px"}}>
+                <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
+                    <button onClick={handleClickActive} className={`${isActive ? "" : "ActiveBtn"}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopLeftRadius:"15px",borderBottomLeftRadius:"15px", height:"21px", borderTopRightRadius:"0",borderBottomRightRadius:"0"}}>
+                      <img
+                        src={"/ImageShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                    <button onClick={handleClickActive} className={`${isActive ? "ActiveBtn" : ""}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopRightRadius:"15px",borderBottomRightRadius:"15px", height:"21px",borderTopLeftRadius:"0",borderBottomLeftRadius:"0"}}>
+                      <img
+                        src={"/videoShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                  </div>
+                  <img
+                    src={"/zoom.png"}
+                    alt={`cdiorbeauty`}
+                  />
+                </div>
+              </div>
+            </div>
+            <div style={{padding:"15px 30px", background:"linear-gradient(rgba(243, 180, 97, 0.55) 0%, rgba(78, 77, 75, 0.45) 30%, rgba(20, 20, 20, 0.55) 100%)", height:"100%"}}>
+              <div style={{marginTop: '0px'}}>
+                                <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>                                  
+                                  <img
+                                      src={'/be1_2.png'}
+                                      alt={`name`}
+                                      style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"5px",}}
+                                    />
+                                  <span style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', fontWeight:"bold", fontSize:"20px", color:"#fff "}}>Dior</span>
+                                </div>
+                                <div style={{display: 'block', marginTop:"15px"}}>
+                                  <p style={{display: 'block', fontSize:"28px", fontWeight:"bold", marginTop:"20px", color:"#d2d2d2"}}>Dior Prestige La Micro-Huile de Rose Activated Serum</p>
+                                  <p style={{display: 'block', fontSize:"20px", marginTop:"5px", color:"#d2d2d2"}}>Exceptional Repairing Micro-Nutritive Serum</p>
+                                </div>
+                                <div style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>
+                                  <p style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginRight:"20px",fontSize:"16px", color:"#fff"}}>$100.00</p>
+                                  <img
+                                      src={'/star.png'}
+                                      alt={`name`}
+                                      style={{borderLeft:"1px solid #fff",paddingLeft:"15px",width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"6px",marginTop:"3px"}}
+                                    />
+                                    <p style={{fontSize:"10px", marginTop:"3px", color:"#fff"}}>( 32 review )</p>
+                                </div>
+                                <div style={{display:"flex", alignItems:"center", justifyContent:"flex-start", marginTop:"30px"}}>
+                                      <button type='button' style={{  
+                                            background: 'rgba(123,123,123,0.4)',
+                                            border:"none",
+                                            padding:"5px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"20px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/Thumb.png"}
+                                            alt={`cdiorbeauty`}
+                                          /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>241</span>
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: 'rgba(123,123,123,0.4)',
+                                            border:"none",
+                                            padding:"5px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"20px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/Msg.png"}
+                                            alt={`cdiorbeauty`}
+                                          /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>32</span>
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: 'rgba(123,123,123,0.4)',
+                                            border:"none",
+                                            padding:"8px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/send.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: 'rgba(123,123,123,0.4)',
+                                            border:"none",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/info.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                    </div>
+                                    <div>
+                                    <div style={{position:"relative", display:"flex", marginTop:"25px"}}>
+                                    {/* onClick={handleAddToCart} */}
+                                      <button  style={{ marginRight: '20px', textAlign: 'center', background:'#96105E', color:'#fff', height:'50px', width:'166px', borderRadius:'10px', border:'1px solid #96105E', fontSize:'16px' }} type='button'>Add to Cart</button>
+                                      <button style={{ marginRight: '0px', textAlign: 'center', background:"transparent", color:"#fff", height:"50px", width:"166px",borderRadius:"10px", border:"1px solid #7B7B7B", fontSize:"16px"}} type='button'>Buy Now</button>
+                                    </div>
+                                    <div style={{display: 'block', marginTop:"15px"}}>
+                                      <p style={{display: 'block', fontSize:"16px", marginTop:"5px", color:"#d2d2d2"}}>An anti-aging serum for face and neck, Dior Prestige La Micro-Huile de Rose Activated Serum is the ultimate Dior micro-nutritive supplement for visibly younger, plumper skin.</p>
+                                    </div>
+                                        <div style={{display: 'flex', marginTop:"30px"}}>
+                                          <div>
+                                          <span style={{  
+                                            color:"#fff",
+                                            fontSize:"18px",
+                                              }}>Quantity</span>
+                                              <button type='button' style={{  
+                                                background: 'transparent',
+                                                border:"1px solid #d7d7d7",
+                                                padding:"8px 15px",
+                                                display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"space-between",
+                                                borderRadius:"20px",
+                                                width:"127px",
+                                                height:"49px",
+                                                marginRight:"10px",
+                                                marginTop:"20px",
+                                              }}
+                                            >
+                                              <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                                height:"24px", display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"center",}}>-</span>
+                                              <input type='text' value="1" style={{fontSize:"14px",color:"#fff", width:"20px", background:"transparent", border:"none", textAlign:"center"}}/>
+                                              <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                                height:"24px", display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"center",}}>+</span>
+                                          </button>
+                                          </div>
+                                          <div>
+                                          <span style={{  
+                                            color:"#fff",
+                                            fontSize:"18px",
+                                            marginLeft:"30px",
+                                              }}>Size</span>
+                                              <button onClick={toggleDropdown} className="dropdown-button" style={{
+                                                padding: '10px 20px',
+                                                backgroundColor: '#333',
+                                                color: 'white',
+                                                border: "1px solid #d7d7d7",
+                                                cursor: 'pointer',
+                                                background:"transparent",
+                                                display: 'block',
+                                                display:"flex",
+                                                alignItems:"center",
+                                                justifyContent:"space-between",
+                                                borderRadius:"20px",
+                                                width:"127px",
+                                                height:"49px",
+                                                marginLeft:"30px",
+                                                marginTop:"20px",
+
+                                              }}>
+                                                30ml  
+                                                <img
+                                                  src={'/downmenu.png'}
+                                                  alt={`name`}
+                                                  style={{paddingLeft:"15px",width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginTop:"3px"}}
+                                                />
+                                              </button>
+
+                                          </div>
+                                        </div>  
+                                  </div>
+                              </div> 
+                <div style={{marginTop: '50px'}}>
+                  <p style={{fontSize:"24px",color:"#fff",}}>Related Products</p>
+                  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end" }}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        overflowX: 'hidden',
+                        paddingBottom: '20px',
+                        justifyContent: "space-between"
+                      }}
+                    >
+                      {allImagesBottom.map((image, index) => (
+                        <div key={index} className='ImagesAll' style={{
+                          flex: '0 0 auto',
+                          width: '31%',
+                          height: '31%',
+                          marginRight: '10px',
+                          marginTop:"30px",
+                          borderRadius: '2px',
+                          transition: 'opacity 0.5s ease-in-out',
+                        }} onClick={toggleDropdown2}>
+                          <img
+                            src={image.img}
+                            alt={`Brand ${index + 1}`}
+                            style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px',borderTopRightRadius: '4px', objectFit: 'cover' }}
+                          />
+                          <div key={index} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                            <div className=''>
+                                    <div style={{background: '#2f2f2f',padding:"15px",marginTop:"-5px", borderRadius:"4px"}}>
+                                      <div style={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+                                          <div style={{display:"flex", alignItems:"center", justifyContent:"flex-start"}}>
+                                            <button type='button' style={{  
+                                                  background: 'rgba(123,123,123,0.2)',
+                                                  border:"none",
+                                                  padding:"5px 15px",
+                                                  display:"flex",
+                                                  alignItems:"center",
+                                                  justifyContent:"center",
+                                                  borderRadius:"20px",
+                                                  height:"42px",
+                                                  marginRight:"10px",
+                                                }}
+                                              >
+                                                <img
+                                                  src={"/Thumb.png"}
+                                                  alt={`cdiorbeauty`}
+                                                /> <span style={{width:"16px",
+                                                height:"16px",color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>241</span>
+                                            </button>
+                                            <button type='button' style={{  
+                                                  background: 'rgba(123,123,123,0.2)',
+                                                  border:"none",
+                                                  padding:"5px 15px",
+                                                  display:"flex",
+                                                  alignItems:"center",
+                                                  justifyContent:"center",
+                                                  borderRadius:"20px",
+                                                  height:"42px",
+                                                  marginRight:"10px",
+                                                }}
+                                              >
+                                                <img
+                                                  src={"/Msg.png"}
+                                                  alt={`cdiorbeauty`}
+                                                /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>32</span>
+                                            </button>
+                                            <button type='button' style={{  
+                                                  background: 'rgba(123,123,123,0.2)',
+                                                  border:"none",
+                                                  padding:"8px 15px",
+                                                  display:"flex",
+                                                  alignItems:"center",
+                                                  justifyContent:"center",
+                                                  borderRadius:"50%",
+                                                  width:"42px",
+                                                  height:"42px",
+                                                  marginRight:"10px",
+                                                }}
+                                              >
+                                                <img
+                                                  src={"/cart.png"}
+                                                  alt={`cdiorbeauty`}
+                                                />
+                                            </button>
+                                            <button type='button' style={{  
+                                                background: 'rgba(123,123,123,0.2)',
+                                                  border:"none",
+                                                  display:"flex",
+                                                  alignItems:"center",
+                                                  justifyContent:"center",
+                                                  borderRadius:"50%",
+                                                  width:"42px",
+                                                  height:"42px",
+                                                  marginRight:"10px",
+                                                }}
+                                              >
+                                                <img
+                                                  src={"/send.png"}
+                                                  alt={`cdiorbeauty`}
+                                                />
+                                            </button>
+                                          </div>
+                                      </div>
+                                      <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', marginTop:"25px"}}>                                  
+                                        <img
+                                            src={'/gucci.png'}
+                                            alt={`Brand ${index + 1}`}
+                                            style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"5px",}}
+                                          />
+                                        <span style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', fontWeight:"bold", fontSize:"20px", color:"#fff"}}>Dior</span>
+                                      </div>
+                                      <div style={{display: 'block', marginTop:"15px"}}>
+                                        <p style={{display: 'block', fontSize:"15px", marginTop:"10px", color:"#d2d2d2"}}>Rouge Dior</p>
+                                        <p style={{display: 'block', fontSize:"12px", marginTop:"5px", color:"#d2d2d2"}}>Couture Color - Hydrating & Long-lasting lipstick - Velvet, Satin & New Veil Finishes</p>
+                                      </div>
+                                      <div style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>
+                                        <p style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginRight:"20px",fontSize:"16px", color:"#fff"}}>$45.00</p>
+                                        <img
+                                            src={'/star.png'}
+                                            alt={`Brand ${index + 1}`}
+                                            style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"6px",marginTop:"3px"}}
+                                          />
+                                          <p style={{fontSize:"10px", marginTop:"3px", color:"#fff"}}>( 132 review )</p>
+                                      </div>
+                                    </div>
+                                    
+                                </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      // second modal
+      {isOpensec && (
+        <div className="modal-overlay">
+          <div className="modal" style={{position:"relative"}}>
+          <div className="modal-body" style={{position:"relative"}}>
+            <button
+                onClick={() => {
+                  setIsOpen(false);
+                  setIssec(false);}}
+                style={{position:"absolute", right:"15px", top:"15px", zIndex:"111111111", background:"#181818", color:"#fff", borderRadius:"50%", width:"36px", height:"36px", border:"none", cursor:"pointer  "}}
+              >
+              X
+            </button>
+             <div className='SecondSection'>
+              <div style={{position:"relative"}}>
+                <Carousel 
+                  autoPlay 
+                  interval={2000} 
+                  infiniteLoop 
+                  howStatus={false} 
+                  showArrows={false} 
+                  showThumbs={false} 
+                  showStatus={false} 
+                >
+                    {slides2.map((slide, index) => (
+                      <div key={index}>
+                        <img src={slide.src} alt={`Slide ${index + 1}`} />
+                      </div>
+                    ))}
+                </Carousel>
+                <div style={{position:"absolute",zIndex: "999",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.1)", padding:"2px 15px"}}>
+                  <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
+                    <button onClick={handleClickActive} className={`${isActive ? "" : "ActiveBtn"}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopLeftRadius:"15px",borderBottomLeftRadius:"15px", height:"21px", borderTopRightRadius:"0",borderBottomRightRadius:"0"}}>
+                      <img
+                        src={"/ImageShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                    <button onClick={handleClickActive} className={`${isActive ? "ActiveBtn" : ""}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopRightRadius:"15px",borderBottomRightRadius:"15px", height:"21px",borderTopLeftRadius:"0",borderBottomLeftRadius:"0"}}>
+                      <img
+                        src={"/videoShow.png"}
+                        alt={`cdiorbeauty`}
+                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                      />
+                    </button>
+                  </div>
+                    <img
+                      src={"/zoom.png"}
+                      alt={`cdiorbeauty`}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div style={{padding:"15px 30px", background:"linear-gradient(rgb(120 85 65) 0%, rgba(78, 77, 75, 0.45) 30%, rgba(20, 20, 20, 0.55) 50%)", height:"100%"}}>
+                <div style={{marginTop: '0px'}}>
+                                  <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>                                  
+                                    <img
+                                        src={'/be1_2.png'}
+                                        alt={`name`}
+                                        style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"5px",marginTop:"4px"}}
+                                      />
+                                    <span style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', fontWeight:"bold", fontSize:"36px", color:"#fff ", marginLeft:"20px"}}>Dior</span>
+                                  </div>
+                                  <div style={{display: 'block', marginTop:"15px"}}>
+                                  <p style={{display: 'block', fontSize:"25px", fontWeight:"bold", marginTop:"5px", color:"#fff"}}>Rouge Dior</p>
+                                    <p style={{display: 'block', fontSize:"20px", marginTop:"10px", color:"#d2d2d2"}}>Couture Color - Hydrating & Long-lasting lipstick - Velvet, Satin & New Veil Finishes</p>
+                                  </div>
+                                  <div style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>
+                                  <p style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginRight:"20px",fontSize:"28px", color:"#fff"}}>$100.00</p>
+                                  <img
+                                      src={'/star.png'}
+                                      alt={`star`}
+                                      style={{borderLeft:"1px solid #fff", paddingLeft:"20px",width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"10px",marginTop:"3px"}}
+                                    />
+                                    <p style={{fontSize:"14px", marginTop:"3px", color:"#fff"}}>( 32 review )</p>
+                                </div>
+                                <div style={{display:"flex", alignItems:"center", justifyContent:"flex-start", marginTop:"30px"}}>
+                                      <button type='button' style={{  
+                                            background: 'rgba(123,123,123,0.4)',
+                                            border:"none",
+                                            padding:"5px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"20px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/Thumb.png"}
+                                            alt={`cdiorbeauty`}
+                                          /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>241</span>
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: 'rgba(123,123,123,0.4)',
+                                            border:"none",
+                                            padding:"5px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"20px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/Msg.png"}
+                                            alt={`cdiorbeauty`}
+                                          /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>32</span>
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: 'rgba(123,123,123,0.4)',
+                                            border:"none",
+                                            padding:"8px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/send.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                      <button type='button' style={{  
+                                            background: 'rgba(123,123,123,0.4)',
+                                            border:"none",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",
+                                            borderRadius:"50%",
+                                            width:"42px",
+                                            height:"42px",
+                                            marginRight:"10px",
+                                          }}
+                                        >
+                                          <img
+                                            src={"/info.png"}
+                                            alt={`cdiorbeauty`}
+                                          />
+                                      </button>
+                                    </div>
+                                    <div>
+                                    <div style={{position:"relative", display:"flex", marginTop:"25px"}}>
+                                      <button style={{ marginRight: '20px', textAlign: 'center', background:"#96105E", color:"#fff", height:"50px", width:"166px",borderRadius:"10px", border:"1px solid #96105E", fontSize:"16px"}} type='button'>Add to Cart</button>
+                                      <button style={{ marginRight: '0px', textAlign: 'center', background:"transparent", color:"#fff", height:"50px", width:"166px",borderRadius:"10px", border:"1px solid #7B7B7B", fontSize:"16px"}} type='button'>Buy Now</button>
+                                    </div>
+                                    <div style={{display: 'block', marginTop:"15px"}}>
+                                      <p style={{display: 'block', fontSize:"16px", marginTop:"5px", color:"#d2d2d2"}}>An anti-aging serum for face and neck, Dior Prestige La Micro-Huile de Rose Activated Serum is the ultimate Dior micro-nutritive supplement for visibly younger, plumper skin.</p>
+                                    </div>
+                                    <div style={{display: 'flex', marginTop:"30px"}}>
+                                      <div>
+                                      <span style={{  
+                                        color:"#fff",
+                                        fontSize:"18px",
+                                          }}>Quantity</span>
+                                          <button type='button' style={{  
+                                            background: 'transparent',
+                                            border:"1px solid #d7d7d7",
+                                            padding:"8px 15px",
+                                            display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"space-between",
+                                            borderRadius:"20px",
+                                            width:"127px",
+                                            height:"49px",
+                                            marginRight:"10px",
+                                            marginTop:"20px",
+                                          }}
+                                        >
+                                          <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                            height:"24px", display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",}}>-</span>
+                                          <input type='text' value="1" style={{fontSize:"14px",color:"#fff", width:"20px", background:"transparent", border:"none", textAlign:"center"}}/>
+                                          <span style={{fontSize:"20px", color:"#fff", width:"24px",
+                                            height:"24px", display:"flex",
+                                            alignItems:"center",
+                                            justifyContent:"center",}}>+</span>
+                                      </button>
+                                      </div>
+                                      <div>
+                                      <span style={{  
+                                        color:"#fff",
+                                        fontSize:"18px",
+                                        marginLeft:"30px",
+                                          }}>Color</span>
+                                        <ul style={{margin:"0", padding:"0", listStyle:"none",display: "flex", marginTop: "28px",marginLeft: "30px" }}>
+                                          <li style={{display:"flex",}}>
+                                            <button type='button' style={{cursor:"pointer",border: "1px solid rgb(255, 255, 255)",borderRadius:"50%",display: "flex",width: "32px",height: "32px",background: "transparent",padding: "0",alignItems: "center",justifyContent: "center"}}><span style={{background: "rgb(193, 117, 113)",borderRadius: "50%",width: "24px",height: "24px",display: "flex",alignItems: "center",justifyContent: "center",margin: "auto",position: "relative",left: "0.5px",top: "0.6px"}}></span></button>
+                                          </li>
+                                          <li style={{display:"flex",}}>
+                                            <button type='button' style={{cursor:"pointer",border: "none",background:"transparent",display: "flex",}}><span style={{background: "#7B3835",borderRadius: "50%",width: "24px",height: "24px",display: "flex",alignItems: "center",justifyContent: "center",margin: "auto",position: "relative",left: "0.5px",top: "0.6px"}}></span></button>
+                                          </li>
+                                          <li style={{display:"flex",}}>
+                                            <button type='button' style={{cursor:"pointer",border: "none",background:"transparent",display: "flex",}}><span style={{background: "#E3726A",borderRadius: "50%",width: "24px",height: "24px",display: "flex",alignItems: "center",justifyContent: "center",margin: "auto",position: "relative",left: "0.5px",top: "0.6px"}}></span></button>
+                                          </li>
+                                          <li style={{display:"flex",}}>
+                                            <button type='button' style={{cursor:"pointer",border: "none",background:"transparent",display: "flex",}}><span style={{background: "#C7433E",borderRadius: "50%",width: "24px",height: "24px",display: "flex",alignItems: "center",justifyContent: "center",margin: "auto",position: "relative",left: "0.5px",top: "0.6px"}}></span></button>
+                                          </li>
+                                          <li style={{display:"flex",}}>
+                                            <button type='button' style={{cursor:"pointer",border: "none",background:"transparent",display: "flex",}}><span style={{background: "#CF6F66",borderRadius: "50%",width: "24px",height: "24px",display: "flex",alignItems: "center",justifyContent: "center",margin: "auto",position: "relative",left: "0.5px",top: "0.6px"}}></span></button>
+                                          </li>
+                                          <li style={{display:"flex",}}>
+                                            <button type='button' style={{cursor:"pointer",border: "none",background:"transparent",display: "flex",}}><span style={{background: "#DA3E47",borderRadius: "50%",width: "24px",height: "24px",display: "flex",alignItems: "center",justifyContent: "center",margin: "auto",position: "relative",left: "0.5px",top: "0.6px"}}></span></button>
+                                          </li>
+                                          <li style={{display:"flex",}}>
+                                            <button type='button' style={{cursor:"pointer",border: "none",background:"transparent",display: "flex",}}><span style={{background: "#EC1B19",borderRadius: "50%",width: "24px",height: "24px",display: "flex",alignItems: "center",justifyContent: "center",margin: "auto",position: "relative",left: "0.5px",top: "0.6px"}}></span></button>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div> 
+                  <div style={{marginTop: '50px'}}>
+                    <p style={{fontSize:"24px",color:"#fff",}}>Related Products</p>
+                    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end" }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexWrap: 'wrap',
+                          overflowX: 'hidden',
+                          paddingBottom: '20px',
+                          justifyContent: "space-between"
+                        }}
+                      >
+                        {allImagesBottom2.map((image, index) => (
+                          <div key={index} className='ImagesAll' style={{
+                            flex: '0 0 auto',
+                            width: '31%',
+                            height: '31%',
+                            marginRight: '10px',
+                            marginTop:"30px",
+                            borderRadius: '2px',
+                            transition: 'opacity 0.5s ease-in-out',
+                          }}>
+                            <img
+                              src={image.img}
+                              alt={`Brand ${index + 1}`}
+                              style={{ width: '100%', height: '100%', borderTopLeftRadius: '4px',borderTopRightRadius: '4px', objectFit: 'cover' }}
+                            />
+                            <div key={index} style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}>
+                              <div className=''>
+                                      <div style={{background: '#2f2f2f',padding:"15px",marginTop:"-5px", borderRadius:"4px"}}>
+                                        <div style={{display:"flex", alignItems:"center", justifyContent:"space-between"}}>
+                                            <div style={{display:"flex", alignItems:"center", justifyContent:"flex-start"}}>
+                                              <button type='button' style={{  
+                                                    background: 'rgba(123,123,123,0.2)',
+                                                    border:"none",
+                                                    padding:"5px 15px",
+                                                    display:"flex",
+                                                    alignItems:"center",
+                                                    justifyContent:"center",
+                                                    borderRadius:"20px",
+                                                    height:"42px",
+                                                    marginRight:"10px",
+                                                  }}
+                                                >
+                                                  <img
+                                                    src={"/Thumb.png"}
+                                                    alt={`cdiorbeauty`}
+                                                  /> <span style={{width:"16px",
+                                                  height:"16px",color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>241</span>
+                                              </button>
+                                              <button type='button' style={{  
+                                                    background: 'rgba(123,123,123,0.2)',
+                                                    border:"none",
+                                                    padding:"5px 15px",
+                                                    display:"flex",
+                                                    alignItems:"center",
+                                                    justifyContent:"center",
+                                                    borderRadius:"20px",
+                                                    height:"42px",
+                                                    marginRight:"10px",
+                                                  }}
+                                                >
+                                                  <img
+                                                    src={"/Msg.png"}
+                                                    alt={`cdiorbeauty`}
+                                                  /> <span style={{color:"#fff", fontSize:"13px", paddingLeft:"5px", marginTop:"1px"}}>32</span>
+                                              </button>
+                                              <button type='button' style={{  
+                                                    background: 'rgba(123,123,123,0.2)',
+                                                    border:"none",
+                                                    padding:"8px 15px",
+                                                    display:"flex",
+                                                    alignItems:"center",
+                                                    justifyContent:"center",
+                                                    borderRadius:"50%",
+                                                    width:"42px",
+                                                    height:"42px",
+                                                    marginRight:"10px",
+                                                  }}
+                                                >
+                                                  <img
+                                                    src={"/cart.png"}
+                                                    alt={`cdiorbeauty`}
+                                                  />
+                                              </button>
+                                              <button type='button' style={{  
+                                                  background: 'rgba(123,123,123,0.2)',
+                                                    border:"none",
+                                                    display:"flex",
+                                                    alignItems:"center",
+                                                    justifyContent:"center",
+                                                    borderRadius:"50%",
+                                                    width:"42px",
+                                                    height:"42px",
+                                                    marginRight:"10px",
+                                                  }}
+                                                >
+                                                  <img
+                                                    src={"/send.png"}
+                                                    alt={`cdiorbeauty`}
+                                                  />
+                                              </button>
+                                            </div>
+                                        </div>
+                                        <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', marginTop:"25px"}}>                                  
+                                          <img
+                                              src={'/gucci.png'}
+                                              alt={`Brand ${index + 1}`}
+                                              style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"5px",}}
+                                            />
+                                          <span style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', fontWeight:"bold", fontSize:"22px", color:"#fff"}}>Dior</span>
+                                        </div>
+                                        <div style={{display: 'block', marginTop:"15px"}}>
+                                          <p style={{display: 'block', fontSize:"18px", marginTop:"10px", color:"#d2d2d2", fontWeight:"bold"}}>Rouge Dior</p>
+                                          <p style={{display: 'block', fontSize:"12px", marginTop:"5px", color:"#d2d2d2"}}>Couture Color - Hydrating & Long-lasting lipstick - Velvet, Satin & New Veil Finishes</p>
+                                        </div>
+                                        <div style={{display: 'flex', alignItems:"center",justifyContent: 'space-between', marginTop:"15px"}}>
+                                          <p style={{display: 'flex', alignItems:"center",justifyContent: 'flex-start', marginRight:"20px",fontSize:"16px", color:"#fff"}}>$45.00</p>
+                                          <div style={{display: 'flex', alignItems:"center",justifyContent: 'flex-end',}}>
+                                            <img
+                                                src={'/star.png'}
+                                                alt={`Brand ${index + 1}`}
+                                                style={{width: "auto",height: "auto",borderRadius: "0px",objectFit: "cover",marginRight:"6px",marginTop:"3px"}}
+                                              />
+                                            <p style={{fontSize:"10px", marginTop:"3px", color:"#fff"}}>( 132 review )</p>
+                                            </div>
+                                        </div>
+                                      </div>
+                                      
+                                  </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+      )}
     </>
   );
 }
