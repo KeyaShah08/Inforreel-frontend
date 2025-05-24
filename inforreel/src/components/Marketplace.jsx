@@ -1,11 +1,16 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // Import arrow icons
 import { useEffect, useRef, useState } from 'react';
+import BeautyProducts from './BeautyProducts';
 import Beautyshowambassadors from './Beautyshowambassadors';
 import Beautyshowrooms from './Beautyshowrooms';
+<<<<<<< HEAD
 import ProductDetails from './ProductDetails';
 import BeautyProducts from './BeautyProducts';
 import { useKeenSlider } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
+=======
+
+>>>>>>> 8c03216f084dc96ceaa3f04b21d2828eb8710171
 function Marketplace() {
  const allImages = [
     {img:'/helth.png', Name:"Health & Wellness",},
@@ -15,6 +20,7 @@ function Marketplace() {
     {img:'/beautyNew.png', Name:"Beauty"},
     {img:'/sport.png', Name:"Sports & Athletics"},
   ];
+
   const allProducts = [
     {img:'/p1.png', Name:"Beauty",},
     {img:'/p2.png', Name:"Health & Wellness"},
@@ -32,29 +38,28 @@ function Marketplace() {
     {img:'/pq2.png', Name:"Fashion"},
   ];
   const allVideos1 = [
-    '/samplevideo1.mp4',
-    '/samplevideo3.mp4',
-    '/samplevideo4.mp4',
-    '/samplevideo4.mp4',
-    '/samplevideo5.mp4',
-    '/samplevideo6.mp4',
-  ];
+  { src: '/health/health1.mp4', label: 'Health & Wellness' },
+  { src: '/health/health2.mp4', label: 'Beauty' },
+  { src: '/health/health3.mp4', label: 'Fashion' },
+  { src: '/health/health4.mp4', label: 'Fitness' },
+  { src: '/health/health5.mp4', label: 'Organic Living' },
+];
 
   const allVideosfastChannel = [
-    '/samplevideo5.mp4',
-    '/samplevideo6.mp4',
-    '/samplevideo3.mp4',
-    '/samplevideo4.mp4',
-    '/samplevideo1.mp4',
-    '/samplevideo5.mp4',
+  '/health/health1.mp4',
+  '/health/health2.mp4',
+  '/health/health3.mp4',
+  '/health/health4.mp4',
+  '/health/health5.mp4',
+  '/health/health1.mp4',
   ];
   const allVideosonDemand = [
-    '/samplevideo3.mp4',
-    '/samplevideo5.mp4',
-    '/samplevideo6.mp4',    
-    '/samplevideo4.mp4',
-    '/samplevideo1.mp4',
-    '/samplevideo5.mp4',
+  '/health/health1.mp4',
+  '/health/health2.mp4',
+  '/health/health3.mp4',
+  '/health/health4.mp4',
+  '/health/health5.mp4',
+  '/health/health1.mp4',
   ];
 
   const allVideos = [
@@ -113,6 +118,7 @@ function Marketplace() {
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [showBeautyShow, setShowBeauty] = useState(false);
   const [showBeautyProd, setShowProduct] = useState(false);
+<<<<<<< HEAD
   const sliderRef = useRef(null);
   const [sliderInstanceRef, slider] = useKeenSlider({
     slides: {
@@ -122,6 +128,15 @@ function Marketplace() {
     loop: false,
     mode: "snap",
   });
+=======
+  const [activeSection, setActiveSection] = useState('all');
+
+const handleNavClick = (section) => {
+  setActiveSection(section);
+  scrollToSection(section);
+};
+
+>>>>>>> 8c03216f084dc96ceaa3f04b21d2828eb8710171
   
   const videoRefs = useRef([]);
   const videoRefs1 = useRef([]);
@@ -291,6 +306,44 @@ function Marketplace() {
     //   console.log("Previous Images:", previousImages);
   }, [displayedImages, previousImages]);
 
+  useEffect(() => {
+  const sections = [
+    { id: 'all', label: 'All' },
+    { id: 'all1', label: 'Shop by Brands' },
+    { id: 'brands', label: 'Shop by Products' },
+    { id: 'ambassadors', label: 'Shop by Ambassador' },
+    { id: 'brand-video', label: 'Brand Video' },
+    { id: 'fast-channel', label: 'Fast Channel' },
+    { id: 'vod', label: 'Video On demand' },
+  ];
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+      if (visible.length > 0) {
+        setActiveSection(visible[0].target.id);
+      }
+    },
+    { threshold: 0.6 }
+  );
+
+  sections.forEach((section) => {
+    const el = document.getElementById(section.id);
+    if (el) observer.observe(el);
+  });
+
+  return () => {
+    sections.forEach((section) => {
+      const el = document.getElementById(section.id);
+      if (el) observer.unobserve(el);
+    });
+  };
+}, []);
+
+
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -326,15 +379,41 @@ function Marketplace() {
       <BeautyProducts />
     :(
       <>
-        <ul className='Shownone' style={{margin:"0", padding:"0", listStyle:"none", display:"flex", position: "fixed", top: "20px", zIndex: "9999",  alignItems: "center", justifyContent: "center", left: "25%"}}>
-          <li onClick={() => scrollToSection('all')} style={{cursor:"pointer",fontSize:"14px",color:"#96105E", borderBottom:"1px solid #96105E", padding:"0", margin:"0", fontWeight:"bold"}}>All</li>
-          <li onClick={() => scrollToSection('brands')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Shop by Brands</li>
-          <li onClick={() => scrollToSection('ambassador')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Shop by Ambassador</li>
-          <li onClick={() => scrollToSection('brand-video')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Brand Video</li>
-          <li onClick={() => scrollToSection('fast-channel')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Fast Channel</li>
-          <li onClick={() => scrollToSection('vod')} style={{cursor:"pointer",fontSize:"14px",color:"#fff", padding:"0", margin:"0",marginLeft:"20px", fontWeight:"normal"}}>Video On demand</li>
-        </ul>
-        <div style={{
+        <ul
+  className='Shownone'
+  style={{
+    margin: "0", padding: "0", listStyle: "none", display: "flex",
+    position: "fixed", top: "20px", zIndex: "9999", alignItems: "center", justifyContent: "center", left: "25%"
+  }}
+>
+  {[
+    { id: 'all', label: 'All' },
+    { id: 'all1', label: 'Shop by Brands' },
+    { id: 'brands', label: 'Shop by Products' },
+    { id: 'ambassadors', label: 'Shop by Ambassador' },
+    { id: 'brand-video', label: 'Brand Video' },
+    { id: 'fast-channel', label: 'Fast Channel' },
+    { id: 'vod', label: 'Video On demand' },
+  ].map((item, index) => (
+    <li
+      key={item.id}
+      onClick={() => handleNavClick(item.id)}
+      style={{
+        cursor: "pointer",
+        fontSize: "14px",
+        color: activeSection === item.id ? "#96105E" : "#fff",
+        borderBottom: activeSection === item.id ? "1px solid #96105E" : "none",
+        padding: "0",
+        margin: "0",
+        marginLeft: index === 0 ? "0" : "20px",
+        fontWeight: activeSection === item.id ? "bold" : "normal"
+      }}
+    >
+      {item.label}
+    </li>
+  ))}
+</ul>
+        <div id= "all" style={{
           position: 'absolute',
           top: 0,
           left: 0,
@@ -414,598 +493,919 @@ function Marketplace() {
             <ChevronRight size={20} />
           </button>
 
-<div ref={sliderRef} className="keen-slider">
-        {displayedImages.map((video, index) => (
-          <div key={index} className="keen-slider__slide" style={slideStyle}>
-            <img
-                        src={video.img}
-                        alt={`Brand ${index + 1}`}
-                        style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                      />
-          </div>
-        ))}
-      </div>
-      </div>
-            {/* Shop by Brands Section */}
-            <section id="all" style={{ marginTop: '100vh', textAlign: 'left' }}>
-          
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between" }}>
-                {/* Navigation Buttons */}
-                <div style={{ width:"100%",display: 'flex', marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Shop by Brands</span>
-                  <div style={{ display: 'flex' }}>
-                    <button
-                      onClick={prevImage}
-                      style={{
-                        background: '#9D9A95',
-                        color: '#333',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '15px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={currentIndex === 0}
-                    >
-                      <ChevronLeft size={32} style={{color: '#333',}}/>
-                    </button>
-                    <button
-                      onClick={nextImage}
-                      style={{  
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={isNextDisabled}
-                    >
-                      <ChevronRight size={32} style={{color: '#333',}} />
-                    </button>
-                  </div>
-                </div>
-                <div
-                  ref={imageContainerRef}
-                  style={{
-                    display: 'flex',
-                    overflowX: 'hidden',
-                    overflowY: 'hidden',
-                    paddingBottom: '20px',
-                    scrollSnapType: 'x mandatory',
-                    WebkitOverflowScrolling: 'touch',
-                    justifyContent: "space-between"
-                  }}
-                >
-                  {displayedImages.map((image, index) => (
-                    <div key={index} style={{
-                      flex: '0 0 auto',
-                      width: '32%',
-                      height: '32%',
-                      // width:"410px",
-                      // height:"410px",
-                      marginRight: '10px',
-                      borderRadius: '0px',
-                      scrollSnapAlign: 'start',
-                      transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                      opacity: previousImages.includes(image) ? 0 : 1, // Hide previous images
-                    }} onClick={() => handleDetailView()}>
-                      <img
-                        src={image.img}
-                        alt={`Brand ${index + 1}`}
-                        style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                      />
-                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{image.Name}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
+
+
+{/* Shop by Brands Section */}
+{/* Shop by Brands Section */}
+<section id="all1" style={{ marginTop: '100vh', textAlign: 'left', position: 'relative' }}>
+  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between" }}>
+    <div style={{ display: 'flex', width: "100%", marginTop: '60px', marginBottom: '40px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <span style={{ fontWeight: 'bold', color: 'White', fontSize: '32px' }}>Shop by Brands</span>
+    </div>
+
+    {/* Scroll Buttons */}
+    <button
+      onClick={() => document.getElementById('brandScrollContainer').scrollBy({ left: -300, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronLeft size={24} style={{ color: '#333' }} />
+    </button>
+    <button
+      onClick={() => document.getElementById('brandScrollContainer').scrollBy({ left: 300, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        right: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronRight size={24} style={{ color: '#333' }} />
+    </button>
+
+    {/* Brand Image Row */}
+    <div
+      id="brandScrollContainer"
+      style={{
+        display: 'flex',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        paddingBottom: '20px',
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch',
+        gap: '40px',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
+      <style>
+        {`
+          #brandScrollContainer::-webkit-scrollbar {
+            display: none;
+          }
+           @media screen and (max-width: 768px) {
+      #brandScrollContainer {
+        gap: 20px !important;
+      }
+
+      #brandScrollContainer > div {
+        width: 70vw !important;
+        height: auto !important;
+      }
+
+      #brandScrollContainer p {
+        font-size: 18px !important;
+        margin-top: 20px !important;
+      }
+
+      button {
+        top: auto !important;
+        bottom: -30px !important;
+        transform: none !important;
+      }
+    }
+        `}
+      </style>
+
+      {[
+  { src: '/health/health1.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness1.mp4', label: 'Fitness' },
+  { src: '/health/health2.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty2.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion2.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness2.mp4', label: 'Fitness' },
+  { src: '/health/health3.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty3.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
+  { src: '/health/health4.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty4.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion4.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness4.mp4', label: 'Fitness' },
+
+      ].map((item, index) => (
+        <div
+          key={index}
+          style={{
+            flex: '0 0 auto',
+            width: '259.01px',
+            height: '520px',
+            scrollSnapAlign: 'start',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+          onClick={() => handleDetailView()}
+        >
+          <video
+            src={item.src}
+            muted
+            style={{
+              width: '100%',
+              height: '460.46px',
+              objectFit: 'cover',
+              borderRadius: '0px',
+            }}
+            onMouseEnter={(e) => e.target.play()}
+            onMouseLeave={(e) => {
+              e.target.pause();
+              e.target.currentTime = 0;
+            }}
+          />
+          <p style={{ marginTop: "40px", fontSize: "24px", fontWeight: "bold", textAlign: "center", color: "white" }}>
+  {item.label}
+</p>
+
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
 
             {/* Shop by Product Section */}
-            <section id="brands" style={{  textAlign: 'left', marginTop: '40px' }}>
+
+{/* Shop by Product Section */}
+<section id="brands" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
+  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between" }}>
+    <div style={{ display: 'flex', width: "100%", marginTop: '60px', marginBottom: '40px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <span style={{ fontWeight: 'bold', color: 'White', fontSize: '32px' }}>Shop by Products</span>
+    </div>
+
+    {/* Scroll Buttons */}
+    <button
+      onClick={() => document.getElementById('productScrollContainer').scrollBy({ left: -320, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronLeft size={24} style={{ color: '#333' }} />
+    </button>
+    <button
+      onClick={() => document.getElementById('productScrollContainer').scrollBy({ left: 320, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        right: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronRight size={24} style={{ color: '#333' }} />
+    </button>
+
+    {/* Product Image Row */}
+    <div
+      id="productScrollContainer"
+      style={{
+        display: 'flex',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        paddingBottom: '20px',
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch',
+        gap: '40px',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+      }}
+    >
+<style>
+{`
+  #productScrollContainer::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    #productScrollContainer {
+      gap: 20px !important;
+    }
+
+    #productScrollContainer > div {
+      width: 70vw !important;
+      height: auto !important;
+    }
+
+    #productScrollContainer p {
+      font-size: 18px !important;
+      margin-top: 20px !important;
+    }
+
+    button {
+      top: auto !important;
+      bottom: -30px !important;
+      transform: none !important;
+    }
+  }
+`}
+</style>
+
+
+      {allProducts.map((product, index) => (
+        <div
+          key={index}
+          style={{
+            flex: '0 0 auto',
+            width: '309.75px',
+            height: '373.75px',
+            scrollSnapAlign: 'start',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+          onClick={() => handleDetailView3()}
+        >
+          <img
+            src={product.img}
+            alt={`Product ${index + 1}`}
+            style={{
+              width: '100%',
+              height: '309.75px',
+              borderRadius: '0px',
+              objectFit: 'cover'
+            }}
+          />
+          <p style={{ marginTop: "40px", fontSize: "24px", fontWeight: "bold", textAlign: "center", color: "white" }}>
+            {product.Name}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+
+{/* Shop by Brand Ambassador Section */}
+<section id="ambassadors" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
+  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
+    <div style={{ display: 'flex', width: "100%", marginTop: '60px', marginBottom: '40px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+      <span style={{ fontWeight: 'bold', color: 'White', fontSize: '32px' }}>Shop by Brand Ambassador</span>
+    </div>
+
+    {/* Scroll Buttons */}
+    <button
+      onClick={() => document.getElementById('ambassadorScrollContainer').scrollBy({ left: -320, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronLeft size={24} style={{ color: '#333' }} />
+    </button>
+    <button
+      onClick={() => document.getElementById('ambassadorScrollContainer').scrollBy({ left: 320, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        right: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronRight size={24} style={{ color: '#333' }} />
+    </button>
+
+    {/* Ambassador Image Row */}
+    <div
+      id="ambassadorScrollContainer"
+      style={{
+        display: 'flex',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        paddingBottom: '20px',
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch',
+        gap: '40px',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+      }}
+    >
+<style>
+{`
+  #ambassadorScrollContainer::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    #ambassadorScrollContainer {
+      gap: 20px !important;
+    }
+
+    #ambassadorScrollContainer > div {
+      width: 70vw !important;
+      height: auto !important;
+    }
+
+    #ambassadorScrollContainer p {
+      font-size: 18px !important;
+      margin-top: 20px !important;
+    }
+
+    button {
+      top: auto !important;
+      bottom: -30px !important;
+      transform: none !important;
+    }
+  }
+`}
+</style>
+
+      {allAmbassadors.map((amb, index) => (
+        <div
+          key={index}
+          style={{
+            flex: '0 0 auto',
+            width: '310px',
+            height: '373.75px',
+            scrollSnapAlign: 'start',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+          onClick={() => handleDetailView2()}
+        >
+          <img
+            src={amb.img}
+            alt={`Ambassador ${index + 1}`}
+            style={{
+              width: '100%',
+              height: '309.75px',
+              borderRadius: '0px',
+              objectFit: 'cover'
+            }}
+          />
+          <p style={{ marginTop: "40px", fontSize: "24px", fontWeight: "bold", textAlign: "center", color: "white" }}>
+            {amb.Name}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>            
             
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
-                {/* Navigation Buttons */}
-                <div style={{ display: 'flex', width:"100%",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Shop by Products</span>
-                  <div style={{ display: 'flex' }}>
-                    <button
-                      onClick={prevProduct}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '15px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={productIndex === 0}
-                    >
-                      <ChevronLeft size={32} style={{color: '#333',}}/>
-                    </button>
-                    <button
-                      onClick={nextProduct}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={isProductNextDisabled}
-                    >
-                      <ChevronRight size={32} style={{color: '#333',}}/>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  ref={imageContainerRef}
-                  style={{
-                    display: 'flex',
-                    overflowX: 'auto',
-                    paddingBottom: '20px',
-                    scrollSnapType: 'x mandatory',
-                    WebkitOverflowScrolling: 'touch',
-                    justifyContent: "space-between"
-                  }}
-                >
-                  {displayedProducts.map((product, index) => (
-                    <div key={index} style={{
-                      flex: '0 0 auto',
-                      width: '32%',
-                      height: '32%',
-                      marginRight: '10px',
-                      borderRadius: '0px',
-                      scrollSnapAlign: 'start',
-                      transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                      opacity: previousProducts.includes(product) ? 0 : 1, // Hide previous images
-                    }} onClick={() => handleDetailView3()}>
-                      <img
-                        src={product.img}
-                        alt={`Product ${index + 1}`}
-                        style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                      />
-                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{product.Name}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-
-            {/* Shop by Brand Ambassador Section */}
-            <section id="ambassador" style={{  textAlign: 'left', marginTop: '40px' }}>
             
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between'  }}>
-                {/* Navigation Buttons */}
-                <div style={{ display: 'flex', width: "100%", marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Shop by Brand Ambassadors</span>
-                  <div style={{ display: 'flex' }}>
-                    <button
-                      onClick={prevAmbassador}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '15px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={ambassadorIndex === 0}
-                    >
-                      <ChevronLeft size={32} style={{color: '#333',}}/>
-                    </button>
-                    <button
-                      onClick={nextAmbassador}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={isAmbassadorNextDisabled}
-                    >
-                      <ChevronRight size={32} style={{color: '#333',}}/>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  ref={imageContainerRef}
-                  style={{
-                    display: 'flex',
-                    overflowX: 'auto',
-                    paddingBottom: '20px',
-                    scrollSnapType: 'x mandatory',
-                    WebkitOverflowScrolling: 'touch',
-                    justifyContent: "space-between"
-                  }}
-                >
-                  {displayedAmbassadors.map((ambassador, index) => (
-                    <div key={index} style={{
-                      flex: '0 0 auto',
-                      width: '32%',
-                      height: '32%',
-                      marginRight: '10px',
-                      borderRadius: '0px',
-                      scrollSnapAlign: 'start',
-                      transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                      opacity: previousAmbassadors.includes(ambassador) ? 0 : 1, // Hide previous images
-                    }} onClick={() => handleDetailView2()}>
-                      <img
-                        src={ambassador.img}
-                        alt={`Ambassador ${index + 1}`}
-                        style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                      />
-                      <p style={{marginTop:"15px",fontSize:"20px", fontWeight:"bold", textAlign:"center" }}>{ambassador.Name}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
 
-            {/* Shop by Brand Video Section */}
-            <section id="brand-video" style={{ textAlign: 'left', marginTop: '40px' }}>
-            
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                {/* Navigation Buttons */}
-                <div style={{ display: 'flex', width: "100%",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Brand Videos</span>
-                  <div style={{ display: 'flex' }}>
-                    <button
-                      onClick={prevVideo}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '15px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={videoIndex === 0}
-                    >
-                      <ChevronLeft size={32} style={{color: '#333',}}/>
-                    </button>
-                    <button
-                      onClick={nextVideo}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={isVideoNextDisabled}
-                    >
-                      <ChevronRight size={32} style={{color: '#333',}}/>
-                    </button>
-                  </div>
-                </div>
-                <div
-                  ref={imageContainerRef}
-                  style={{
-                    display: 'flex',
-                    overflowX: 'hidden',
-                    paddingBottom: '20px',
-                    scrollSnapType: 'x mandatory',
-                    WebkitOverflowScrolling: 'touch',
-                    justifyContent: "space-between",
-                    width:"100%"
-                  }}
-                >
+<section id="brand-video" style={{ textAlign: 'left', marginTop: '40px', marginBottom: '25px', position: 'relative' }}>
+  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
+    {/* Title */}
+    <div style={{
+      display: 'flex',
+      width: '100%',
+      marginTop: '60px',
+      marginBottom: '40px',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    }}>
+      <span style={{ fontWeight: 'bold', color: 'white', fontSize: '32px' }}>Brand Videos</span>
+    </div>
 
-                  {displayedVideos.map((video, index) => (
-                            <div key={index} style={{
-                              flex: '0 0 auto',
-                              width: '32%',
-                              height: '32%',
-                              marginRight: '10px',
-                              borderRadius: '0px',
-                              scrollSnapAlign: 'start',
-                              transition: 'opacity 0.5s ease-in-out', 
-                              // opacity: previousVideos.includes(video) ? 0 : 1, // Hide previous images
-                              opacity: previousVideos.includes(video) ? 1 : 1, // Hide previous images
-                            }} onClick={() => handleDetailView()}>
-                              <video
-                                src={video}
-                                controls
-                                muted
-                                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-                                onMouseEnter={(e) => e.target.play()}
-                                onMouseLeave={(e) => {
-                                  e.target.pause();
-                                  e.target.currentTime = 0;
-                                }}
-                              />
-                            </div>
-                          ))}
-                </div>
-              </div>
-            </section>
+    {/* Scroll Buttons */}
+    <button
+      onClick={() => document.getElementById('brandVideoScroll').scrollBy({ left: -400, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: '195px',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronLeft size={24} style={{ color: '#333' }} />
+    </button>
+    <button
+      onClick={() => document.getElementById('brandVideoScroll').scrollBy({ left: 400, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        right: 0,
+        top: '195px',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronRight size={24} style={{ color: '#333' }} />
+    </button>
 
-            {/* Fast channel Section */}
-              <section id="fast-channel" style={{ textAlign: 'left', marginTop: '40px' }}>
-                <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                  {/* Navigation Buttons */}
-                  <div
-                    style={{
-                      display: 'flex',
-                      width: '100%',
-                      marginBottom: '10px',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <span style={{ fontWeight: 'bold', color: 'white', fontSize: '20px' }}>Fast Channel</span>
-                    <div style={{ display: 'flex' }}>
-                      <button
-                        onClick={prevfastChannel}
-                        style={{
-                          background: '#9D9A95',
-                          color: 'white',
-                          border: 'none',
-                          padding: '5px',
-                          borderRadius: '50%',
-                          cursor: 'pointer',
-                          zIndex: 10,
-                          marginRight: '15px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '45px',
-                          height: '45px',
-                        }}
-                        disabled={fastIndex === 0}
-                      >
-                        <ChevronLeft size={32} style={{ color: '#333' }} />
-                      </button>
-                      <button
-                        onClick={nextfastChannel}
-                        style={{
-                          background: '#9D9A95',
-                          color: 'white',
-                          border: 'none',
-                          padding: '5px',
-                          borderRadius: '50%',
-                          cursor: 'pointer',
-                          zIndex: 10,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '45px',
-                          height: '45px',
-                        }}
-                        disabled={isfastChannelDisabled}
-                      >
-                        <ChevronRight size={32} style={{ color: '#333' }} />
-                      </button>
-                    </div>
-                  </div>
-                  <div
-                    ref={imageContainerRef}
-                    style={{
-                      display: 'flex',
-                      overflowX: 'auto',
-                      paddingBottom: '20px',
-                      scrollSnapType: 'x mandatory',
-                      WebkitOverflowScrolling: 'touch',
-                      justifyContent: 'space-between',
-                      width: '100%',
-                    }}
-                  >
-                    {displayfastChannel.map((video, index) => (
-                      <div
-                        key={index}
-                        style={{
-                          flex: '0 0 auto',
-                          width: '32%',
-                          height: '250px',
-                          marginRight: '10px',
-                          borderRadius: '0px',
-                          scrollSnapAlign: 'start',
-                          transition: 'opacity 0.5s ease-in-out',
-                          opacity: previousFastChannel.includes(video) ? 1 : 1,
-                        }}
-                        onClick={() => {
-                          console.log('Open detail view for video:', video);
-                        }}
-                      >
-                        <video
-                          ref={(el) => {
-                            if (el) videoRefs1.current[index] = el;
-                          }}
-                          src={video}
-                          controls
-                          muted
-                          style={{
-                            cursor: 'pointer',
-                            width: '100%',
-                            height: '100%',
-                            borderRadius: '0px',
-                            objectFit: 'cover',
-                          }}
-                          onMouseEnter={() => {
-                            videoRefs1.current[index]?.play();
-                          }}
-                          onMouseLeave={() => {
-                            videoRefs1.current[index]?.pause();
-                            videoRefs1.current[index].currentTime = 0;
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </section>
-            {/* Video on demoand Section */}
-            <section id="vod" style={{ textAlign: 'left', marginTop: '40px' }}>
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    width: '100%',
-                    marginBottom: '10px',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <span style={{ fontWeight: 'bold', color: 'White', fontSize: '20px' }}>Video On Demand</span>
-                  <div style={{ display: 'flex' }}>
-                    <button
-                      onClick={prevvideoonDemand}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '15px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={videoonDemandIndex === 0}
-                    >
-                      <ChevronLeft size={32} style={{ color: '#333' }} />
-                    </button>
-                    <button
-                      onClick={nextvideoonDemand}
-                      style={{
-                        background: '#9D9A95',
-                        color: 'white',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '45px',
-                        height: '45px',
-                      }}
-                      disabled={isVideoNextDisabled}
-                    >
-                      <ChevronRight size={32} style={{ color: '#333' }} />
-                    </button>
-                  </div>
-                </div>
-                <div
-                  ref={imageContainerRef}
-                  style={{
-                    display: 'flex',
-                    overflowX: 'auto',
-                    paddingBottom: '20px',
-                    scrollSnapType: 'x mandatory',
-                    WebkitOverflowScrolling: 'touch',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                  }}
-                >
-                  {displayvideoonDemand.map((video, index) => (
-                    <div
-                      key={index}
-                      style={{
-                        flex: '0 0 auto',
-                        width: '32%',
-                        height: '250px',
-                        marginRight: '10px',
-                        borderRadius: '0px',
-                        scrollSnapAlign: 'start',
-                        transition: 'opacity 0.5s ease-in-out',
-                        opacity: previousVideos.includes(video) ? 1 : 1,
-                      }}
-                      onClick={() => {
-                        console.log('View VOD detail:', video);
-                      }}
-                    >
-                      <video
-                        ref={(el) => {
-                          if (el) videoRefs2.current[index] = el;
-                        }}
-                        src={video}
-                        controls
-                        muted
-                        style={{
-                          cursor: 'pointer',
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: '0px',
-                          objectFit: 'cover',
-                        }}
-                        onMouseEnter={() => {
-                          videoRefs2.current[index]?.play();
-                        }}
-                        onMouseLeave={() => {
-                          videoRefs2.current[index]?.pause();
-                          videoRefs2.current[index].currentTime = 0;
-                        }}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
+    {/* Scrollable Video Row */}
+    <div
+      id="brandVideoScroll"
+      style={{
+        display: 'flex',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        paddingBottom: '10px',
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch',
+        gap: '40px',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
+<style>
+{`
+  #brandVideoScroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    #brandVideoScroll {
+      gap: 20px !important;
+    }
+
+    #brandVideoScroll > div {
+      width: 70vw !important;
+      height: auto !important;
+    }
+
+    #brandVideoScroll p {
+      font-size: 18px !important;
+      margin-top: 20px !important;
+    }
+
+    button {
+      top: auto !important;
+      bottom: -30px !important;
+      transform: none !important;
+    }
+  }
+`}
+</style>
+
+
+      {[
+  { src: '/health/health2.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty2.mp4', label: 'Beauty' }, 
+  { src: '/Fashion/fashion2.mp4', label: 'Fashion' }, 
+  { src: '/Fitness/fitness2.mp4', label: 'Fitness' }, 
+  { src: '/health/health3.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty3.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
+  { src: '/health/health4.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty4.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion4.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness4.mp4', label: 'Fitness' },
+  { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness1.mp4', label: 'Fitness' },
+      ].map((item, index) => (
+        <div
+          key={index}
+          style={{
+            flex: '0 0 auto',
+            width: '396.16px',
+            height: '390px',
+            scrollSnapAlign: 'start',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+          onClick={() => handleDetailView()}
+        >
+          <video
+            src={item.src}
+            muted
+            style={{
+              width: '100%',
+              height: '250px',
+              objectFit: 'cover',
+              borderRadius: '0px',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.play()}
+            onMouseLeave={(e) => {
+              e.target.pause();
+              e.target.currentTime = 0;
+            }}
+          />
+          <p style={{
+            marginTop: '20px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            color: 'white'
+          }}>
+            {item.label}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+
+
+{/* Fast Channel Section */}
+<section id="fast-channel" style={{ textAlign: 'left', marginTop: '40px', marginBottom: '25px', position: 'relative' }}>
+  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
+    {/* Title */}
+    <div style={{
+      display: 'flex',
+      width: '100%',
+      marginTop: '0',
+      marginBottom: '40px',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    }}>
+      <span style={{ fontWeight: 'bold', color: 'white', fontSize: '32px' }}>Fast Channel</span>
+    </div>
+
+    {/* Scroll Buttons */}
+    <button
+      onClick={() => document.getElementById('fastChannelScroll').scrollBy({ left: -400, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: '195px',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronLeft size={24} style={{ color: '#333' }} />
+    </button>
+    <button
+      onClick={() => document.getElementById('fastChannelScroll').scrollBy({ left: 400, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        right: 0,
+        top: '195px',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronRight size={24} style={{ color: '#333' }} />
+    </button>
+
+    {/* Scrollable Row */}
+    <div
+      id="fastChannelScroll"
+      style={{
+        display: 'flex',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        paddingBottom: '10px',
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch',
+        gap: '40px',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
+     <style>
+{`
+  #fastChannelScroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    #fastChannelScroll {
+      gap: 20px !important;
+    }
+
+    #fastChannelScroll > div {
+      width: 70vw !important;
+      height: auto !important;
+    }
+
+    #fastChannelScroll p {
+      font-size: 18px !important;
+      margin-top: 20px !important;
+    }
+
+    button {
+      top: auto !important;
+      bottom: -30px !important;
+      transform: none !important;
+    }
+  }
+`}
+</style>
+
+
+      {[
+ 
+  { src: '/health/health3.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty3.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
+  { src: '/health/health4.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty4.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion4.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness4.mp4', label: 'Fitness' },
+  { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness1.mp4', label: 'Fitness' }, 
+  { src: '/health/health2.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty2.mp4', label: 'Beauty' }, 
+  { src: '/Fashion/fashion2.mp4', label: 'Fashion' }, 
+  { src: '/Fitness/fitness2.mp4', label: 'Fitness' },      ].map((item, index) => (
+        <div
+          key={index}
+          style={{
+            flex: '0 0 auto',
+            width: '396.16px',
+            height: '390px',
+            scrollSnapAlign: 'start',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+          onClick={() => console.log('Open detail view for:', item.label)}
+        >
+          <video
+            src={item.src}
+            muted
+            style={{
+              width: '100%',
+              height: '250px',
+              objectFit: 'cover',
+              borderRadius: '0px',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.play()}
+            onMouseLeave={(e) => {
+              e.target.pause();
+              e.target.currentTime = 0;
+            }}
+          />
+          <p style={{
+            marginTop: '20px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            color: 'white'
+          }}>
+            {item.label}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+{/* Video On Demand Section */}
+<section id="vod" style={{ textAlign: 'left', marginTop: '40px', marginBottom: '25px', position: 'relative' }}>
+  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
+    {/* Title */}
+    <div style={{
+      display: 'flex',
+      width: '100%',
+      marginTop: '0',
+      marginBottom: '40px',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    }}>
+      <span style={{ fontWeight: 'bold', color: 'white', fontSize: '32px' }}>Video On Demand</span>
+    </div>
+
+    {/* Scroll Buttons */}
+    <button
+      onClick={() => document.getElementById('vodScroll').scrollBy({ left: -400, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: '195px',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronLeft size={24} style={{ color: '#333' }} />
+    </button>
+    <button
+      onClick={() => document.getElementById('vodScroll').scrollBy({ left: 400, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        right: 0,
+        top: '195px',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronRight size={24} style={{ color: '#333' }} />
+    </button>
+
+    {/* Scrollable Row */}
+    <div
+      id="vodScroll"
+      style={{
+        display: 'flex',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        paddingBottom: '10px',
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch',
+        gap: '40px',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
+<style>
+{`
+  #vodScroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (max-width: 768px) {
+    #vodScroll {
+      gap: 20px !important;
+    }
+
+    #vodScroll > div {
+      width: 70vw !important;
+      height: auto !important;
+    }
+
+    #vodScroll p {
+      font-size: 18px !important;
+      margin-top: 20px !important;
+    }
+
+    button {
+      top: auto !important;
+      bottom: -30px !important;
+      transform: none !important;
+    }
+  }
+`}
+</style>
+
+      {[
+          
+  { src: '/health/health4.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty4.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion4.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness4.mp4', label: 'Fitness' },
+  { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness1.mp4', label: 'Fitness' }, 
+  { src: '/health/health2.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty2.mp4', label: 'Beauty' }, 
+  { src: '/Fashion/fashion2.mp4', label: 'Fashion' }, 
+  { src: '/Fitness/fitness2.mp4', label: 'Fitness' },
+  { src: '/health/health3.mp4', label: 'Health & Wellness' },
+  { src: '/Beauty/beauty3.mp4', label: 'Beauty' },
+  { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
+  { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
+      ].map((item, index) => (
+        <div
+          key={index}
+          style={{
+            flex: '0 0 auto',
+            width: '396.16px',
+            height: '390px',
+            scrollSnapAlign: 'start',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+          onClick={() => console.log('Open detail view for:', item.label)}
+        >
+          <video
+            src={item.src}
+            muted
+            style={{
+              width: '100%',
+              height: '250px',
+              objectFit: 'cover',
+              borderRadius: '0px',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.play()}
+            onMouseLeave={(e) => {
+              e.target.pause();
+              e.target.currentTime = 0;
+            }}
+          />
+          <p style={{
+            marginTop: '20px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            color: 'white'
+          }}>
+            {item.label}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
           </div>
         </div>
       </>
