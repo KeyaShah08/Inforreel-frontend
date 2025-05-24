@@ -4,7 +4,8 @@ import Beautyshowambassadors from './Beautyshowambassadors';
 import Beautyshowrooms from './Beautyshowrooms';
 import ProductDetails from './ProductDetails';
 import BeautyProducts from './BeautyProducts';
-
+import { useKeenSlider } from 'keen-slider/react';
+import 'keen-slider/keen-slider.min.css';
 function Marketplace() {
  const allImages = [
     {img:'/helth.png', Name:"Health & Wellness",},
@@ -83,6 +84,7 @@ function Marketplace() {
     {img:'/vd3.png', Name:"Sports & Athletics"}, 
   ];
 
+
   const [displayedImages, setDisplayedImages] = useState(allImages.slice(0, 3));
   const [displayedProducts, setDisplayedProducts] = useState(allProducts.slice(0, 3));
   const [displayedAmbassadors, setDisplayedAmbassadors] = useState(allAmbassadors.slice(0, 3));
@@ -111,11 +113,30 @@ function Marketplace() {
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [showBeautyShow, setShowBeauty] = useState(false);
   const [showBeautyProd, setShowProduct] = useState(false);
+  const sliderRef = useRef(null);
+  const [sliderInstanceRef, slider] = useKeenSlider({
+    slides: {
+      perView: 3,
+      spacing: 15,
+    },
+    loop: false,
+    mode: "snap",
+  });
   
   const videoRefs = useRef([]);
   const videoRefs1 = useRef([]);
   const videoRefs2 = useRef([]);
+  const playOnHover = (index) => {
+    videoRefs.current[index]?.play();
+  };
 
+  const pauseOnLeave = (index) => {
+    const video = videoRefs.current[index];
+    if (video) {
+      video.pause();
+      video.currentTime = 0;
+    }
+  };
   const nextImage = () => {
     if (imageContainerRef.current && currentIndex + 3 < allImages.length) {
       // Store the current images as previous images
@@ -276,6 +297,25 @@ function Marketplace() {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+  const navBtnStyle = {
+    background: '#9D9A95',
+    border: 'none',
+    borderRadius: '50%',
+    padding: 10,
+    marginLeft: 8,
+    color: '#333',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+  
+  const slideStyle = {
+    height: '200px',
+    borderRadius: '10px',
+    overflow: 'hidden',
+    cursor: 'pointer',
+  };
   return (
     <>
     {showBeautyShowroom ? (
@@ -360,7 +400,32 @@ function Marketplace() {
             paddingLeft: "270px"
           }}>
 
+<div style={{marginTop:"900px"}}>
+<button
+            onClick={() => slider?.prev()}
+            style={navBtnStyle}
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <button
+            onClick={() => slider?.next()}
+            style={navBtnStyle}
+          >
+            <ChevronRight size={20} />
+          </button>
 
+<div ref={sliderRef} className="keen-slider">
+        {displayedImages.map((video, index) => (
+          <div key={index} className="keen-slider__slide" style={slideStyle}>
+            <img
+                        src={video.img}
+                        alt={`Brand ${index + 1}`}
+                        style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
+                      />
+          </div>
+        ))}
+      </div>
+      </div>
             {/* Shop by Brands Section */}
             <section id="all" style={{ marginTop: '100vh', textAlign: 'left' }}>
           
