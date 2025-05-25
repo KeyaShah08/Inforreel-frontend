@@ -122,8 +122,8 @@ function Beautyshowrooms () {
                         src={image.img}
                         alt={`Brand ${index + 1}`}
                         style={{
-                          width: '100%',
-                          height: '222.36px',
+                          width: '300.04px',
+                          height: '177.89px',
                           objectFit: 'cover'
                         }}
                       />

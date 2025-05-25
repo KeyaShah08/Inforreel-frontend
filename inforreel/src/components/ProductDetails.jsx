@@ -61,7 +61,7 @@ function ProductDetails() {
   const [isNextDisabled, setIsNextDisabled] = useState(allImages.length <= 3);
   const [previousImages, setPreviousImages] = useState([]); // Track previously displayed images
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
-  const [activeTab, setActiveTab] = useState('tab1');
+  const [activeTab, setActiveTab] = useState('all'); // Initialize activeTab state
   const [isBack, setBackView] = useState(false);
   const [isOpen, setIsOpen] = useState(false); 
   const [isOpensec, setIssec] = useState(false);
@@ -272,6 +272,36 @@ function ProductDetails() {
         }
         .ActiveBtn {
           background: #912664 !important;
+        }
+        .static-filter-tabs {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 40px;
+            border-bottom: 1px solid #7B7B7B; /* Bottom border for the whole section */
+            padding-bottom: 10px; /* Space between buttons and border */
+        }
+        .static-filter-tab-button {
+            background: transparent;
+            border: none;
+            color: #fff;
+            margin-right: 30px;
+            font-size: 20px;
+            padding: 0;
+            cursor: pointer;
+            position: relative; /* Needed for the pseudo-element underline */
+            padding-bottom: 10px; /* To lift the text slightly from the border */
+        }
+        .static-filter-tab-button.active {
+            color: #96105E;
+        }
+        .static-filter-tab-button.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -1px; /* Position it just above the parent border */
+            width: 100%;
+            height: 2px; /* Thickness of the underline */
+            background-color: #96105E;
         }
       `}
     </style>
@@ -526,32 +556,44 @@ function ProductDetails() {
       </section>
       <section>
         <div className="static-filter-tabs">
-  <button
-    className="static-filter-tab-button"
-    onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })}
-  >
-    All
-  </button>
-  <button
-    className="static-filter-tab-button"
-    onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })}
-  >
-    Product
-  </button>
-  <button
-    className="static-filter-tab-button"
-    onClick={() => document.getElementById('brandvideos')?.scrollIntoView({ behavior: 'smooth' })}
-  >
-    Brand Videos
-  </button>
-  <button
-    className="static-filter-tab-button"
-    onClick={() => document.getElementById('vibereel')?.scrollIntoView({ behavior: 'smooth' })}
-  >
-    VibeReel
-  </button>
-</div>
-                <section id="collection" style={{ textAlign: 'left', marginTop: '40px',position: 'relative'}}>
+          <button
+            className={`static-filter-tab-button ${activeTab === 'all' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveTab('all');
+              document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            All
+          </button>
+          <button
+            className={`static-filter-tab-button ${activeTab === 'product' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveTab('product');
+              document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Product
+          </button>
+          <button
+            className={`static-filter-tab-button ${activeTab === 'brandvideos' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveTab('brandvideos');
+              document.getElementById('brandvideos')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            Brand Videos
+          </button>
+          <button
+            className={`static-filter-tab-button ${activeTab === 'vibereel' ? 'active' : ''}`}
+            onClick={() => {
+              setActiveTab('vibereel');
+              document.getElementById('vibereel')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          >
+            VibeReel
+          </button>
+        </div>
+        <section id="collection" style={{ textAlign: 'left', marginTop: '40px',position: 'relative'}}>
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between"}}>
               {/* Navigation Buttons */}
               <div style={{ width:"100%",display: 'flex', marginBottom: '25px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
