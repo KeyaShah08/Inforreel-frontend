@@ -16,38 +16,6 @@ function ProductDetails() {
     {img:'/C1.png', Name:"Skincare"},
     {img:'/C3.png', Name:"Fragrances"},
   ];
-  const allProducts = [
-    {img:'/B1.png', Name:"Makeup"},
-    {img:'/B2.png', Name:"Skincare"},
-    {img:'/B3.png', Name:"Name"},
-    {img:'/B2.png', Name:"Skincare"},
-    {img:'/B3.png', Name:"Makeup"},
-    {img:'/B1.png', Name:"Makeup"},
-  ];
-  const allAmbassadors = [
-    {img:'/v1.png', Name:"Lipstick"},
-    {img:'/v2.png', Name:"Highlighter Powder"},
-    {img:'/v3.png', Name:"Eyeshadows"},
-    {img:'/v4.png', Name:"Skin care"},
-    {img:'/v3.png', Name:"Lipstick"},
-    {img:'/v1.png', Name:"Highlighter Powder"},
-  ];
-  const allVideos = [
-    '/samplevideo1.mp4',
-    '/samplevideo3.mp4',
-    '/samplevideo4.mp4',
-    '/samplevideo4.mp4',
-    '/samplevideo5.mp4',
-    '/samplevideo6.mp4',  
-  ];
-  const allCollection = [    
-    '/samplevideo3.mp4',
-    '/samplevideo4.mp4',    
-    '/samplevideo5.mp4',
-    '/samplevideo6.mp4',  
-    '/samplevideo1.mp4',
-    '/samplevideo4.mp4',
-  ];
   const slides = [
     { src: "/sl1.png"},
     { src: "/b13.png"},
@@ -87,24 +55,11 @@ function ProductDetails() {
     {img:'/sp6.png', Name:"Armani", Smallimg:'/armani.png'},
   ];
   const [displayedImages, setDisplayedImages] = useState(allImages.slice(0, 3));
-  const [displayedProducts, setDisplayedProducts] = useState(allProducts.slice(0, 3));
-  const [displayedAmbassadors, setDisplayedAmbassadors] = useState(allAmbassadors.slice(0, 3));
-  const [displayedVideos, setDisplayedVideos] = useState(allVideos.slice(0, 3));
-  const [displayedCollection, setDisplayedCollection] = useState(allCollection.slice(0, 3));
   
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [productIndex, setProductIndex] = useState(0);
-  const [ambassadorIndex, setAmbassadorIndex] = useState(0);
-  const [videoIndex, setVideoIndex] = useState(0);
   const imageContainerRef = useRef(null);
   const [isNextDisabled, setIsNextDisabled] = useState(allImages.length <= 3);
-  const [isProductNextDisabled, setIsProductNextDisabled] = useState(allProducts.length <= 3);
-  const [isAmbassadorNextDisabled, setIsAmbassadorNextDisabled] = useState(allAmbassadors.length <= 3);
-  const [isVideoNextDisabled, setIsVideoNextDisabled] = useState(allVideos.length <= 3);
   const [previousImages, setPreviousImages] = useState([]); // Track previously displayed images
-  const [previousProducts, setPreviousProducts] = useState([]);
-  const [previousAmbassadors, setPreviousAmbassadors] = useState([]);
-  const [previousVideos, setPreviousVideos] = useState([]);
   const [showBeautyShowroom, setShowBeautyShowroom] = useState(false);
   const [activeTab, setActiveTab] = useState('tab1');
   const [isBack, setBackView] = useState(false);
@@ -112,11 +67,7 @@ function ProductDetails() {
   const [isOpensec, setIssec] = useState(false);
   const [isOpenDrp, setIsOpenDrp] = useState(false); // State for dropdown open status  
   const [isActive, setIsActive] = useState(false);
-  const videoRefs = useRef([]);
-  const videoRefsN = useRef([]);
   const videoRefscoll = useRef([]);
-  const videoRefs2 = useRef([]);
-  const videoRef3 = useRef([]);
   const navigate = useNavigate();
 
 
@@ -144,73 +95,7 @@ function ProductDetails() {
     }
   };
 
-  const nextProduct = () => {
-    if (imageContainerRef.current && productIndex + 3 < allProducts.length) {
-      // Store the current images as previous images
-      setPreviousProducts(displayedProducts);
 
-      setProductIndex(productIndex + 3);
-      const newProducts = allProducts.slice(productIndex + 3, Math.min(productIndex + 6, allProducts.length));
-      setDisplayedProducts(newProducts); //directly set new images, don't accumulate
-      if (productIndex + 6 >= allProducts.length) {
-        setIsProductNextDisabled(true);
-      }
-    }
-  };
-
-  const prevProduct = () => {
-    if (imageContainerRef.current && productIndex - 3 >= 0) {
-      setPreviousProducts(displayedProducts);
-      setProductIndex(productIndex - 3);
-      const newProducts = allProducts.slice(Math.max(0, productIndex - 3), productIndex);
-      setDisplayedProducts(newProducts);
-      setIsProductNextDisabled(false);
-    }
-  };
-
-  const nextAmbassador = () => {
-    if (imageContainerRef.current && ambassadorIndex + 3 < allAmbassadors.length) {
-      // Store the current images as previous images
-      setPreviousAmbassadors(displayedAmbassadors);
-
-      setAmbassadorIndex(ambassadorIndex + 3);
-      const newAmbassadors = allAmbassadors.slice(ambassadorIndex + 3, Math.min(ambassadorIndex + 6, allAmbassadors.length));
-      setDisplayedAmbassadors(newAmbassadors); //directly set new images, don't accumulate
-      if (ambassadorIndex + 6 >= allAmbassadors.length) {
-        setIsAmbassadorNextDisabled(true);
-      }
-    }
-  };
-
-  const prevAmbassador = () => {
-    if (imageContainerRef.current && ambassadorIndex - 3 >= 0) {
-      setPreviousAmbassadors(displayedAmbassadors);
-      setAmbassadorIndex(ambassadorIndex - 3);
-      const newAmbassadors = allAmbassadors.slice(Math.max(0, ambassadorIndex - 3), ambassadorIndex);
-      setDisplayedAmbassadors(newAmbassadors);
-      setIsAmbassadorNextDisabled(false);
-    }
-  };
-
-  const nextVideo = () => {
-    if (imageContainerRef.current && videoIndex + 3 < allVideos.length) {
-      setPreviousVideos(displayedVideos);
-      setVideoIndex(videoIndex + 3);
-      const newVideos = allVideos.slice(videoIndex + 3, Math.min(videoIndex + 6, allVideos.length));
-      setDisplayedVideos(newVideos);
-      setIsVideoNextDisabled(true);
-    }
-  };
-
-  const prevVideo = () => {
-    if (imageContainerRef.current && videoIndex - 3 >= 0) {
-      setPreviousVideos(displayedVideos);
-      setVideoIndex(videoIndex - 3);
-      const newVideos = allVideos.slice(Math.max(0, videoIndex - 3), videoIndex);
-      setDisplayedVideos(newVideos);
-      setIsVideoNextDisabled(false);
-    }
-  };
   const handleDetailView = () => {
     setShowBeautyShowroom(true);
   };
@@ -639,21 +524,35 @@ function ProductDetails() {
             </ul>
         </div>
       </section>
-      {/* Tab Section */}
-      <section style={{marginTop:"50px"}}>
-      <div className="tabs-wrapper">
-        <div className="tab-buttons" style={{display:"flex",borderBottom:"1px solid #666"}}>
-          <button className={`tab-btn ${activeTab === 'tab1' ? 'activeTab' : ''}`} onClick={() => setActiveTab('tab1')}>All</button>
-          <button className={`tab-btn ${activeTab === 'tab2' ? 'activeTab' : ''}`} onClick={() => setActiveTab('tab2')}>Collection</button>
-          <button className={`tab-btn ${activeTab === 'tab3' ? 'activeTab' : ''}`} onClick={() => setActiveTab('tab3')}>Brand Video</button>
-          <button className={`tab-btn ${activeTab === 'tab4' ? 'activeTab' : ''}`} onClick={() => setActiveTab('tab4')}>VibeReel</button>
-        </div>
-
-      <div style={{position: "relative", marginTop:"30px",  overflow: "hidden"}}>
-        <div className={`tab-panel ${activeTab === 'tab1' ? 'active' : ''}`}>
-          {/* Shop by Brands Section */}
-          <section style={{ textAlign: 'left' }}>
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between" }}>
+      <section>
+        <div className="static-filter-tabs">
+  <button
+    className="static-filter-tab-button"
+    onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })}
+  >
+    All
+  </button>
+  <button
+    className="static-filter-tab-button"
+    onClick={() => document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' })}
+  >
+    Product
+  </button>
+  <button
+    className="static-filter-tab-button"
+    onClick={() => document.getElementById('brandvideos')?.scrollIntoView({ behavior: 'smooth' })}
+  >
+    Brand Videos
+  </button>
+  <button
+    className="static-filter-tab-button"
+    onClick={() => document.getElementById('vibereel')?.scrollIntoView({ behavior: 'smooth' })}
+  >
+    VibeReel
+  </button>
+</div>
+                <section id="collection" style={{ textAlign: 'left', marginTop: '40px',position: 'relative'}}>
+            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between"}}>
               {/* Navigation Buttons */}
               <div style={{ width:"100%",display: 'flex', marginBottom: '25px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Collection</span>
@@ -730,537 +629,354 @@ function ProductDetails() {
                       alt={`Brand ${index + 1}`}
                       style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
                     />
-                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{image.Name}</p>
+                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px", fontWeight: 'bold'}}>{image.Name}</p>
                   </div>
                 ))}
               </div>
             </div>
           </section>
           {/* Shop by Product Section */}
-        <section style={{  textAlign: 'left', marginTop: '40px' }}>
-         
-         <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
-           {/* Navigation Buttons */}
-           <div style={{ display: 'flex', width:"100%",marginBottom: '20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-           <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Brand Videos</span>
-             <div style={{ display: 'flex' }}>
-               <button
-                 onClick={prevProduct}
-                 style={{
-                   background: '#868584',
-                     color: '#000',
-                     border: 'none',
-                     padding: '5px',
-                     borderRadius: '50%',
-                     cursor: 'pointer',
-                     zIndex: 10,
-                     marginRight: '20px',
-                     display: 'flex',
-                     alignItems: 'center',
-                     justifyContent: 'center',
-                     width: '48px',
-                     height: '48px',
-                 }}
-                 disabled={productIndex === 0}
-               >
-                 <ChevronLeft size={20} />
-               </button>
-               <button
-                 onClick={nextProduct}
-                 style={{
-                   background: '#868584',
-                     color: '#000',
-                     border: 'none',
-                     padding: '5px',
-                     borderRadius: '50%',
-                     cursor: 'pointer',
-                     zIndex: 10,
-                     marginRight: '20px',
-                     display: 'flex',
-                     alignItems: 'center',
-                     justifyContent: 'center',
-                     width: '48px',
-                     height: '48px',
-                 }}
-                 disabled={isProductNextDisabled}
-               >
-                 <ChevronRight size={20} />
-               </button>
-             </div>
-           </div>
-           <div
-             ref={imageContainerRef}
-             style={{
-               display: 'flex',
-               overflowX: 'auto',
-               paddingBottom: '20px',
-               scrollSnapType: 'x mandatory',
-               WebkitOverflowScrolling: 'touch',
-               justifyContent: "space-between"
-             }}
-           >
-          {displayedVideos.map((video, index) => (
-               <div key={index} style={{
-                 flex: '0 0 auto',
-                 width: '32%',
-                 height: '32%',
-                 marginRight: '10px',
-                 borderRadius: '0px',
-                 scrollSnapAlign: 'start',
-                 transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                 opacity: previousProducts.includes(video) ? 0 : 1, // Hide previous images
-               }} onClick={() => handleDetailView()}>
-                 {/* <img
-                   src={product.img}
-                   alt={`Product ${index + 1}`}
-                   style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                 />
-                 <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
-                  <video
-                        ref={(el) => {
-                          if (el) videoRefsN.current[index] = el;
-                        }}
-                        src={video}
-                        controls
-                        muted
-                        style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                        onMouseEnter={() => {
-                          videoRefsN.current[index]?.play();
-                        }}
-                        onMouseLeave={() => {
-                          const video = videoRefsN.current?.[index];
-                          if (video && typeof video.pause === 'function') {
-                            video.pause();
-                            video.currentTime = 0;
-                          }
-                        }}
-                      />
-               </div>
-             ))}
-           </div>
-         </div>
-        </section>
+<section id="brandvideos" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
+  <div style={{ position: 'relative' }}>
+    {/* Title */}
+    <div style={{
+      display: 'flex',
+      width: '100%',
+      marginTop: '60px',
+      marginBottom: '40px',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    }}>
+      <span style={{ fontWeight: 'bold', color: 'white', fontSize: '32px' }}>Brand Videos</span>
+    </div>
+
+    {/* Scroll Buttons */}
+    <button
+      onClick={() => document.getElementById('brandVideoScroll').scrollBy({ left: -400, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronLeft size={24} style={{ color: '#333' }} />
+    </button>
+
+    <button
+      onClick={() => document.getElementById('brandVideoScroll').scrollBy({ left: 400, behavior: 'smooth' })}
+      style={{
+        position: 'absolute',
+        right: 0,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: '#9D9A95',
+        border: 'none',
+        padding: '10px',
+        borderRadius: '50%',
+        cursor: 'pointer',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <ChevronRight size={24} style={{ color: '#333' }} />
+    </button>
+
+    {/* Scrollable Video Row */}
+    <div
+      id="brandVideoScroll"
+      style={{
+        display: 'flex',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        paddingBottom: '10px',
+        scrollSnapType: 'x mandatory',
+        WebkitOverflowScrolling: 'touch',
+        gap: '40px',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
+      <style>
+        {`
+        #brandVideoScroll::-webkit-scrollbar {
+          display: none;
+        }
+
+        @media screen and (max-width: 768px) {
+          #brandVideoScroll {
+            gap: 20px !important;
+          }
+
+          #brandVideoScroll > div {
+            width: 70vw !important;
+            height: auto !important;
+          }
+
+          #brandVideoScroll p {
+            font-size: 18px !important;
+            margin-top: 20px !important;
+          }
+
+          button {
+            top: auto !important;
+            bottom: -30px !important;
+            transform: none !important;
+          }
+        }
+      `}
+      </style>
+
+      {[
+        { src: '/health/health2.mp4', label: 'Health & Wellness' },
+        { src: '/Beauty/beauty2.mp4', label: 'Beauty' },
+        { src: '/Fashion/fashion2.mp4', label: 'Fashion' },
+        { src: '/Fitness/fitness2.mp4', label: 'Fitness' },
+        { src: '/health/health3.mp4', label: 'Health & Wellness' },
+        { src: '/Beauty/beauty3.mp4', label: 'Beauty' },
+        { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
+        { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
+        { src: '/health/health4.mp4', label: 'Health & Wellness' },
+        { src: '/Beauty/beauty4.mp4', label: 'Beauty' },
+        { src: '/Fashion/fashion4.mp4', label: 'Fashion' },
+        { src: '/Fitness/fitness4.mp4', label: 'Fitness' },
+        { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+        { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
+        { src: '/Fitness/fitness1.mp4', label: 'Fitness' },
+      ].map((item, index) => (
+        <div
+          key={index}
+          style={{
+            flex: '0 0 auto',
+            width: '396.16px',
+            height: '305px',
+            scrollSnapAlign: 'start',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center'
+          }}
+          onClick={() => handleDetailView()}
+        >
+          <video
+            src={item.src}
+            muted
+            style={{
+              width: '100%',
+              height: '250px',
+              objectFit: 'cover',
+              borderRadius: '0px',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => e.target.play()}
+            onMouseLeave={(e) => {
+              e.target.pause();
+              e.target.currentTime = 0;
+            }}
+          />
+          <p style={{
+            marginTop: '20px',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            color: 'white'
+          }}>
+            {item.label}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
 
        {/* Shop by Brand Ambassador Section */}
-       <section style={{  textAlign: 'left', marginTop: '40px' }}>
-       
-         <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between'  }}>
-           {/* Navigation Buttons */}
-           <div style={{ display: 'flex', width: "100%", marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-             <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>VibeReel</span>
-             <div style={{ display: 'flex' }}>
-               <button
-                 onClick={prevAmbassador}
-                 style={{
-                   background: 'rgba(0, 0, 0, 0.5)',
-                   color: 'white',
-                   border: 'none',
-                   padding: '12px',
-                   borderRadius: '50%',
-                   cursor: 'pointer',
-                   zIndex: 10,
-                   marginRight: '5px',
-                   display: 'flex',
-                   alignItems: 'center',
-                   justifyContent: 'center',
-                   width: '48px',
-                   height: '48px',
-                 }}
-                 disabled={ambassadorIndex === 0}
-               >
-                 <ChevronLeft size={20} />
-               </button>
-               <button
-                 onClick={nextAmbassador}
-                 style={{
-                   background: 'rgba(0, 0, 0, 0.5)',
-                   color: 'white',
-                   border: 'none',
-                   padding: '12px',
-                   borderRadius: '50%',
-                   cursor: 'pointer',
-                   zIndex: 10,
-                   display: 'flex',
-                   alignItems: 'center',
-                   justifyContent: 'center',
-                   width: '48px',
-                   height: '48px',
-                 }}
-                 disabled={isAmbassadorNextDisabled}
-               >
-                 <ChevronRight size={20} />
-               </button>
-             </div>
-           </div>
-           <div
-             ref={imageContainerRef}
-             style={{
-               display: 'flex',
-               overflowX: 'auto',
-               paddingBottom: '20px',
-               scrollSnapType: 'x mandatory',
-               WebkitOverflowScrolling: 'touch',
-               justifyContent: "space-between"
-             }}
-           >
-             {displayedVideos.map((video, index) => (
-                  <div key={index} style={{
-                    flex: '0 0 auto',
-                    width: '32%',
-                    height: '32%',
-                    marginRight: '10px',
-                    borderRadius: '0px',
-                    scrollSnapAlign: 'start',
-                    transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                    opacity: previousProducts.includes(video) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView()}>
-                    {/* <img
-                      src={product.img}
-                      alt={`Product ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                    />
-                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
-                        <video
-                            ref={(el) => {
-                              if (el) videoRef3.current[index] = el;
-                            }}
-                            src={video}
-                            controls
-                            muted
-                            style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                            onMouseEnter={() => {
-                              videoRef3.current[index]?.play();
-                            }}
-                            onMouseLeave={() => {
-                              videoRef3.current[index]?.pause();
-                              videoRef3.current[index].currentTime = 0;
-                            }}
-                        />
-                  </div>
-                ))}
-           </div>
-         </div>
-       </section>
-        </div>
-        <div className={`tab-panel ${activeTab === 'tab2' ? 'active' : ''}`}>
-           {/* Shop by Product Section */}
-            <section style={{  textAlign: 'left', }}>
-            
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
-              {/* Navigation Buttons */}
-              <div style={{ display: 'flex', width:"100%",marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Collection</span>
-                <div style={{ display: 'flex' }}>
-                  <button
-                    onClick={prevProduct}
-                    style={{
-                      background: '#868584',
-                        color: '#000',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '20px',
-                        marginBottom: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '48px',
-                        height: '48px',
-                    }}
-                    disabled={productIndex === 0}
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <button
-                    onClick={nextProduct}
-                    style={{
-                      background: '#868584',
-                        color: '#000',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '20px',
-                        marginBottom: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '48px',
-                        height: '48px',
-                    }}
-                    disabled={isProductNextDisabled}
-                  >
-                    <ChevronRight size={20} />
-                  </button>
-                </div>
-              </div>
-              <div
-                ref={imageContainerRef}
-                style={{
-                  display: 'flex',
-                  overflowX: 'auto',
-                  paddingBottom: '20px',
-                  scrollSnapType: 'x mandatory',
-                  WebkitOverflowScrolling: 'touch',
-                  justifyContent: "space-between"
-                }}
-              >
-                {/* {displayedProducts.map((product, index) => (
-                  <div key={index} style={{
-                    flex: '0 0 auto',
-                    width: '32%',
-                    height: '32%',
-                    marginRight: '10px',
-                    borderRadius: '0px',
-                    scrollSnapAlign: 'start',
-                    transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                    opacity: previousProducts.includes(product) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView()}>
-                    <img
-                      src={product.img}
-                      alt={`Product ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                    />
-                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p>
-                  </div>
-                ))} */}
-                {displayedCollection.map((video, index) => (
-                  <div key={index} style={{
-                    flex: '0 0 auto',
-                    width: '32%',
-                    height: '32%',
-                    marginRight: '10px',
-                    borderRadius: '0px',
-                    scrollSnapAlign: 'start',
-                    transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                    opacity: previousProducts.includes(video) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView()}>
-                    {/* <img
-                      src={product.img}
-                      alt={`Product ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                    />
-                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
-                      <video
-                        ref={(el) => {
-                          if (el) videoRefs.current[index] = el;
-                        }}
-                        src={video}
-                        controls
-                        muted
-                        style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                        onMouseEnter={() => {
-                          videoRefs.current[index]?.play();
-                        }}
-                        onMouseLeave={() => {
-                          const video = videoRefs.current?.[index];
-                          if (video && typeof video.pause === 'function') {
-                            video.pause();
-                            video.currentTime = 0;
-                          }
-                        }}
-                      />
-                  </div>
-                ))}
-              </div>
-            </div>
-            </section>
-        </div>
-        <div className={`tab-panel ${activeTab === 'tab3' ? 'active' : ''}`}>
-            <section style={{ textAlign: 'left' }}>
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between" }}>
-                {/* Navigation Buttons */}
-                <div style={{ width:"100%",display: 'flex', marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Shop by Brands</span>
-                  <div style={{ display: 'flex' }}>
-                    <button
-                      onClick={prevImage}
-                      style={{
-                        background: '#868584',
-                        color: '#000',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '20px',
-                        marginBottom: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '48px',
-                        height: '48px',
-                      }}
-                      disabled={currentIndex === 0}
-                    >
-                      <ChevronLeft size={20} />
-                    </button>
-                    <button
-                      onClick={nextImage}
-                      style={{  
-                        background: '#868584',
-                        color: '#000',
-                        border: 'none',
-                        padding: '5px',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        zIndex: 10,
-                        marginRight: '20px',
-                        marginBottom: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        width: '48px',
-                        height: '48px',
-                      }}
-                      disabled={isNextDisabled}
-                    >
-                      <ChevronRight size={20} />
-                    </button>
-                  </div>
-                </div>
-                <div
-                  ref={imageContainerRef}
-                  style={{
-                    display: 'flex',
-                    overflowX: 'auto',
-                    paddingBottom: '20px',
-                    scrollSnapType: 'x mandatory',
-                    WebkitOverflowScrolling: 'touch',
-                    justifyContent: "space-between"
-                  }}
-                >
-                  {displayedImages.map((image, index) => (
-                    <div key={index} style={{
-                      flex: '0 0 auto',
-                      width: '32%',
-                      height: '32%',
-                      marginRight: '10px',
-                      borderRadius: '0px',
-                      scrollSnapAlign: 'start',
-                      transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                      opacity: previousImages.includes(image) ? 0 : 1, // Hide previous images
-                    }} onClick={() => handleDetailView()}>
-                      <img
-                        src={image.img}
-                        alt={`Brand ${index + 1}`}
-                        style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                      />
-                      <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{image.Name}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
-        </div>
-        <div className={`tab-panel ${activeTab === 'tab4' ? 'active' : ''}`}>
-          {/* Shop by Brand Ambassador Section */}
-            <section style={{  textAlign: 'left', }}>
-            
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between'  }}>
-              {/* Navigation Buttons */}
-              <div style={{ display: 'flex', width: "100%", marginBottom: '10px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>VibeReel</span>
-                <div style={{ display: 'flex' }}>
-                  <button
-                    onClick={prevAmbassador}
-                    style={{
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px',
-                      borderRadius: '50%',
-                      cursor: 'pointer',
-                      zIndex: 10,
-                      marginRight: '5px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '48px',
-                      height: '48px',
-                    }}
-                    disabled={ambassadorIndex === 0}
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-                  <button
-                    onClick={nextAmbassador}
-                    style={{
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      color: 'white',
-                      border: 'none',
-                      padding: '12px',
-                      borderRadius: '50%',
-                      cursor: 'pointer',
-                      zIndex: 10,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '48px',
-                      height: '48px',
-                    }}
-                    disabled={isAmbassadorNextDisabled}
-                  >
-                    <ChevronRight size={20} />
-                  </button>
-                </div>
-              </div>
-              <div
-                ref={imageContainerRef}
-                style={{
-                  display: 'flex',
-                  overflowX: 'auto',
-                  paddingBottom: '20px',
-                  scrollSnapType: 'x mandatory',
-                  WebkitOverflowScrolling: 'touch',
-                  justifyContent: "space-between"
-                }}
-              >
-                {displayedVideos.map((video, index) => (
-                  <div key={index} style={{
-                    flex: '0 0 auto',
-                    width: '32%',
-                    height: '32%',
-                    marginRight: '10px',
-                    borderRadius: '0px',
-                    scrollSnapAlign: 'start',
-                    transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                    opacity: previousProducts.includes(video) ? 0 : 1, // Hide previous images
-                  }} onClick={() => handleDetailView()}>
-                    {/* <img
-                      src={product.img}
-                      alt={`Product ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                    />
-                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px"}}>{product.Name}</p> */}
-                    <video
-                            ref={(el) => {
-                              if (el) videoRefs2.current[index] = el;
-                            }}
-                            src={video}
-                            controls
-                            muted
-                            style={{ cursor:"pointer",width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                            onMouseEnter={() => {
-                              videoRefs2.current[index]?.play();
-                            }}
-                            onMouseLeave={() => {
-                              videoRefs2.current[index]?.pause();
-                              videoRefs2.current[index].currentTime = 0;
-                            }}
-                          />
-                  </div>
-                ))}
-              </div>
-            </div>
-            </section>
-        </div>
+<section id="vibereel" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
+  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
+    
+    {/* Title */}
+    <div style={{
+      display: 'flex',
+      width: '100%',
+      marginTop: '60px',
+      marginBottom: '40px',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    }}>
+      <span style={{ fontWeight: 'bold', color: 'white', fontSize: '32px' }}>VibeReel</span>
+    </div>
+
+    {/* Wrapper exactly matching VIDEO height (not whole card) */}
+    <div style={{ position: 'relative', height: '601px' }}>
+      
+      {/* Left Scroll Button */}
+      <button
+        onClick={() => document.getElementById('brandVideoScroll').scrollBy({ left: -400, behavior: 'smooth' })}
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: '230.5px',
+          transform: 'translateY(-50%)',
+          background: '#9D9A95',
+          border: 'none',
+          padding: '10px',
+          borderRadius: '50%',
+          cursor: 'pointer',
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '40px',
+          width: '40px'
+        }}
+      >
+        <ChevronLeft size={24} style={{ color: '#333' }} />
+      </button>
+
+      {/* Right Scroll Button */}
+      <button
+        onClick={() => document.getElementById('brandVideoScroll').scrollBy({ left: 400, behavior: 'smooth' })}
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: '230.5px',
+          transform: 'translateY(-50%)',
+          background: '#9D9A95',
+          border: 'none',
+          padding: '10px',
+          borderRadius: '50%',
+          cursor: 'pointer',
+          zIndex: 10,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '40px',
+          width: '40px'
+        }}
+      >
+        <ChevronRight size={24} style={{ color: '#333' }} />
+      </button>
+
+      {/* Scrollable Video Row */}
+      <div
+        id="brandVideoScroll"
+        style={{
+          display: 'flex',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          gap: '40px',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          height: '100%'
+        }}
+      >
+        <style>
+          {`
+            #brandVideoScroll::-webkit-scrollbar {
+              display: none;
+            }
+
+            @media screen and (max-width: 768px) {
+              #brandVideoScroll {
+                gap: 20px !important;
+              }
+
+              #brandVideoScroll > div {
+                width: 70vw !important;
+                height: auto !important;
+              }
+
+              #brandVideoScroll p {
+                font-size: 18px !important;
+                margin-top: 20px !important;
+              }
+
+              button {
+                top: auto !important;
+                bottom: -30px !important;
+                transform: none !important;
+              }
+            }
+          `}
+        </style>
+
+        {[
+          { src: '/health/health2.mp4', label: 'Health & Wellness' },
+          { src: '/Beauty/beauty2.mp4', label: 'Beauty' },
+          { src: '/Fashion/fashion2.mp4', label: 'Fashion' },
+          { src: '/Fitness/fitness2.mp4', label: 'Fitness' },
+          { src: '/health/health3.mp4', label: 'Health & Wellness' },
+          { src: '/Beauty/beauty3.mp4', label: 'Beauty' },
+          { src: '/Fashion/fashion3.mp4', label: 'Fashion' },
+          { src: '/Fitness/fitness3.mp4', label: 'Fitness' },
+          { src: '/health/health4.mp4', label: 'Health & Wellness' },
+          { src: '/Beauty/beauty4.mp4', label: 'Beauty' },
+          { src: '/Fashion/fashion4.mp4', label: 'Fashion' },
+          { src: '/Fitness/fitness4.mp4', label: 'Fitness' },
+          { src: '/Beauty/beauty1.mp4', label: 'Beauty' },
+          { src: '/Fashion/fashion1.mp4', label: 'Fashion' },
+          { src: '/Fitness/fitness1.mp4', label: 'Fitness' },
+        ].map((item, index) => (
+          <div
+            key={index}
+            style={{
+              flex: '0 0 auto',
+              width: '260px',
+              height: '601px',
+              scrollSnapAlign: 'start',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
+            }}
+            onClick={() => handleDetailView()}
+          >
+            <video
+              src={item.src}
+              muted
+              style={{
+                width: '260px',
+                height: '461px',
+                objectFit: 'cover',
+                borderRadius: '0px',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => e.target.play()}
+              onMouseLeave={(e) => {
+                e.target.pause();
+                e.target.currentTime = 0;
+              }}
+            />
+            <p style={{
+              marginTop: '20px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              textAlign: 'center',
+              color: 'white'
+            }}>
+              {item.label}
+            </p>
+          </div>
+        ))}
       </div>
     </div>
-      </section>
+  </div>
+</section>
+</section>
+
       </div>
     </div>
     )}
@@ -2005,5 +1721,4 @@ function ProductDetails() {
     </>
   );
 }
-
 export default ProductDetails;
