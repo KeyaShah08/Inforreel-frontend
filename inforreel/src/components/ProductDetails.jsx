@@ -40,6 +40,13 @@ function ProductDetails() {
     { src: "/Beauty/beauty4.mp4" },
     { src: "/Beauty/beauty5.mp4" },
   ];
+  const modalVideos2 = [
+  { src: "/Beauty/beauty4.mp4" },
+  { src: "/Beauty/beauty5.mp4" },
+  { src: "/Beauty/beauty6.mp4" },
+  { src: "/Beauty/beauty7.mp4" },
+  { src: "/Beauty/beauty8.mp4" },
+];
   const ListItem = [
     {img:'/Li1.png', Date:"5/1/2025", purchsed:"2K purchased", Name:"Prestige Exceptional Micro-Nutritive and Repairing Ritual "},
     {img:'/Li2.png', Date:"5/5/2025", purchsed:"5K purchased", Name:"Forever Glow Luminizer - Limited Edition"},
@@ -603,6 +610,8 @@ function ProductDetails() {
             VibeReel
           </button>
         </div>
+
+         {/* Shop by Product Section */}
 <section id="products" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
   <div style={{ position: 'relative' }}>
     {/* Title */}
@@ -748,7 +757,7 @@ function ProductDetails() {
 </section>
 
 
-          {/* Shop by Product Section */}
+          {/* Shop by Brand videos Section */}
 <section id="brandvideos" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
   <div style={{ position: 'relative' }}>
     
@@ -922,7 +931,7 @@ function ProductDetails() {
 
 
 
-       {/* Shop by Brand Ambassador Section */}
+       {/* Shop by Vibereel Section */}
 <section id="vibereel" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
   <div style={{ position: 'relative' }}>
 
@@ -1338,60 +1347,137 @@ function ProductDetails() {
         </div>
       )}
       // second modal
-      {isOpensec && (
-        <div className="modal-overlay">
-          <div className="modal" style={{position:"relative"}}>
-          <div className="modal-body" style={{position:"relative"}}>
-            <button
-                onClick={() => {
-                  setIssec(false);  // Close second modal
-                  setIsOpen(true);  // Reopen first modal
+{isOpensec && (
+  <div className="modal-overlay">
+    <div className="modal" style={{ position: "relative" }}>
+      <div className="modal-body" style={{ position: "relative" }}>
+        <button
+          onClick={() => {
+            setIssec(false);
+            setIsOpen(true);
+          }}
+          style={{
+            position: "absolute",
+            right: "15px",
+            top: "15px",
+            zIndex: "111111111",
+            background: "#181818",
+            color: "#fff",
+            borderRadius: "50%",
+            width: "36px",
+            height: "36px",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          X
+        </button>
+        <div className="SecondSection">
+          <div style={{ position: "relative" }}>
+            <Carousel
+              autoPlay={false}
+              infiniteLoop
+              showStatus={false}
+              showArrows={true}
+              showThumbs={false}
+            >
+              {modalContentType === "image"
+                ? slides2.map((slide, index) => (
+                    <div key={index}>
+                      <img
+                        src={slide.src}
+                        alt={`Slide ${index + 1}`}
+                        style={{ height: "480px", objectFit: "cover" }}
+                      />
+                    </div>
+                  ))
+                : modalVideos2.map((video, index) => (
+                    <div key={index}>
+                      <video
+                        src={video.src}
+                        controls
+                        autoPlay
+                        loop
+                        muted
+                        style={{
+                          width: "100%",
+                          height: "480px",
+                          borderRadius: "0px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </div>
+                  ))}
+            </Carousel>
+
+            <div
+              style={{
+                position: "absolute",
+                zIndex: "999",
+                bottom: "0",
+                left: "0",
+                right: "0",
+                background: "rgba(0,0,0,0.5)",
+                padding: "2px 15px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
-                style={{position:"absolute", right:"15px", top:"15px", zIndex:"111111111", background:"#181818", color:"#fff", borderRadius:"50%", width:"36px", height:"36px", border:"none", cursor:"pointer  "}}
               >
-              X
-            </button>
-             <div className='SecondSection'>
-              <div style={{position:"relative"}}>
-                <Carousel 
-  autoPlay={false}
-  infiniteLoop
-  showStatus={false}
-  showArrows={true}
-  showThumbs={false}
->
-                    {slides2.map((slide, index) => (
-                      <div key={index}>
-                        <img src={slide.src} alt={`Slide ${index + 1}`} style={{ height: '480px', objectFit: 'cover' }}/> {/* Added height and objectFit */}
-                      </div>
-                    ))}
-                </Carousel>
-                <div style={{position:"absolute",zIndex: "999",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.1)", padding:"2px 15px"}}>
-                  <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
-                  <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
-                    <button onClick={handleClickActive} className={`${isActive ? "" : "ActiveBtn"}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopLeftRadius:"15px",borderBottomLeftRadius:"15px", height:"21px", borderTopRightRadius:"0",borderBottomRightRadius:"0"}}>
-                      <img
-                        src={"/ImageShow.png"}
-                        alt={`cdiorbeauty`}
-                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
-                      />
-                    </button>
-                    <button onClick={handleClickActive} className={`${isActive ? "ActiveBtn" : ""}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopRightRadius:"15px",borderBottomRightRadius:"15px", height:"21px",borderTopLeftRadius:"0",borderBottomLeftRadius:"0"}}>
-                      <img
-                        src={"/videoShow.png"}
-                        alt={`cdiorbeauty`}
-                        style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
-                      />
-                    </button>
-                  </div>
-                    <img
-                      src={"/zoom.png"}
-                      alt={`cdiorbeauty`}
-                    />
-                  </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <button
+                    onClick={() => handleClickActive("image")}
+                    className={`${
+                      modalContentType === "image" ? "ActiveBtn" : ""
+                    }`}
+                    style={{
+                      cursor: "pointer",
+                      border: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      background: "rgba(123,123,123,0.2)",
+                      padding: "2px 5px",
+                      borderTopLeftRadius: "15px",
+                      borderBottomLeftRadius: "15px",
+                      height: "21px",
+                    }}
+                  >
+                    <img src="/ImageShow.png" alt="Image" />
+                  </button>
+                  <button
+                    onClick={() => handleClickActive("video")}
+                    className={`${
+                      modalContentType === "video" ? "ActiveBtn" : ""
+                    }`}
+                    style={{
+                      cursor: "pointer",
+                      border: "none",
+                      display: "flex",
+                      alignItems: "center",
+                      background: "rgba(123,123,123,0.2)",
+                      padding: "2px 5px",
+                      borderTopRightRadius: "15px",
+                      borderBottomRightRadius: "15px",
+                      height: "21px",
+                    }}
+                  >
+                    <img src="/videoShow.png" alt="Video" />
+                  </button>
                 </div>
+                <img src="/zoom.png" alt="zoom" />
               </div>
-              <div style={{padding:"15px 30px", background:"linear-gradient(rgb(120 85 65) 0%, rgba(78, 77, 75, 0.45) 30%, rgba(20, 20, 20, 0.55) 50%)", height:"100%"}}>
+            </div>
+          </div>              <div style={{padding:"15px 30px", background:"linear-gradient(rgb(120 85 65) 0%, rgba(78, 77, 75, 0.45) 30%, rgba(20, 20, 20, 0.55) 50%)", height:"100%"}}>
                 <div style={{marginTop: '0px'}}>
                                   <div style={{display: 'flex',alignItems:"center",justifyContent: 'flex-start', marginTop:"15px"}}>                                  
                                     <img
