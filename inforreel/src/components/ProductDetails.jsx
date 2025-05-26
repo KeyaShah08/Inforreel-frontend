@@ -25,12 +25,20 @@ function ProductDetails() {
     { src: "/b11.png"},
   ];
   const slides2 = [
-    { src: "/sl1.png"},
+   
     { src: "/sl2.png"},
     { src: "/sl3.png"},
     { src: "/sl1.png"},
+     { src: "/sl1.png"},
     { src: "/sl2.png"},
     { src: "/sl3.png"},
+  ];
+  const modalVideos = [ // New array for modal videos
+    { src: "/Beauty/beauty1.mp4" },
+    { src: "/Beauty/beauty2.mp4" },
+    { src: "/Beauty/beauty3.mp4" },
+    { src: "/Beauty/beauty4.mp4" },
+    { src: "/Beauty/beauty5.mp4" },
   ];
   const ListItem = [
     {img:'/Li1.png', Date:"5/1/2025", purchsed:"2K purchased", Name:"Prestige Exceptional Micro-Nutritive and Repairing Ritual "},
@@ -69,6 +77,7 @@ function ProductDetails() {
   const [isActive, setIsActive] = useState(false);
   const videoRefscoll = useRef([]);
   const navigate = useNavigate();
+  const [modalContentType, setModalContentType] = useState('image'); // 'image' or 'video'
 
 
   const nextImage = () => {
@@ -119,8 +128,9 @@ function ProductDetails() {
     setIssec(!isOpensec);
     setIsOpen(false);
   };
-  const handleClickActive = () => {
-    setIsActive(!isActive);
+  const handleClickActive = (type) => { // Modified to accept a type parameter
+    setIsActive(type === 'video'); // Set isActive based on 'video' type
+    setModalContentType(type); // Set modal content type
   };
   return (
     <>
@@ -315,7 +325,7 @@ function ProductDetails() {
       width: '100%',
       height: '100%',
       backgroundColor: '#000', // Changed to black
-      maxHeight: "540px",
+      maxHeight: "480px", // Changed from 540px
       // background: 'linear-gradient(to bottom, #141414, #282828)', // Removed gradient
     }}>
       <div style={{
@@ -327,7 +337,7 @@ function ProductDetails() {
         overflow: "hidden",
         zIndex: 9,
         backgroundColor: '#000',
-        maxHeight: "540px",
+        maxHeight: "480px", // Changed from 540px
       }}>
         {/* <video autoPlay muted loop playsInline style={{
           width: "100%",
@@ -341,7 +351,7 @@ function ProductDetails() {
                   <img
                     src={"/cdiorbeauty.png"}
                     alt={`cdiorbeauty`}
-                    style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
+                    style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover', maxHeight:"480px" }} // Changed from 540px
                   />
         <div
           style={{
@@ -560,19 +570,19 @@ function ProductDetails() {
             className={`static-filter-tab-button ${activeTab === 'all' ? 'active' : ''}`}
             onClick={() => {
               setActiveTab('all');
-              document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+              document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
             All
           </button>
           <button
-            className={`static-filter-tab-button ${activeTab === 'product' ? 'active' : ''}`}
+            className={`static-filter-tab-button ${activeTab === 'products' ? 'active' : ''}`}
             onClick={() => {
-              setActiveTab('product');
-              document.getElementById('collection')?.scrollIntoView({ behavior: 'smooth' });
+              setActiveTab('products');
+              document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
-            Product
+            Products
           </button>
           <button
             className={`static-filter-tab-button ${activeTab === 'brandvideos' ? 'active' : ''}`}
@@ -593,11 +603,11 @@ function ProductDetails() {
             VibeReel
           </button>
         </div>
-        <section id="collection" style={{ textAlign: 'left', marginTop: '40px',position: 'relative'}}>
+        <section id="products" style={{ textAlign: 'left', marginTop: '40px',position: 'relative'}}>
             <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between"}}>
               {/* Navigation Buttons */}
               <div style={{ width:"100%",display: 'flex', marginBottom: '25px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Collection</span>
+                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Products</span>
                 <div style={{ display: 'flex' }}>
                   <button
                     onClick={prevImage}
@@ -803,7 +813,7 @@ function ProductDetails() {
           style={{
             flex: '0 0 auto',
             width: '396.16px',
-            height: '305px',
+            height: '480px', // Changed from 305px
             scrollSnapAlign: 'start',
             display: 'flex',
             flexDirection: 'column',
@@ -816,7 +826,7 @@ function ProductDetails() {
             muted
             style={{
               width: '100%',
-              height: '250px',
+              height: '480px', // Changed from 250px
               objectFit: 'cover',
               borderRadius: '0px',
               cursor: 'pointer'
@@ -861,7 +871,7 @@ function ProductDetails() {
     </div>
 
     {/* Wrapper exactly matching VIDEO height (not whole card) */}
-    <div style={{ position: 'relative', height: '601px' }}>
+    <div style={{ position: 'relative', height: '480px' }}> {/* Changed from 601px */}
       
       {/* Left Scroll Button */}
       <button
@@ -978,7 +988,7 @@ function ProductDetails() {
             style={{
               flex: '0 0 auto',
               width: '260px',
-              height: '601px',
+              height: '480px', // Changed from 601px
               scrollSnapAlign: 'start',
               display: 'flex',
               flexDirection: 'column',
@@ -991,7 +1001,7 @@ function ProductDetails() {
               muted
               style={{
                 width: '260px',
-                height: '461px',
+                height: '480px', // Changed from 461px
                 objectFit: 'cover',
                 borderRadius: '0px',
                 cursor: 'pointer'
@@ -1035,42 +1045,64 @@ function ProductDetails() {
               X
             </button>
             <div style={{position:"relative"}}>
-              <Carousel 
-                autoPlay
-                interval={2000} 
-                infiniteLoop 
-                howStatus={false} 
-                showArrows={false} 
-                showThumbs={false} 
-                showStatus={false} 
-              >
-                  {slides.map((slide, index) => (
-                    <div key={index}>
-                      <img src={slide.src} alt={`Slide ${index + 1}`} />
-                    </div>
-                  ))}
-              </Carousel>
+              {modalContentType === 'image' ? ( // Conditional rendering for images
+                <Carousel 
+  autoPlay={false}
+  infiniteLoop
+  showStatus={false}
+  showArrows={true}
+  showThumbs={false}
+>
+                    {slides.map((slide, index) => (
+                      <div key={index}>
+                        <img src={slide.src} alt={`Slide ${index + 1}`} style={{ height: '480px', objectFit: 'cover' }} /> {/* Added height and objectFit */}
+                      </div>
+                    ))}
+                </Carousel>
+              ) : ( // Conditional rendering for videos
+                <Carousel 
+  autoPlay={false}
+  infiniteLoop
+  showStatus={false}
+  showArrows={true}
+  showThumbs={false}
+>
+                    {modalVideos.map((video, index) => (
+                      <div key={index}>
+                        <video 
+                          src={video.src} 
+                          controls 
+                          autoPlay 
+                          loop 
+                          muted 
+                          style={{width: '100%', height: '480px', borderRadius: '0px', objectFit: 'cover'}} // Changed height to 480px
+                        />
+                      </div>
+                    ))}
+                </Carousel>
+              )}
+              
               <div style={{position:"absolute", zIndex: "999",bottom:"0", left:"0",right:"0", background:"rgba(0,0,0,0.5)", padding:"2px 15px"}}>
                 <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
                   <div style={{display:"flex", alignItems:"center",justifyContent:"space-between"}}>
-                    <button onClick={handleClickActive} className={`${isActive ? "" : "ActiveBtn"}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopLeftRadius:"15px",borderBottomLeftRadius:"15px", height:"21px", borderTopRightRadius:"0",borderBottomRightRadius:"0"}}>
+                    <button onClick={() => handleClickActive('image')} className={`${modalContentType === 'image' ? "ActiveBtn" : ""}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopLeftRadius:"15px",borderBottomLeftRadius:"15px", height:"21px", borderTopRightRadius:"0",borderBottomRightRadius:"0"}}>
                       <img
                         src={"/ImageShow.png"}
-                        alt={`cdiorbeauty`}
+                        alt={`Image Icon`}
                         style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
                       />
                     </button>
-                    <button onClick={handleClickActive} className={`${isActive ? "ActiveBtn" : ""}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopRightRadius:"15px",borderBottomRightRadius:"15px", height:"21px",borderTopLeftRadius:"0",borderBottomLeftRadius:"0"}}>
+                    <button onClick={() => handleClickActive('video')} className={`${modalContentType === 'video' ? "ActiveBtn" : ""}`} style={{cursor:"pointer",border:"none", display:"flex", alignItems:"center",background:"rgba(123,123,123,0.2)", padding:"2px 5px",borderTopRightRadius:"15px",borderBottomRightRadius:"15px", height:"21px",borderTopLeftRadius:"0",borderBottomLeftRadius:"0"}}>
                       <img
                         src={"/videoShow.png"}
-                        alt={`cdiorbeauty`}
+                        alt={`Video Icon`}
                         style={{ width: 'auto', height: 'auto', borderRadius: '0px', objectFit: 'cover', maxHeight:"540px" }}
                       />
                     </button>
                   </div>
                   <img
                     src={"/zoom.png"}
-                    alt={`cdiorbeauty`}
+                    alt={`zoom`}
                   />
                 </div>
               </div>
@@ -1241,8 +1273,9 @@ function ProductDetails() {
           <div className="modal-body" style={{position:"relative"}}>
             <button
                 onClick={() => {
-                  setIsOpen(false);
-                  setIssec(false);}}
+                  setIssec(false);  // Close second modal
+                  setIsOpen(true);  // Reopen first modal
+                }}
                 style={{position:"absolute", right:"15px", top:"15px", zIndex:"111111111", background:"#181818", color:"#fff", borderRadius:"50%", width:"36px", height:"36px", border:"none", cursor:"pointer  "}}
               >
               X
@@ -1250,17 +1283,15 @@ function ProductDetails() {
              <div className='SecondSection'>
               <div style={{position:"relative"}}>
                 <Carousel 
-                  autoPlay 
-                  interval={2000} 
-                  infiniteLoop 
-                  howStatus={false} 
-                  showArrows={false} 
-                  showThumbs={false} 
-                  showStatus={false} 
-                >
+  autoPlay={false}
+  infiniteLoop
+  showStatus={false}
+  showArrows={true}
+  showThumbs={false}
+>
                     {slides2.map((slide, index) => (
                       <div key={index}>
-                        <img src={slide.src} alt={`Slide ${index + 1}`} />
+                        <img src={slide.src} alt={`Slide ${index + 1}`} style={{ height: '480px', objectFit: 'cover' }}/> {/* Added height and objectFit */}
                       </div>
                     ))}
                 </Carousel>
