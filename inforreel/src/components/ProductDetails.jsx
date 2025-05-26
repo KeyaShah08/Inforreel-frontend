@@ -603,93 +603,155 @@ function ProductDetails() {
             VibeReel
           </button>
         </div>
-        <section id="products" style={{ textAlign: 'left', marginTop: '40px',position: 'relative'}}>
-            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "space-between"}}>
-              {/* Navigation Buttons */}
-              <div style={{ width:"100%",display: 'flex', marginBottom: '25px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 'bold', color: 'White', fontSize: '25px' }}>Products</span>
-                <div style={{ display: 'flex' }}>
-                  <button
-                    onClick={prevImage}
-                    style={{
-                      background: '#868584',
-                      color: '#000',
-                      border: 'none',
-                      padding: '5px',
-                      borderRadius: '50%',
-                      cursor: 'pointer',
-                      zIndex: 10,
-                      marginRight: '20px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '48px',
-                      height: '48px',
-                    }}
-                    disabled={currentIndex === 0}
-                  >
-                    <ChevronLeft size={32} />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    style={{  
-                      background: '#868584',
-                      color: '#000',
-                      border: 'none',
-                      padding: '5px',
-                      borderRadius: '50%',
-                      cursor: 'pointer',
-                      zIndex: 10,
-                      marginRight: '20px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '48px',
-                      height: '48px',
-                    }}
-                    disabled={isNextDisabled}
-                  >
-                    <ChevronRight size={32} />
-                  </button>
-                </div>
-              </div>
-              <div
-                ref={imageContainerRef}
-                style={{
-                  display: 'flex',
-                  overflowX: 'auto',
-                  paddingBottom: '20px',
-                  scrollSnapType: 'x mandatory',
-                  WebkitOverflowScrolling: 'touch',
-                  justifyContent: "space-between"
-                }}
-              >
-                {displayedImages.map((image, index) => (
-                  <div key={index} style={{
-                    flex: '0 0 auto',
-                    width: '32%',
-                    height: '32%',
-                    marginRight: '10px',
-                    borderRadius: '0px',
-                    scrollSnapAlign: 'start',
-                    transition: 'opacity 0.5s ease-in-out', // Add smooth transition
-                    opacity: previousImages.includes(image) ? 0 : 1, // Hide previous images
-                  }} onClick={() => setIsOpen(true)}>
-                    {/* onClick={() => handleDetailView()} */}
-                    <img
-                      src={image.img}
-                      alt={`Brand ${index + 1}`}
-                      style={{ width: '100%', height: '100%', borderRadius: '0px', objectFit: 'cover' }}
-                    />
-                    <p style={{fontSize:"20px", textAlign:"center", marginTop:"10px", fontWeight: 'bold'}}>{image.Name}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+<section id="products" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
+  <div style={{ position: 'relative' }}>
+    {/* Title */}
+    <div style={{
+      display: 'flex',
+      width: '100%',
+      marginTop: '60px',
+      marginBottom: '40px',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    }}>
+      <span style={{ fontWeight: 'bold', color: 'white', fontSize: '32px' }}>Products</span>
+    </div>
+
+    {/* Scroll Wrapper */}
+    <div style={{ position: 'relative', height: '340px' }}>
+      {/* Left Button */}
+      <button
+        onClick={() => document.getElementById('productScroll').scrollBy({ left: -400, behavior: 'smooth' })}
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: '125px',
+          transform: 'translateY(-50%)',
+          background: '#9D9A95',
+          border: 'none',
+          padding: '10px',
+          borderRadius: '50%',
+          cursor: 'pointer',
+          zIndex: 10,
+          height: '40px',
+          width: '40px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <ChevronLeft size={24} style={{ color: '#333' }} />
+      </button>
+
+      {/* Right Button */}
+      <button
+        onClick={() => document.getElementById('productScroll').scrollBy({ left: 400, behavior: 'smooth' })}
+        style={{
+          position: 'absolute',
+          right: 0,
+          top: '125px',
+          transform: 'translateY(-50%)',
+          background: '#9D9A95',
+          border: 'none',
+          padding: '10px',
+          borderRadius: '50%',
+          cursor: 'pointer',
+          zIndex: 10,
+          height: '40px',
+          width: '40px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        <ChevronRight size={24} style={{ color: '#333' }} />
+      </button>
+
+      {/* Scrollable Image Row */}
+      <div
+        id="productScroll"
+        style={{
+          display: 'flex',
+          overflowX: 'auto',
+          overflowY: 'hidden',
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          gap: '40px',
+          height: '100%',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          whiteSpace: 'nowrap'
+        }}
+      >
+        <style>{`
+          #productScroll::-webkit-scrollbar {
+            display: none;
+          }
+          @media screen and (max-width: 768px) {
+            #productScroll {
+              gap: 20px !important;
+            }
+            #productScroll > div {
+              width: 70vw !important;
+              height: auto !important;
+            }
+            #productScroll p {
+              font-size: 18px !important;
+              margin-top: 10px !important;
+            }
+            button {
+              top: auto !important;
+              bottom: -30px !important;
+              transform: none !important;
+            }
+          }
+        `}</style>
+
+        {allImages.map((image, index) => (
+          <div
+            key={index}
+            style={{
+              flex: '0 0 auto',
+              width: '259px',
+              height: '300px',
+              scrollSnapAlign: 'start',
+              display: 'inline-block',
+              textAlign: 'center',
+              cursor: 'pointer'
+            }}
+            onClick={() => setIsOpen(true)}
+          >
+            <img
+              src={image.img}
+              alt={`Product ${index + 1}`}
+              style={{
+                width: '100%',
+                height: '250px',
+                objectFit: 'cover',
+                borderRadius: '0px'
+              }}
+            />
+            <p style={{
+              marginTop: '10px',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              color: 'white'
+            }}>
+              {image.Name}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+
           {/* Shop by Product Section */}
 <section id="brandvideos" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
   <div style={{ position: 'relative' }}>
+    
     {/* Title */}
     <div style={{
       display: 'flex',
@@ -719,7 +781,9 @@ function ProductDetails() {
         zIndex: 10,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        height: '40px',
+        width: '40px'
       }}
     >
       <ChevronLeft size={24} style={{ color: '#333' }} />
@@ -740,7 +804,9 @@ function ProductDetails() {
         zIndex: 10,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        height: '40px',
+        width: '40px'
       }}
     >
       <ChevronRight size={24} style={{ color: '#333' }} />
@@ -753,12 +819,12 @@ function ProductDetails() {
         display: 'flex',
         overflowX: 'auto',
         overflowY: 'hidden',
-        paddingBottom: '10px',
         scrollSnapType: 'x mandatory',
         WebkitOverflowScrolling: 'touch',
         gap: '40px',
         scrollbarWidth: 'none',
-        msOverflowStyle: 'none'
+        msOverflowStyle: 'none',
+        height: '340px' // ✅ increased so text is never clipped
       }}
     >
       <style>
@@ -813,11 +879,13 @@ function ProductDetails() {
           style={{
             flex: '0 0 auto',
             width: '396.16px',
-            height: '480px', // Changed from 305px
+            height: '300px',
             scrollSnapAlign: 'start',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center'
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            cursor: 'pointer'
           }}
           onClick={() => handleDetailView()}
         >
@@ -826,10 +894,9 @@ function ProductDetails() {
             muted
             style={{
               width: '100%',
-              height: '480px', // Changed from 250px
+              height: '250px',
               objectFit: 'cover',
-              borderRadius: '0px',
-              cursor: 'pointer'
+              borderRadius: '0px'
             }}
             onMouseEnter={(e) => e.target.play()}
             onMouseLeave={(e) => {
@@ -838,7 +905,7 @@ function ProductDetails() {
             }}
           />
           <p style={{
-            marginTop: '20px',
+            marginTop: '10px',
             fontSize: '20px',
             fontWeight: 'bold',
             textAlign: 'center',
@@ -853,10 +920,12 @@ function ProductDetails() {
 </section>
 
 
+
+
        {/* Shop by Brand Ambassador Section */}
 <section id="vibereel" style={{ textAlign: 'left', marginTop: '40px', position: 'relative' }}>
-  <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: 'space-between' }}>
-    
+  <div style={{ position: 'relative' }}>
+
     {/* Title */}
     <div style={{
       display: 'flex',
@@ -870,8 +939,8 @@ function ProductDetails() {
       <span style={{ fontWeight: 'bold', color: 'white', fontSize: '32px' }}>VibeReel</span>
     </div>
 
-    {/* Wrapper exactly matching VIDEO height (not whole card) */}
-    <div style={{ position: 'relative', height: '480px' }}> {/* Changed from 601px */}
+    {/* Wrapper height to accommodate full cards */}
+    <div style={{ position: 'relative', height: '600px' }}>
       
       {/* Left Scroll Button */}
       <button
@@ -879,7 +948,7 @@ function ProductDetails() {
         style={{
           position: 'absolute',
           left: 0,
-          top: '230.5px',
+          top: '50%',
           transform: 'translateY(-50%)',
           background: '#9D9A95',
           border: 'none',
@@ -903,7 +972,7 @@ function ProductDetails() {
         style={{
           position: 'absolute',
           right: 0,
-          top: '230.5px',
+          top: '50%',
           transform: 'translateY(-50%)',
           background: '#9D9A95',
           border: 'none',
@@ -987,8 +1056,8 @@ function ProductDetails() {
             key={index}
             style={{
               flex: '0 0 auto',
-              width: '260px',
-              height: '480px', // Changed from 601px
+              width: '259px',
+              height: '560px', // ✅ fits video + 40px + text
               scrollSnapAlign: 'start',
               display: 'flex',
               flexDirection: 'column',
@@ -1000,8 +1069,8 @@ function ProductDetails() {
               src={item.src}
               muted
               style={{
-                width: '260px',
-                height: '480px', // Changed from 461px
+                width: '259px',
+                height: '460px',
                 objectFit: 'cover',
                 borderRadius: '0px',
                 cursor: 'pointer'
@@ -1013,7 +1082,7 @@ function ProductDetails() {
               }}
             />
             <p style={{
-              marginTop: '20px',
+              marginTop: '40px', // ✅ exactly as requested
               fontSize: '20px',
               fontWeight: 'bold',
               textAlign: 'center',
@@ -1027,6 +1096,8 @@ function ProductDetails() {
     </div>
   </div>
 </section>
+
+
 </section>
 
       </div>

@@ -457,7 +457,7 @@ function ProductDetails2() {
                 <p style={{fontSize: "40px"}}>12.4K</p>
             </div>
             <div style={{display: "flex",alignItems: "flex-start",justifyContent: "flex-center", flexDirection: "column",  marginLeft:"10px", padding:"4px 10px" ,borderLeft:"1px solid #666", height:"90px" }}>         
-                <p style={{fontSize: "18px", fontWeight:"600"}}>Ambassadors</p>
+                <p style={{fontSize: "18px", fontWeight:"600"}}>Brands</p>
                 <p style={{fontSize: "40px"}}>10</p>
             </div>
             <div style={{display: "flex",alignItems: "flex-start",justifyContent: "flex-center", flexDirection: "column",  marginLeft:"10px", padding:"4px 10px" ,borderLeft:"1px solid #666", height:"90px" }}>
