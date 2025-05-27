@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // Import arrow icons
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BeautyProducts from './BeautyProducts';
 import Beautyshowambassadors from './Beautyshowambassadors';
 import Beautyshowrooms from './Beautyshowrooms';
@@ -111,6 +112,7 @@ function Marketplace() {
   const [showBeautyShow, setShowBeauty] = useState(false);
   const [showBeautyProd, setShowProduct] = useState(false);
   const [activeSection, setActiveSection] = useState('all');
+  const navigate = useNavigate();
 
 const handleNavClick = (section) => {
   setActiveSection(section);
@@ -980,7 +982,8 @@ const handleNavClick = (section) => {
             flexDirection: 'column',
             alignItems: 'center'
           }}
-          onClick={() => handleDetailView()}
+          onClick={() => navigate('/brandvideos')}
+
         >
           <video
             src={item.src}
@@ -1145,7 +1148,7 @@ const handleNavClick = (section) => {
             flexDirection: 'column',
             alignItems: 'center'
           }}
-          onClick={() => console.log('Open detail view for:', item.label)}
+          onClick={() => navigate('/brandvideos')}
         >
           <video
             src={item.src}
@@ -1310,7 +1313,7 @@ const handleNavClick = (section) => {
             flexDirection: 'column',
             alignItems: 'center'
           }}
-          onClick={() => console.log('Open detail view for:', item.label)}
+          onClick={() => navigate('/brandvideos')}
         >
           <video
             src={item.src}

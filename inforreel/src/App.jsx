@@ -22,9 +22,6 @@ import VerifyAccount from "./pages/VerifyAccount";
 import Welcome from "./pages/Welcome";
 
 
-
-
-
 function App() {
   return (
     <Router>
@@ -53,11 +50,7 @@ function App() {
         <Route path="/mycart" element={<MyCart />} /> {/* ✅ Route for MyCart */}
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/thankyou" element={<Thankyou />} />
-
-
-
-
-
+        
 
       </Routes>
     </Router>

@@ -778,7 +778,6 @@ const handleRedirection = () => {
                                           backgroundColor: 'white', // Color of the dot
                                           zIndex: 3,
   pointerEvents: 'none', // Ensure dot is above everything in the bar
-                                          pointerEvents: 'none', // Prevent clicks on dot from interfering with seek
                                       }}></div>
                                   )}
                             </div>

@@ -687,7 +687,6 @@ const toggleDropdown2 = () => {
                                                 border: "1px solid #d7d7d7",
                                                 cursor: 'pointer',
                                                 background:"transparent",
-                                                display: 'block',
                                                 display:"flex",
                                                 alignItems:"center",
                                                 justifyContent:"space-between",

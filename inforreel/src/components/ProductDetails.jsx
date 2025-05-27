@@ -7,6 +7,7 @@ import BeautyProducts from './BeautyProducts';
 import Beautyshowrooms from './Beautyshowrooms';
 
 
+
 function ProductDetails() {
   const allImages = [
     {img:'/C1.png', Name:"Skincare"},
@@ -896,7 +897,7 @@ function ProductDetails() {
             justifyContent: 'flex-start',
             cursor: 'pointer'
           }}
-          onClick={() => handleDetailView()}
+          onClick={() => navigate('/brandvideos')}
         >
           <video
             src={item.src}
