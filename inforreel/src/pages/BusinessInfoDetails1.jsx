@@ -8,13 +8,13 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 // Define the API endpoint
-const api_url = 'http://54.193.54.116:8000/api/users/profile';
+const api_url = 'http://34.229.245.56:8000/api/users/profile';
 
 
 // --- Static Styles (Moved outside the component) ---
 
 const inputStyle = {
-  backgroundColor: "#1D1D1D",
+  backgroundColor: "#141414",
   color: "#FFFFFF",
   border: "1px solid #444",
   borderRadius: "8px",
@@ -36,7 +36,7 @@ const labelStyle = {
 // Modified fileUploadBox for dashed border and dark theme - for OPTIONAL single files
 const fileUploadBoxStyle = (hasError, isDisabled) => ({
   border: `1px dashed ${hasError ? '#ff4d4f' : '#888'}`, // Dashed border, red on error for single optional fields
-  backgroundColor: isDisabled ? '#2d2d2d' : "#1d1d1d", // Dark background, slightly different when disabled
+  backgroundColor: isDisabled ? '#2d2d2d' : "#141414", // Dark background, slightly different when disabled
   padding: "2rem",
   textAlign: "center",
   borderRadius: "10px", // Rounded corners matching other elements
@@ -54,7 +54,7 @@ const fileUploadBoxStyle = (hasError, isDisabled) => ({
 // New style specifically for the Product Media upload box (REQUIRED multi-file)
 const productMediaFileUploadBoxStyle = (hasError, isDisabled) => ({
      border: `1px dashed ${hasError ? '#ff4d4f' : '#888'}`, // Dashed border, red on error for this REQUIRED multi-file field
-     backgroundColor: isDisabled ? '#2d2d2d' : "#1d1d1d", // Dark background, slightly different when disabled
+     backgroundColor: isDisabled ? '#2d2d2d' : "#141414", // Dark background, slightly different when disabled
      padding: "2rem",
      textAlign: "center",
      borderRadius: "10px", // Rounded corners matching other elements
@@ -97,7 +97,7 @@ const customCheckboxStyle = (isChecked) => ({
   border: '1px solid #444',
   borderRadius: '4px',
   marginRight: "10px",
-  backgroundColor: isChecked ? '#96105E' : '#1D1D1D',
+  backgroundColor: isChecked ? '#96105E' : '#141414',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -127,7 +127,7 @@ const uploadedFileItemStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#333',
+    backgroundColor: '#141414',
     padding: '10px',
     borderRadius: '5px',
     marginTop: '8px',
@@ -149,7 +149,7 @@ const removeFileButtonStyle = {
 const customSelectStyles = {
   container: (base) => ({ ...base, marginTop: "0.3rem", marginBottom: "1rem" }),
   control: (base, state) => ({
-    ...base, backgroundColor: "#1D1D1D", borderColor: state.isFocused || state.selectProps.value ? "#555" : "#444", color: "#fff", borderRadius: "8px", boxShadow: state.isFocused ? '0 0 0 1px #555' : 'none', "&:hover": { borderColor: "#555" }, minHeight: '40px', padding: '0 8px',
+    ...base, backgroundColor: "#141414", borderColor: state.isFocused || state.selectProps.value ? "#555" : "#444", color: "#fff", borderRadius: "8px", boxShadow: state.isFocused ? '0 0 0 1px #555' : 'none', "&:hover": { borderColor: "#555" }, minHeight: '40px', padding: '0 8px',
   }),
   singleValue: (base) => ({ ...base, color: "#fff" }), // Style for single value (not used in multi-select, but good to keep)
   multiValue: (base) => ({ ...base, backgroundColor: "#444", color: "#fff", borderRadius: '4px' }), // Style for selected tags
@@ -642,7 +642,7 @@ function BusinessInfoDetails1() {
   return (
     <div
       className="app-wrapper"
-      style={{ backgroundColor: "#000000", minHeight: "100vh", color: "white" }}
+      style={{ backgroundColor: "#141414", minHeight: "100vh", color: "white" }}
     >
       <Header />
       <main className="main-content" style={{flex: 1}}>
@@ -652,7 +652,7 @@ function BusinessInfoDetails1() {
           style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "500px", margin: "2rem auto", textAlign: "left", padding: "0 20px" }} // Added padding for small screens
           noValidate // Disable default browser validation
         >
-          <h2 style={{ textAlign: "center", fontSize: "1.8rem", fontWeight: 700, marginBottom: "1.5rem" }}>Product Information</h2> {/* Adjusted margin */}
+          <h2 style={{ textAlign: "center", fontSize: "1.8rem", fontWeight: 700, marginBottom: "1.5rem" , marginTop:"2rem"}}>Product Information</h2> {/* Adjusted margin */}
 
           {/* Display flow error if critical data is missing from previous pages */}
           {errors.flowError && <p style={errorStyle}>{errors.flowError}</p>}
@@ -666,20 +666,18 @@ function BusinessInfoDetails1() {
                   Ingredient transparency document (optional)
                   <div
                       style={fileUploadBoxStyle(!!errors.ingredientTransparencyFile, !!ingredientTransparencyFile)} // Use style function, pass boolean error and isDisabled if file exists
-                      onClick={() => {
-                           // Only trigger click if a file isn't already selected
-                           if (!ingredientTransparencyFile) document.getElementById('ingredientTransparencyInput').click()
-                           else console.log("Remove existing file to upload a new one."); // Optional feedback
-                       }}
                   >
-                     {/* SVG icon */}
-                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                     </svg>
-                     {/* Drag & drop text */}
-                    <p style={{ margin: "1rem 0 0.5rem" }}>
-                      Drag & drop file or <span style={browseLinkStyle}>Browse</span> {/* Use styled span */}
-                    </p>
+<img
+  src="/icons/cloud-upload1.png"
+  alt="Upload Icon"
+  style={{ width: "48px", height: "48px", marginBottom: "0.5rem" }}
+/>
+<p style={{ margin: "1rem 0 0.5rem" }}>
+  Drag & drop file or{" "}
+  <label htmlFor="ingredientTransparencyInput" style={{ ...browseLinkStyle, cursor: "pointer" }}>
+    Browse
+  </label>
+</p>
                      {/* Accepted file types (customize as needed) */}
                     <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
                      {/* Hidden file input */}
@@ -706,48 +704,90 @@ function BusinessInfoDetails1() {
                 </label>
 
                 {/* Packaging sustainability document (optional) */}
-                <label style={labelStyle}>
-                  Packaging sustainability document (optional)
-                  <div
-                      style={fileUploadBoxStyle(!!errors.packagingSustainabilityFile, !!packagingSustainabilityFile)} // Use style function, pass boolean error and isDisabled if file exists
-                      onClick={() => {
-                           // Only trigger click if a file isn't already selected
-                           if (!packagingSustainabilityFile) document.getElementById('packagingSustainabilityInput').click()
-                            else console.log("Remove existing file to upload a new one."); // Optional feedback
-                      }}
-                  >
-                     {/* SVG icon */}
-                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                     </svg>
-                     {/* Drag & drop text */}
-                    <p style={{ margin: "1rem 0 0.5rem" }}>
-                      Drag & drop file or <span style={browseLinkStyle}>Browse</span> {/* Use styled span */}
-                    </p>
-                     {/* Accepted file types (customize as needed) */}
-                    <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
-                     {/* Hidden file input */}
-                     <input
-                        type="file"
-                         key={packagingSustainabilityFile?.name || 'no-file'} // Key to force re-render
-                        id="packagingSustainabilityInput"
-                        name="packagingSustainabilityFile" // Name for validation/scrolling (though not validated)
-                        accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        onChange={(e) => handleSingleFileChange(setPackagingSustainabilityFile, 'packagingSustainabilityFile', e)} // Use generic handler
-                        style={{ display: "none" }}
-                         disabled={!!packagingSustainabilityFile} // Disable input if a file is already selected
-                     />
-                  </div>
-                    {/* Display selected file name if any */}
-                    {packagingSustainabilityFile && (
-                        <div style={uploadedFileItemStyle}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
-                            <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{packagingSustainabilityFile.name}</span>
-                             <button type="button" onClick={() => setPackagingSustainabilityFile(null)} style={removeFileButtonStyle}>&times;</button>
-                        </div>
-                     )}
-                   {/* No error span for optional field */}
-                </label>
+<label style={labelStyle}>
+  Packaging sustainability document (optional)
+  <div
+    style={fileUploadBoxStyle(!!errors.packagingSustainabilityFile, !!packagingSustainabilityFile)}
+  >
+    {/* ✅ Replaced SVG with IMG */}
+    <img
+      src="/icons/cloud-upload1.png"
+      alt="Upload Icon"
+      style={{ width: "48px", height: "48px", marginBottom: "0.5rem" }}
+    />
+
+    {/* ✅ Wrapped Browse in <label htmlFor> and removed parent onClick */}
+    <p style={{ margin: "1rem 0 0.5rem" }}>
+      Drag & drop file or{" "}
+      <label
+        htmlFor="packagingSustainabilityInput"
+        style={{ ...browseLinkStyle, cursor: "pointer" }}
+      >
+        Browse
+      </label>
+    </p>
+
+    <p style={{ fontSize: "0.85rem", color: "#ccc" }}>
+      png, pdf, jpg, docx accepted
+    </p>
+
+    <input
+      type="file"
+      key={packagingSustainabilityFile?.name || 'no-file'}
+      id="packagingSustainabilityInput"
+      name="packagingSustainabilityFile"
+      accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      onChange={(e) =>
+        handleSingleFileChange(
+          setPackagingSustainabilityFile,
+          'packagingSustainabilityFile',
+          e
+        )
+      }
+      style={{ display: "none" }}
+      disabled={!!packagingSustainabilityFile}
+    />
+  </div>
+
+  {/* ✅ Display selected file name if any */}
+  {packagingSustainabilityFile && (
+    <div style={uploadedFileItemStyle}>
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ marginRight: '10px', flexShrink: 0 }}
+      >
+        <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" />
+        <polyline points="13 2 13 9 20 9" />
+      </svg>
+      <span
+        style={{
+          flex: 1,
+          fontSize: '0.95rem',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {packagingSustainabilityFile.name}
+      </span>
+      <button
+        type="button"
+        onClick={() => setPackagingSustainabilityFile(null)}
+        style={removeFileButtonStyle}
+      >
+        &times;
+      </button>
+    </div>
+  )}
+</label>
+
 
 
               {/* Custom Checkbox for useEverywhere */}
@@ -836,18 +876,19 @@ function BusinessInfoDetails1() {
                            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
                            onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); }}
                            onDrop={handleProductMediaDrop} // Multi-file drop handler
-                           onClick={() => document.getElementById('productMediaFilesInput').click()} // Trigger hidden input
                       >
-                          {/* SVG icon */}
-                          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                             <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                          </svg>
-                          {/* Drag & drop text */}
-                         <p style={{ margin: "1rem 0 0.5rem" }}>
-                              Drag & drop files or <span style={browseLinkStyle}>Browse</span>
-                         </p>
-                          {/* Accepted file types (customize as needed) */}
-                         <p style={{ fontSize: "0.85rem", color: "#ccc" }}>mp4, mov, jpg, jpeg, png accepted</p> {/* Updated accepted types */}
+<img
+  src="/icons/cloud-upload1.png"
+  alt="Upload Icon"
+  style={{ width: "48px", height: "48px", marginBottom: "0.5rem" }}
+/>
+<p style={{ margin: "1rem 0 0.5rem" }}>
+  Drag & drop files or{" "}
+  <label htmlFor="productMediaFilesInput" style={{ ...browseLinkStyle, cursor: "pointer" }}>
+    Browse
+  </label>
+</p>
+<p style={{ fontSize: "0.85rem", color: "#ccc" }}>mp4, mov, jpg, jpeg, png accepted</p>
                           {/* Hidden file input - use key to reset input field state */}
                           <input
                               type="file"
@@ -855,7 +896,7 @@ function BusinessInfoDetails1() {
                               id="productMediaFilesInput"
                               name="productMediaFiles" // Name for validation/scrolling
                               multiple // Allow multiple file selection
-                              accept="video/*,image/*" // Accept video and image files
+accept="video/*,image/*,application/pdf"
                               onChange={handleProductMediaFileChange} // Multi-file change handler
                               style={{ display: "none" }}
                                disabled={productMediaFiles.length >= 3} // Disable input if max files reached
@@ -905,48 +946,86 @@ function BusinessInfoDetails1() {
 
 
                 {/* Compliance and QA upload (optional) */}
-                <label style={labelStyle}>
-                  Compliance and QA upload (optional)
-                  <div
-                      style={fileUploadBoxStyle(!!errors.complianceQAFile, !!complianceQAFile)} // Use style function, pass boolean error and isDisabled if file exists
-                      onClick={() => {
-                          // Only trigger click if a file isn't already selected
-                          if (!complianceQAFile) document.getElementById('complianceQAInput').click()
-                           else console.log("Remove existing file to upload a new one."); // Optional feedback
-                      }}
-                  >
-                     {/* SVG icon */}
-                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                     </svg>
-                     {/* Drag & drop text */}
-                    <p style={{ margin: "1rem 0 0.5rem" }}>
-                      Drag & drop file or <span style={browseLinkStyle}>Browse</span> {/* Use styled span */}
-                    </p>
-                     {/* Accepted file types (customize as needed) */}
-                    <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
-                     {/* Hidden file input - use key to reset input field state */}
-                     <input
-                        type="file"
-                         key={complianceQAFile?.name || 'no-file'} // Key to force re-render
-                        id="complianceQAInput"
-                        name="complianceQAFile" // Name for validation/scrolling (though not validated)
-                        accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        onChange={(e) => handleSingleFileChange(setComplianceQAFile, 'complianceQAFile', e)} // Use generic handler
-                        style={{ display: "none" }}
-                         disabled={!!complianceQAFile} // Disable input if a file is already selected
-                     />
-                  </div>
-                    {/* Display selected file name if any */}
-                    {complianceQAFile && (
-                        <div style={uploadedFileItemStyle}>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', flexShrink: 0 }}><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" /><polyline points="13 2 13 9 20 9" /></svg>
-                            <span style={{ flex: 1, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{complianceQAFile.name}</span>
-                             <button type="button" onClick={() => setComplianceQAFile(null)} style={removeFileButtonStyle}>&times;</button>
-                        </div>
-                     )}
-                   {/* No error span for optional field */}
-                </label>
+<label style={labelStyle}>
+  Compliance and QA upload (optional)
+  <div
+    style={fileUploadBoxStyle(!!errors.complianceQAFile, !!complianceQAFile)}
+  >
+    {/* ✅ Replace SVG with IMG */}
+    <img
+      src="/icons/cloud-upload1.png"
+      alt="Upload Icon"
+      style={{ width: "48px", height: "48px", marginBottom: "0.5rem" }}
+    />
+
+    {/* ✅ Replace <span> with <label htmlFor="..."> for native file trigger */}
+    <p style={{ margin: "1rem 0 0.5rem" }}>
+      Drag & drop file or{" "}
+      <label
+        htmlFor="complianceQAInput"
+        style={{ ...browseLinkStyle, cursor: "pointer" }}
+      >
+        Browse
+      </label>
+    </p>
+
+    <p style={{ fontSize: "0.85rem", color: "#ccc" }}>
+      png, pdf, jpg, docx accepted
+    </p>
+
+    <input
+      type="file"
+      key={complianceQAFile?.name || 'no-file'}
+      id="complianceQAInput"
+      name="complianceQAFile"
+      accept=".pdf,.jpg,.jpeg,.png,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      onChange={(e) =>
+        handleSingleFileChange(setComplianceQAFile, 'complianceQAFile', e)
+      }
+      style={{ display: "none" }}
+      disabled={!!complianceQAFile}
+    />
+  </div>
+
+  {/* ✅ Display selected file */}
+  {complianceQAFile && (
+    <div style={uploadedFileItemStyle}>
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ marginRight: '10px', flexShrink: 0 }}
+      >
+        <path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z" />
+        <polyline points="13 2 13 9 20 9" />
+      </svg>
+      <span
+        style={{
+          flex: 1,
+          fontSize: '0.95rem',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {complianceQAFile.name}
+      </span>
+      <button
+        type="button"
+        onClick={() => setComplianceQAFile(null)}
+        style={removeFileButtonStyle}
+      >
+        &times;
+      </button>
+    </div>
+  )}
+</label>
+
 
 
               {/* Buttons */}

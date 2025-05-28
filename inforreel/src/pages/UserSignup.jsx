@@ -74,7 +74,7 @@ function UserSignup() {
       try {
         const userTypeToSend = "general"; // Define the user type to send
 
-        const response = await fetch("http://54.193.54.116:8000/api/users/register", {
+        const response = await fetch("http://34.229.245.56:8000/api/users/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -119,7 +119,7 @@ function UserSignup() {
         flexDirection: "column",
         minHeight: "100vh",
         fontFamily: "'Source Sans Pro', sans-serif",
-        backgroundColor: "#000000", // ✅ pure black background
+        backgroundColor: "#141414", // ✅ pure black background
         color: "#ffffff",
       }}
     >
@@ -134,7 +134,7 @@ function UserSignup() {
             margin: "auto",
           }}
         >
-          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "0.5rem", marginTop:"2rem" }}>
             Create your user account
           </h2>
           <p style={{ fontSize: "1rem", color: "#cccccc", marginBottom: "2rem", fontWeight: 400 }}>
@@ -166,7 +166,7 @@ function UserSignup() {
                   style={{
                     padding: "10px",
                     border: "1px solid #444",
-                    backgroundColor: "#1d1d1d",
+                    backgroundColor: "#141414",
                     borderRadius: "6px",
                     fontSize: "1rem",
                     color: "#fff",
@@ -199,7 +199,7 @@ function UserSignup() {
                     style={{
                       padding: "10px",
                       border: "1px solid #444",
-                      backgroundColor: "#1d1d1d",
+                      backgroundColor: "#141414",
                       borderRadius: "6px",
                       fontSize: "1rem",
                       width: "100%",

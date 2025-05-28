@@ -56,7 +56,7 @@ function Home() {
   return (
     <div
       style={{
-        backgroundColor: "#000",
+        backgroundColor: "#141414",
         color: "white",
         minHeight: "100vh",
         overflowX: "hidden",
@@ -81,13 +81,13 @@ function Home() {
               left: 0,
               width: "100%",
               height: "300px",
-              background: "linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #000 100%)",
+              background: "linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, #141414 100%)",
               zIndex: 2,
               pointerEvents: "none",
             }}
           />
 
-          {/* Top gradient */}
+          {/* Top gradient
           <div
             style={{
               position: "absolute",
@@ -95,11 +95,11 @@ function Home() {
               left: 0,
               width: "100%",
               height: "200px",
-              background: "linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0) 100%)",
+              background: "linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0) #141414 100%)",
               zIndex: 2,
               pointerEvents: "none",
             }}
-          />
+          /> */}
         </div>
 
         {/* TEXT SECTION START */}
@@ -113,7 +113,7 @@ function Home() {
             boxSizing: "border-box",
           }}
         >
-          <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "1rem" }}>
+          <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "1rem", marginTop: "2rem"}}>
             Welcome to InforReel
           </h1>
           <p style={{ fontSize: "0.9rem", marginBottom: "1rem" }}>
@@ -172,7 +172,7 @@ function Home() {
         {/* TEXT SECTION END */}
       </section>
 
-      <section style={{ padding: "2rem 1rem", backgroundColor: "#000", maxWidth: "1200px", margin: "auto" }}>
+      <section style={{ padding: "2rem 1rem", backgroundColor: "#141414", maxWidth: "1200px", margin: "auto" }}>
         <h2 style={{ textAlign: "center", color: "white" }}>More Reasons to Join</h2>
         <div
           style={{
@@ -226,7 +226,7 @@ function Home() {
         </div>
       </section>
 
-      <section style={{ backgroundColor: "#000", color: "white", maxWidth: "800px", margin: "3rem auto", padding: "0 1rem" }}>
+      <section style={{ backgroundColor: "#141414", color: "white", maxWidth: "800px", margin: "3rem auto", padding: "0 1rem" }}>
         <h2 style={{ textAlign: "center" }}>Frequently Asked Questions</h2>
         <br />
         {faqList.map((faq, idx) => (

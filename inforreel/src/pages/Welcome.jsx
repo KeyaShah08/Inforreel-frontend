@@ -17,12 +17,12 @@ function Welcome() {
     },
     {
       label: "Brand / Vendor",
-      desc: "Partner with brands. Create a VibeReel. Earn.",
+      desc: "Partner with brands. Create a VibesReel. Earn.",
       path: "/signup/business",
     },
     {
       label: "Influencer / Brand Ambassador",
-      desc: "Showcase Products. Partner with Influencers. Drive Sales.",
+      desc: "Showcase Products. Create a VibeReel. Partner with Influencers. Drive Sales.",
       path: "/signup/influencer",
     },
   ];
@@ -34,7 +34,7 @@ function Welcome() {
         flexDirection: "column",
         minHeight: "100vh",
         fontFamily: "'Source Sans Pro', sans-serif",
-        backgroundColor: "#000000", // ✅ true black background
+        backgroundColor: "#141414", // ✅ true black background
         color: "#ffffff",
         margin: 0,
         padding: 0,
@@ -56,6 +56,7 @@ function Welcome() {
               fontSize: "2rem",
               fontWeight: 700,
               marginBottom: "0.8rem",
+              marginTop:"2rem"
             }}
           >
             Tell Us Who You Are

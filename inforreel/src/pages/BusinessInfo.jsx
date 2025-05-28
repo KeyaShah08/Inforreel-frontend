@@ -58,7 +58,7 @@ const customSelectStyles = {
   container: (base) => ({ ...base, marginTop: "0.3rem" }),
   control: (base, state) => ({
     ...base,
-    backgroundColor: "#1d1d1d",
+    backgroundColor: "#141414",
     borderColor: state.isFocused ? "#555" : "#444",
     color: "#fff",
     boxShadow: state.isFocused ? '0 0 0 1px #555' : 'none',
@@ -68,7 +68,7 @@ const customSelectStyles = {
     padding: "2px 0px", // Adjust padding to match input
   }),
   singleValue: (base) => ({ ...base, color: "#fff" }),
-  menu: (base) => ({ ...base, backgroundColor: "#fff", color: "#000", zIndex: 9999 }),
+  menu: (base) => ({ ...base, backgroundColor: "#fff", color: "#141414", zIndex: 9999 }),
   option: (base, { isFocused }) => ({
     ...base,
     backgroundColor: isFocused ? "#f0f0f0" : "#fff",
@@ -96,7 +96,7 @@ const inputStyle = {
   marginTop: "0.3rem",
   padding: "10px", // Match Select padding roughly
   border: "1px solid #444",
-  backgroundColor: "#1d1d1d",
+  backgroundColor: "#141414",
   borderRadius: "6px",
   color: "#fff",
   fontSize: "1rem",
@@ -187,11 +187,11 @@ export default function BusinessInfo() {
 
     }
 
-    // Restore full name from session storage if it exists (assuming it's set during registration/login)
-    const savedName = sessionStorage.getItem("businessFullName");
-    if (savedName) {
-      setFormData((prev) => ({ ...prev, fullName: savedName }));
-    }
+    // // Restore full name from session storage if it exists (assuming it's set during registration/login)
+    // const savedName = sessionStorage.getItem("businessFullName");
+    // if (savedName) {
+    //   setFormData((prev) => ({ ...prev, fullName: savedName }));
+    // }
 
   }, [searchParams]); // Depend on searchParams to react to URL changes
 
@@ -244,8 +244,6 @@ export default function BusinessInfo() {
     if (errors.idFile) {
       setErrors((prevErrors) => ({ ...prevErrors, idFile: null }));
     }
-     // Clear the input's value to allow selecting the same file again if needed
-     e.target.value = null;
   };
 
     const handleFileDrop = (e) => {
@@ -452,7 +450,7 @@ export default function BusinessInfo() {
    // Style for the file upload drag area
      const fileUploadAreaStyle = (hasError) => ({
          border: `1px dashed ${hasError ? '#ff4d4f' : '#888'}`, // Dashed border, red on error
-         backgroundColor: "#1d1d1d",
+         backgroundColor: "#141414",
          padding: "2rem",
          textAlign: "center",
          borderRadius: "10px", // Rounded corners matching other elements
@@ -471,7 +469,7 @@ export default function BusinessInfo() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      backgroundColor: '#333', // Darker background for item
+      backgroundColor: '#141414', // Darker background for item
       padding: '10px',
       borderRadius: '5px',
       marginTop: '1rem', // Space above the first item
@@ -491,11 +489,11 @@ export default function BusinessInfo() {
 
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", fontFamily: "'Source Sans Pro', sans-serif", backgroundColor: "#000", color: "#fff" }}>
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", fontFamily: "'Source Sans Pro', sans-serif", backgroundColor: "#141414", color: "#fff" }}>
       <Header />
       <main style={{ flex: 1 }}>
         <div style={{ textAlign: "center", padding: "3rem 1rem", maxWidth: "900px", margin: "auto" }}>
-          <h2 style={{ fontSize: "1.8rem", fontWeight: 700, marginBottom: "2rem" }}>Personal Information</h2>
+          <h2 style={{ fontSize: "1.8rem", fontWeight: 700, marginBottom: "2rem", marginTop:"2rem" }}>Personal Information</h2>
 
             {/* Removed all verification status messages */}
 
@@ -503,8 +501,14 @@ export default function BusinessInfo() {
           <form onSubmit={handleSubmit} className="signup-form" style={{ display: "flex", flexDirection: "column", gap: "1rem", maxWidth: "500px", margin: "0 auto", textAlign: "left" }} noValidate>
             <label style={labelStyle}> {/* Applied labelStyle */}
               Full Name
-              <input type="text" name="fullName" value={formData.fullName} readOnly style={{...inputStyle, cursor: 'not-allowed', opacity: 0.8}} /> {/* Make readOnly as it comes from sessionStorage */}
-              {errors.fullName && <span style={{ color: "#ff4d4f", fontSize: "0.85rem", display: 'block', marginTop: '0.2rem' }}>{errors.fullName}</span>}
+<input
+  type="text"
+  name="fullName"
+  value={formData.fullName}
+  onChange={handleChange}
+  placeholder="Enter your full name"
+  style={inputStyle}
+/>              {errors.fullName && <span style={{ color: "#ff4d4f", fontSize: "0.85rem", display: 'block', marginTop: '0.2rem' }}>{errors.fullName}</span>}
             </label>
 
             <label style={labelStyle}> {/* Applied labelStyle */}
@@ -536,44 +540,42 @@ export default function BusinessInfo() {
             <label style={labelStyle}> {/* Applied labelStyle */}
               Government issued ID
               {/* Updated File Upload JSX */}
-              <div
-                    id="idFileInputArea" // Added ID for scrolling
-                    style={fileUploadAreaStyle(errors.idFile)} // Use dynamic style for error border
-                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                    onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                    onDrop={handleFileDrop}
-                    onClick={() => {
-                         // Only trigger click if a file isn't already selected (for single file input)
-                         if (!formData.idFile) {
-                              document.getElementById('idFileInput').click();
-                         } else {
-                              // Maybe provide feedback to the user that they need to remove the current file first
-                              console.log("Remove the current file to upload a new one.");
-                              // Optionally add a temporary message or visual cue
-                         }
-                    }}
-                >
-                    {/* SVG icon */}
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                    </svg>
-                    {/* Drag & drop text */}
-                    <p style={{ margin: "1rem 0 0.5rem" }}>
-                       Drag & drop file or <label htmlFor="idFileInput" style={{ color: "#d84b9e", cursor: "pointer", textDecoration: "underline" }}>Browse</label>
-                    </p>
-                    {/* Accepted file types */}
-                    <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
-                    {/* Hidden file input - use key to reset input field state */}
-                    <input
-                     type="file"
-                     key={formData.idFile ? formData.idFile.name : 'no-file'} // Key to force re-render on file change/removal
-                     id="idFileInput" // Use a distinct ID from the label's htmlFor
-                     name="idFile" // Name for validation/scrolling
-                     accept="image/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                     onChange={handleFileChange}
-                     style={{ display: "none" }}
-                    />
-                </div>
+<div
+  id="idFileInputArea"
+  style={fileUploadAreaStyle(errors.idFile)}
+  onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+  onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); }}
+  onDrop={handleFileDrop}
+>
+<img
+    src="/icons/cloud-upload1.png"
+    alt="Upload Icon"
+    style={{ width: "48px", height: "48px", marginBottom: "0.5rem" }}
+  />  <p style={{ margin: "1rem 0 0.5rem" }}>
+    Drag & drop file or{" "}
+    <span
+      style={{ color: "#d84b9e", cursor: "pointer", textDecoration: "underline" }}
+      onClick={() => {
+        if (!formData.idFile) {
+          document.getElementById("idFileInput").click();
+        }
+      }}
+    >
+      Browse
+    </span>
+  </p>
+  <p style={{ fontSize: "0.85rem", color: "#ccc" }}>png, pdf, jpg, docx accepted</p>
+  <input
+    type="file"
+    key={formData.idFile ? formData.idFile.name : "no-file"}
+    id="idFileInput"
+    name="idFile"
+    accept="image/*,.pdf,.doc,.docx"
+    onChange={handleFileChange}
+    style={{ display: "none" }}
+  />
+</div>
+
 
                 {/* Display uploaded file info below the drag area if a file is selected */}
                 {formData.idFile && (

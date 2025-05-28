@@ -89,7 +89,7 @@ function InfluencerSignup() {
     console.log("Sending registration data to API:", dataToSend);
 
     try {
-      const response = await fetch("http://54.193.54.116:8000/api/users/register", {
+      const response = await fetch("http://34.229.245.56:8000/api/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -142,13 +142,13 @@ function InfluencerSignup() {
       flexDirection: "column",
       minHeight: "100vh",
       fontFamily: "'Source Sans Pro', sans-serif",
-      backgroundColor: "#000000",
+      backgroundColor: "#141414",
       color: "#ffffff"
     }}>
       <Header />
       <main style={{ flex: 1 }}>
         <div style={{ textAlign: "center", padding: "3.5rem 1rem", maxWidth: "800px", margin: "auto" }}>
-          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "0.5rem" , marginTop: "2rem"}}>
             Create your influencer account
           </h2>
           <p style={{ fontSize: "1rem", color: "#ccc", marginBottom: "2rem", fontWeight: 400 }}>
@@ -187,7 +187,7 @@ function InfluencerSignup() {
                   style={{
                     padding: "10px",
                     border: `1px solid ${(errors[field] || (apiError && field === 'email')) ? '#ff4d4d' : '#444'}`, // Highlight on client or potential API email error
-                    backgroundColor: "#1d1d1d",
+                    backgroundColor: "#141414",
                     borderRadius: "6px",
                     fontSize: "1rem",
                     color: "#fff",
@@ -216,7 +216,7 @@ function InfluencerSignup() {
                     style={{
                       padding: "10px",
                       border: `1px solid ${(errors[field] || (apiError && (field === 'password' || field === 'confirmPassword'))) ? '#ff4d4d' : '#444'}`, // Highlight on client or potential API password error
-                      backgroundColor: "#1d1d1d",
+                      backgroundColor: "#141414",
                       borderRadius: "6px",
                       fontSize: "1rem",
                       width: "100%",

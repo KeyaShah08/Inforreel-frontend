@@ -47,7 +47,7 @@ export default function IdentityVerificationIntro() {
         if (sessionId && !sessionAlreadyHandled) {
             const runFlow = async () => {
                 try {
-                    const response = await fetch(`http://54.193.54.116:8000/identity-complete?session_id=${sessionId}`);
+                    const response = await fetch(`http://34.229.245.56:8000/identity-complete?session_id=${sessionId}`);
                     const data = await response.json();
 
                     if (data.redirectUrl) {
@@ -70,7 +70,7 @@ export default function IdentityVerificationIntro() {
         setIsLoading(true);
         sessionStorage.removeItem("session_verified");
 
-        const apiEndpoint = "http://54.193.54.116:8000/create-session";
+        const apiEndpoint = "http://34.229.245.56:8000/create-session";
         const payload = {
             userId: "681a48835298885fffe60f5b",
             name: "Vendor",
@@ -113,9 +113,11 @@ export default function IdentityVerificationIntro() {
     };
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", fontFamily: "'Source Sans Pro', sans-serif", backgroundColor: "#000", color: "#fff" }}>
+        <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", fontFamily: "'Source Sans Pro', sans-serif", backgroundColor: "#141414", color: "#fff" }}>
             <Header />
-            <main style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", padding: "2rem 1rem" }}>
+            <main style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "flex-start", padding: "2rem 1rem",padding: "3rem 1rem",
+marginTop: "2rem",
+ }}>
                 <div style={{ textAlign: "center", maxWidth: "600px", width: "100%" }}>
                     <h1 style={{ fontSize: "2.5rem", fontWeight: 700, marginBottom: "1rem" }}>Identity Verification</h1>
                     <p style={{ fontSize: "1.2rem", color: "#ccc", marginBottom: "2rem" }}>

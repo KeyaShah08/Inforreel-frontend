@@ -106,7 +106,7 @@ function InterestSelection() {
     console.log("Token being sent in fetch header:", userToken); // Log the token being used
 
     try {
-      const response = await fetch("http://54.193.54.116:8000/api/users/profile", {
+      const response = await fetch("http://34.229.245.56:8000/api/users/profile", {
         method: "POST",
         headers: {
           // *** IMPORTANT: DO NOT set Content-Type manually for FormData ***
@@ -192,14 +192,21 @@ function InterestSelection() {
   ];
 
   const boxStyle = {
-    flex: "1 1 45%",
-    border: "1px solid #333",
-    borderRadius: "10px",
-    padding: "1.2rem",
-    backgroundColor: "#1D1D1D",
-    textAlign: "left",
-    minWidth: "300px",
-  };
+  flex: "1 1 auto",
+  border: "1px solid #333",
+  borderRadius: "10px",
+  padding: "1.2rem",
+  backgroundColor: "#1D1D1D",
+  textAlign: "left",
+  width: "100%",           // Stretch to fit column
+  minWidth: "300px",
+  maxWidth: "400px",
+  height: "300px",         // Set a fixed height
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "flex-start",
+};
+
 
   // Determine if the submit button should be disabled
   // It should be disabled if loading, no interests are selected, or if the token/profileData are missing from state (initially undefined)
@@ -213,7 +220,7 @@ function InterestSelection() {
         flexDirection: "column",
         minHeight: "100vh",
         fontFamily: "'Source Sans Pro', sans-serif",
-        backgroundColor: "#000000",
+        backgroundColor: "#141414",
         color: "#ffffff",
       }}
     >
@@ -228,7 +235,7 @@ function InterestSelection() {
             textAlign: "center",
           }}
         >
-          <h2 style={{ fontSize: "1.75rem", marginBottom: "2.5rem", fontWeight: 700 }}>
+          <h2 style={{ fontSize: "1.75rem", marginBottom: "2.5rem", fontWeight: 700 , marginTop:"3rem"}}>
             Select your interest
           </h2>
 
@@ -241,13 +248,14 @@ function InterestSelection() {
 
 
           <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", // Responsive grid
-              gap: "2rem",
-              justifyContent: "center",
-            }}
-          >
+  style={{
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr", // force 2 columns
+    gap: "2rem",
+    justifyContent: "center",
+    alignItems: "start",
+  }}
+>
             {categories.map(({ title, items }) => (
               <div key={title} style={boxStyle}>
                 <h4

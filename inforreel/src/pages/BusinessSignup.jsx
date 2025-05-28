@@ -88,7 +88,7 @@ function BusinessSignup() {
       };
 
       try {
-        const response = await fetch("http://54.193.54.116:8000/api/users/register", {
+        const response = await fetch("http://34.229.245.56:8000/api/users/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -137,7 +137,7 @@ function BusinessSignup() {
         flexDirection: "column",
         minHeight: "100vh",
         fontFamily: "'Source Sans Pro', sans-serif",
-        backgroundColor: "#000000",
+        backgroundColor: "#141414",
         color: "#ffffff",
       }}
     >
@@ -156,6 +156,7 @@ function BusinessSignup() {
               fontSize: "1.75rem",
               fontWeight: 700,
               marginBottom: "0.5rem",
+              marginTop: "2rem",
             }}
           >
             Create your business account
@@ -191,7 +192,7 @@ function BusinessSignup() {
                   style={{
                     padding: "10px",
                     border: `1px solid ${errors[field] ? '#ff4d4f' : '#444'}`,
-                    backgroundColor: "#1d1d1d",
+                    backgroundColor: "#141414",
                     borderRadius: "6px",
                     fontSize: "1rem",
                     color: "#fff",
@@ -224,7 +225,7 @@ function BusinessSignup() {
                     style={{
                       padding: "10px",
                       border: `1px solid ${errors[field] ? '#ff4d4f' : '#444'}`,
-                      backgroundColor: "#1d1d1d",
+                      backgroundColor: "#141414",
                       borderRadius: "6px",
                       fontSize: "1rem",
                       width: "100%",

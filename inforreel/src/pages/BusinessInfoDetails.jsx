@@ -92,7 +92,7 @@ function BusinessInfoDetails() {
 
   // Style objects (Assuming these are correct from your attached code)
   const inputStyle = {
-    backgroundColor: "#1D1D1D",
+    backgroundColor: "#141414",
     color: "#FFFFFF",
     border: "1px solid #444", // Default border color
     borderRadius: "8px",
@@ -111,7 +111,7 @@ function BusinessInfoDetails() {
     }),
     control: (base, state) => ({
       ...base,
-      backgroundColor: "#1D1D1D",
+      backgroundColor: "#141414",
       borderColor: state.isFocused || state.selectProps.value ? "#555" : "#444", // Highlight on focus/value
       color: "#fff",
       borderRadius: "8px",
@@ -651,7 +651,7 @@ function BusinessInfoDetails() {
     border: '1px solid #444',
     borderRadius: '4px',
     marginRight: "10px",
-    backgroundColor: isChecked ? '#96105E' : '#1D1D1D',
+    backgroundColor: isChecked ? '#96105E' : '#141414',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -689,7 +689,7 @@ function BusinessInfoDetails() {
     // Style for the file upload drag area - **NO RED BORDER ON ERROR**
     const fileUploadAreaStyle = (hasError, isDisabled) => ({
         border: `1px dashed ${hasError ? '#ff4d4f' : '#888'}`, // Dashed border, red on error
-        backgroundColor: isDisabled ? '#2d2d2d' : "#1d1d1d", // Dark background, slightly different when disabled
+        backgroundColor: isDisabled ? '#2d2d2d' : "#141414", // Dark background, slightly different when disabled
         padding: "2rem",
         borderRadius: "10px",
         textAlign: "center",
@@ -709,7 +709,7 @@ function BusinessInfoDetails() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#333',
+        backgroundColor: '#141414',
         padding: '10px',
         borderRadius: '5px',
         marginTop: '8px',
@@ -740,13 +740,13 @@ function BusinessInfoDetails() {
   return (
     <div
       className="app-wrapper"
-      style={{ backgroundColor: "#000000", minHeight: "100vh", color: "white" }}
+      style={{ backgroundColor: "#141414", minHeight: "100vh", color: "white" }}
     >
       <Header />
       <main className="main-content">
         {/* Added noValidate to prevent default browser validation, we handle it */}
         <form className="signup-form" onSubmit={handleSubmit} noValidate>
-          <h2 style={{ textAlign: "center",fontSize: "1.8rem", fontWeight: 700, marginBottom: "2rem" }}>Business Information</h2>
+          <h2 style={{ textAlign: "center",fontSize: "1.8rem", fontWeight: 700, marginBottom: "2rem", marginTop:"2rem" }}>Business Information</h2>
 
           {/* Display flow error if critical data is missing */}
           {errors.flowError && <p style={errorStyle}>{errors.flowError}</p>}
@@ -830,14 +830,15 @@ function BusinessInfoDetails() {
                            onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
                            onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); }}
                            onDrop={handleDbaDrop}
-                           onClick={() => document.getElementById('dbaDocumentsInput').click()}
                       >
-                           {/* SVG icon */}
-                           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M16 16l-4-4-4 4" /> <path d="M12 12v9" /> <path d="M20.39 18.39A5.5 5.5 0 0018 9h-1.26A8 8 0 104 16.3" />
-                           </svg>
+                           <img
+    src="/icons/cloud-upload1.png"
+    alt="Upload Icon"
+    style={{ width: "48px", height: "48px", marginBottom: "0.5rem" }}
+  />
                            {/* Drag & drop text */}
                            <p style={{ margin: "1rem 0 0.5rem" }}>
+                            
                               Drag & drop files or <label htmlFor="dbaDocumentsInput" style={{ color: "#d84b9e", cursor: "pointer", textDecoration: "underline" }}>Browse</label>
                            </p>
                            {/* Accepted file types (customize as needed) */}

@@ -41,7 +41,7 @@ function PolicyPage() {
         flexDirection: "column",
         minHeight: "100vh",
         fontFamily: "'Source Sans Pro', sans-serif",
-        backgroundColor: "#000000",
+        backgroundColor: "#141414",
         color: "#ffffff",
       }}
     >
@@ -60,6 +60,7 @@ function PolicyPage() {
               fontSize: "1.9rem",
               fontWeight: "700",
               marginBottom: "0.75rem",
+              marginTop: "2rem",
             }}
           >
             Welcome to InforReel Seller Account Setup!

@@ -51,10 +51,10 @@ const customSelectStyles = {
   }),
   control: (base, state) => ({
     ...base,
-    backgroundColor: "#1d1d1d",
-    borderColor: state.isFocused ? "#96105E" : "#444", // Use brand color on focus
+    backgroundColor: "#141414",
+    borderColor: state.isFocused ? "#666" : "#444", // Use brand color on focus
     color: "#ffffff",
-    boxShadow: state.isFocused ? "0 0 0 1px #96105E" : "none", // Add focus ring
+    boxShadow: state.isFocused ? "0 0 0 1px #666" : "none", // Add focus ring
     borderRadius: "6px", // Match input border radius
     padding: "2px",
     minHeight: "40px", // Slightly smaller height
@@ -82,42 +82,49 @@ const customSelectStyles = {
     zIndex: 9999, // Ensure dropdown is above other content
   }),
   option: (base, { isFocused, isSelected }) => ({
-    ...base,
-    backgroundColor: isSelected ? "#96105E" : isFocused ? "#f0f0f0" : "#fff", // Brand color for selected, light grey for focused
-    color: isSelected ? "white" : "#000", // White text on brand color, black otherwise
-    cursor: "pointer",
-    "&:active": { // Active state for click
-      backgroundColor: "#96105E",
-      color: "white",
-    },
-  }),
+  ...base,
+backgroundColor: isSelected
+    ? "#e0e0e0" // light grey when selected
+    : isFocused
+    ? "#f5f5f5" // slightly lighter grey on hover/focus
+    : "#fff",   // default white
+  color: "#000", // always black text  cursor: "pointer",
+  "&:active": {
+    backgroundColor: "#e0e0e0",
+    color: "#000",
+  },
+}),
+
   multiValue: (base) => ({
-    ...base,
-    backgroundColor: "#444", // Darker background for selected multi-values
-    color: "#fff", // White text
-    borderRadius: "4px",
-  }),
-  multiValueLabel: (base) => ({
-    ...base,
-    color: "#fff", // White label text
-  }),
-  multiValueRemove: (base) => ({
-    ...base,
-    color: "#aaa", // Lighter color for remove icon
-    ":hover": {
-      backgroundColor: "#ff4d4d", // Error red on hover
-      color: "#fff",
-    },
-  }),
+  ...base,
+  backgroundColor: "#e0e0e0", // light grey tag background
+  color: "#000", // black text
+  borderRadius: "4px",
+}),
+
+multiValueLabel: (base) => ({
+  ...base,
+  color: "#000", // black label text inside tag
+}),
+
+multiValueRemove: (base) => ({
+  ...base,
+  color: "#333", // dark gray 'x'
+  ":hover": {
+    backgroundColor: "#bbb", // subtle hover background
+    color: "#000", // keep 'x' black
+  },
+}),
+
   indicatorSeparator: (base) => ({
      ...base,
      backgroundColor: '#444', // Dark separator
   }),
   dropdownIndicator: (base) => ({
      ...base,
-     color: '#aaa', // Light color for dropdown arrow
+     color: '#ccc', // Light color for dropdown arrow
      "&:hover": {
-       color: '#ccc',
+       color: '#eee',
      }
   }),
 };
@@ -313,7 +320,7 @@ function InfluencerProfileSetup() {
 
 
     try {
-      const response = await fetch("http://54.193.54.116:8000/api/users/profile", {
+      const response = await fetch("http://34.229.245.56:8000/api/users/profile", {
         method: "POST", // Or PUT/PATCH if profile updates use a different method - check API docs!
         headers: {
           // *** IMPORTANT: DO NOT set Content-Type manually for FormData ***
@@ -371,11 +378,11 @@ function InfluencerProfileSetup() {
 
 
   return (
-    <div className="app-wrapper" style={{ backgroundColor: "#000", color: "#fff", minHeight: "100vh" }}>
+    <div className="app-wrapper" style={{ backgroundColor: "#141414", color: "#fff", minHeight: "100vh", marginTop: "2rem" }}>
       <Header />
       <main className="main-content">
         <form className="signup-form" onSubmit={handleSubmit}>
-          <h2 className="text-center" style={{ color: "#fff" }}>Continue your profile setup</h2>
+          <h2 className="text-center" style={{ color: "#fff" , textAlign: "center"}}>Continue your profile setup</h2>
 
           {/* API Error Message Display */}
           {apiError && (
@@ -472,7 +479,7 @@ function InfluencerProfileSetup() {
                 border: `1px solid ${errors.dob ? '#ff4d4d' : '#444'}`,
                 borderRadius: "6px",
                 fontSize: "1rem",
-                backgroundColor: "#1d1d1d",
+                backgroundColor: "#141414",
                 color: "#fff",
                 width: "100%",
               }}
@@ -517,7 +524,7 @@ function InfluencerProfileSetup() {
                 setApiError(""); // Clear general API error
               }}
               style={{
-                backgroundColor: "#1d1d1d",
+                backgroundColor: "#141414",
                 border: `1px solid ${errors.about ? '#ff4d4d' : '#444'}`,
                 borderRadius: "6px",
                 color: "#fff",
@@ -549,7 +556,7 @@ function InfluencerProfileSetup() {
                 setApiError(""); // Clear general API error
               }}
               style={{
-                backgroundColor: "#1d1d1d",
+                backgroundColor: "#141414",
                 border: `1px solid ${errors.brandStatement ? '#ff4d4d' : '#444'}`,
                 borderRadius: "6px",
                 color: "#fff",
@@ -588,7 +595,7 @@ function InfluencerProfileSetup() {
                 onChange={(e) => handleLinkChange(platform.value, e.target.value)}
                 className="social-link-input"
                 style={{
-                  backgroundColor: "#1d1d1d",
+                  backgroundColor: "#141414",
                   border: "1px solid #444",
                   borderRadius: "6px",
                   padding: "10px",
