@@ -60,7 +60,7 @@ function ForgotPassword() {
         flexDirection: "column",
         minHeight: "100vh",
         fontFamily: "'Source Sans Pro', sans-serif",
-        backgroundColor: "#000",
+        backgroundColor: "#141414",
         color: "#fff",
       }}
     >
@@ -75,7 +75,7 @@ function ForgotPassword() {
             margin: "auto",
           }}
         >
-          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "2rem" }}>
+          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "2rem", marginTop: "2rem" }}>
             Forgot Password
           </h2>
 
@@ -103,7 +103,7 @@ function ForgotPassword() {
               style={{
                 padding: "12px",
                 border: "1px solid #444",
-                backgroundColor: "#1d1d1d",
+                backgroundColor: "#141414",
                 borderRadius: "6px",
                 fontSize: "1rem",
                 color: "#fff",

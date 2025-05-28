@@ -103,14 +103,14 @@ function ResetPassword() {
       flexDirection: "column",
       minHeight: "100vh",
       fontFamily: "'Source Sans Pro', sans-serif",
-      backgroundColor: "#000000",
+      backgroundColor: "#141414",
       color: "#ffffff"
     }}>
       <Header />
 
       <main style={{ flex: 1 }}>
         <div style={{ textAlign: "center", padding: "3.5rem 1rem", maxWidth: "800px", margin: "auto" }}>
-          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "1.5rem" }}>
+          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginTop: "2rem", marginBottom: "2rem" }}>
             Reset Your Password
           </h2>
 
@@ -142,7 +142,7 @@ function ResetPassword() {
                 style={{
                   padding: "10px",
                   border: "1px solid #444",
-                  backgroundColor: "#1d1d1d",
+                  backgroundColor: "#141414",
                   borderRadius: "6px",
                   fontSize: "1rem",
                   width: "100%",
@@ -174,7 +174,7 @@ function ResetPassword() {
                     style={{
                       padding: "10px",
                       border: `1px solid ${errors[name] ? '#ff4d4d' : '#444'}`, // Highlight if error
-                      backgroundColor: "#1d1d1d",
+                      backgroundColor: "#141414",
                       borderRadius: "6px",
                       fontSize: "1rem",
                       width: "100%",

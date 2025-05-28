@@ -24,6 +24,20 @@ function SignIn() {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
+  const resendOtp = async (email) => {
+  try {
+    await fetch("http://54.193.54.116:8000/api/users/resend-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    console.log("OTP resent successfully");
+  } catch (err) {
+    console.error("Could not resend OTP:", err);
+    // optional: surface a toast/snackbar, but don't block navigation
+  }
+};
+
 
    // Password validation (client-side - you might rely solely on backend for real auth)
    // const validatePassword = (password) => {
@@ -81,26 +95,41 @@ function SignIn() {
              // You might want to store the token (e.g., in localStorage or context) here
              // localStorage.setItem('authToken', token); // Store the token for authenticated requests
 
-             if (isVerified === true && isProfileSetup === true) {
-               // Navigate to dashboard if both flags are true
-               console.log("Login successful, navigating to /dashboard");
-                // You might pass user info or token to dashboard here via state if needed
-               navigate("/dashboard", { state: { authToken: token, userType: userUserType } });
-             } else {
-               // Navigate to verify account page otherwise
-               console.log("User needs verification or profile setup, navigating to /verify");
-               // PASS EMAIL, USERTYPE, AND SOURCE: 'login' IN STATE WHEN NAVIGATING
-               navigate("/verify", { // Corrected path to match your Route definition
-                 state: {
-                   email: userEmail, // Pass the email obtained from API response
-                   userType: userUserType, // Pass the userType obtained from API response
-                   source: 'login' // *** Add this flag to indicate origin ***
-                   // You can pass the token here too if VerifyAccount needs it,
-                   // but typically the token is stored client-side after login.
-                   // authToken: token
-                 }
-               });
-             }
+             // ----------------------------------------------
+// Decide where to go after a successful /login
+// ----------------------------------------------
+if (isVerified === true && isProfileSetup === true) {
+  // ✅ Everything complete → straight to dashboard
+  console.log("Login successful, navigating to /dashboard");
+
+  // Optionally persist the token before navigating
+  // localStorage.setItem('authToken', token);
+
+  navigate("/dashboard", {
+    state: { authToken: token, userType: userUserType }
+  });
+
+} else {
+  // ❗User still needs e‑mail verification or profile setup
+  console.log(
+    "User needs verification or profile setup → resending OTP, then navigating to /verify"
+  );
+
+  // 1️⃣   Fire ONE resend‑otp request
+  await resendOtp(userEmail);
+
+  // 2️⃣   Head to the VerifyAccount flow
+  navigate("/verify", {
+    state: {
+      email: userEmail,          // for VerifyAccount screen
+      userType: userUserType,    // general / influencer / vendor
+      source: "login",           // helps VerifyAccount logic
+      otpAlreadySent: true       // tells it not to auto‑resend
+      // authToken: token        // (optional) pass token if needed
+    }
+  });
+}
+
           } else {
               // Handle case where response data is missing expected fields
               console.error("Login API response missing required data fields:", data);
@@ -131,7 +160,7 @@ function SignIn() {
         flexDirection: "column",
         minHeight: "100vh",
         fontFamily: "'Source Sans Pro', sans-serif",
-        backgroundColor: "#000",
+        backgroundColor: "#141414",
         color: "#fff",
       }}
     >
@@ -146,7 +175,7 @@ function SignIn() {
             margin: "auto",
           }}
         >
-          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "2rem" }}>
+          <h2 style={{ fontSize: "1.75rem", fontWeight: 700, marginBottom: "2rem", marginTop: "2rem" }}>
             Sign In
           </h2>
 
@@ -179,7 +208,7 @@ function SignIn() {
                   style={{
                     padding: "12px",
                     border: errors[field] ? "1px solid #ff4d4d" : "1px solid #888", // Highlight error fields
-                    backgroundColor: "#000",
+                    backgroundColor: "#141414",
                     borderRadius: "6px",
                     fontSize: "1rem",
                     color: "#fff",

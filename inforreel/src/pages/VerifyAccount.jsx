@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
@@ -8,21 +8,17 @@ const MESSAGE_TO_HIDE = "OTP resent successfully";
 // Define the specific message to exclude from errors and display
 const MESSAGE_TO_EXCLUDE_FROM_ERROR = "Navigation source is missing. Cannot determine flow.";
 
-
 function VerifyAccount() {
   const [otp, setOtp] = useState("");
-  const [error, setError] = useState(""); // Client-side validation error for OTP
-  const [verifyLoading, setVerifyLoading] = useState(false); // State for OTP verification loading
-  const [resendLoading, setResendLoading] = useState(false); // State for resend loading indicator
-  const [verifyApiError, setVerifyApiError] = useState(""); // State for OTP verification API error messages
-  const [resendError, setResendError] = useState(""); // State for resend API error messages
-  // Removed the resendSuccess state variable
-
-  // New states for the initial Registration API call (if coming from signup)
+  const [error, setError] = useState("");
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [verifyApiError, setVerifyApiError] = useState("");
+  const [resendError, setResendError] = useState("");
+  const hasSentOtpRef = useRef(false); // UseRef instead of useState
   const [registrationLoading, setRegistrationLoading] = useState(false);
   const [registrationError, setRegistrationError] = useState(null);
   const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState(null);
-
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,133 +29,85 @@ function VerifyAccount() {
     password: null,
     userType: null,
     username: null,
-    source: null, // 'signup', 'login', or 'forgot-password'
+    source: null,
     next: null
   };
 
-  // --- useEffect to handle initial API calls based on source ---
   useEffect(() => {
-    // Function to handle the initial Registration API call (if coming from signup)
     const handleInitialRegistration = async () => {
-        setRegistrationLoading(true);
-        setRegistrationError(null);
-        setRegistrationSuccessMessage(null);
+      setRegistrationLoading(true);
+      setRegistrationError(null);
+      setRegistrationSuccessMessage(null);
 
-        try {
-          console.log("Attempting initial registration API call from VerifyAccount...");
-          const response = await fetch("http://54.193.54.116:8000/api/users/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              name,
-              email,
-              password,
-              userType,
-              username,
-            }),
-          });
+      try {
+        const response = await fetch("http://54.193.54.116:8000/api/users/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, userType, username }),
+        });
 
-          const data = await response.json();
+        const data = await response.json();
 
-          console.log("Registration API Response Status:", response.status);
-          console.log("Registration API Response Data:", data);
-
-
-          if (response.ok && data.code === 200) {
-            console.log("Initial Registration successful:", data);
-             setRegistrationSuccessMessage("Registration successful! Please check your email for OTP.");
-          } else {
-            console.error("Initial Registration failed:", data);
-            setRegistrationError(data.error || data.message || "Registration failed. Please try again.");
-          }
-        } catch (error) {
-          console.error("Network error during initial registration:", error);
-          setRegistrationError("An error occurred during registration. Please check your connection.");
-        } finally {
-          setRegistrationLoading(false);
+        if (response.ok && data.code === 200) {
+          setRegistrationSuccessMessage("Registration successful! Please check your email for OTP.");
+        } else {
+          setRegistrationError(data.error || data.message || "Registration failed. Please try again.");
         }
+      } catch (error) {
+        setRegistrationError("An error occurred during registration. Please check your connection.");
+      } finally {
+        setRegistrationLoading(false);
+      }
     };
 
-    // Function to handle the initial Resend OTP call (if coming from login or forgot-password)
     const handleInitialResend = async () => {
-        setResendLoading(true);
-        setResendError("");
+      setResendLoading(true);
+      setResendError("");
 
-        try {
-            console.log(`Attempting initial resend OTP API call from VerifyAccount (from ${source})...`);
-            const resendApiUrl = "http://54.193.54.116:8000/api/users/resend-otp";
+      try {
+        const response = await fetch("http://54.193.54.116:8000/api/users/resend-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
 
-            const response = await fetch(resendApiUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email: email }),
-            });
+        const data = await response.json();
 
-            const data = await response.json();
-
-            console.log("Initial Resend OTP API Response Status:", response.status);
-            console.log("Initial Resend OTP API Response Data:", data);
-
-            if (response.ok && data.code === 200 && data.message === "OTP sent to your email for verification") {
-                console.log("Initial Resend OTP successful:", data);
-                 setOtp(""); // Clear previous OTP input field
-                 // No success message needed for resend, the main text explains OTP sent.
-            } else if (response.status === 400 && data.error === "User already verified") {
-                console.log("User already verified on initial resend attempt. Navigating.");
-                const authToken = data.data?.token || null;
-                if (authToken) { // Check if token is not null before storing
-                     localStorage.setItem('authToken', authToken); // <-- ADDED THIS LINE
-                }
-                const verifiedUserType = data.data?.userType || userType;
-                handleSuccessfulNavigation(authToken, verifiedUserType); // Navigate if already verified
-            }
-             else {
-                console.error("Initial Resend OTP failed:", data);
-                setResendError(data.message || `Failed to send OTP. Status: ${response.status}. Please try again.`);
-            }
-        } catch (error) {
-            console.error("Network error during initial resend:", error);
-            setResendError("An error occurred while resending OTP. Please try again.");
-        } finally {
-            setResendLoading(false);
+        if (response.ok && data.code === 200 && data.message === "OTP sent to your email for verification") {
+          setOtp("");
+        } else if (response.status === 400 && data.error === "User already verified") {
+          const authToken = data.data?.token || null;
+          if (authToken) localStorage.setItem('authToken', authToken);
+          const verifiedUserType = data.data?.userType || userType;
+          handleSuccessfulNavigation(authToken, verifiedUserType);
+        } else {
+          setResendError(data.message || `Failed to send OTP. Status: ${response.status}. Please try again.`);
         }
+      } catch (error) {
+        setResendError("An error occurred while resending OTP. Please try again.");
+      } finally {
+        setResendLoading(false);
+      }
     };
 
+    if (!email || hasSentOtpRef.current) return;
 
-    // --- Decision logic based on 'source' and email availability ---
+    const sendOtpOnce = async () => {
+      switch (source) {
+        case 'signup':
+          await handleInitialRegistration();
+          break;
+        case 'forgot-password':
+          await handleInitialResend();
+          break;
+        default:
+          console.warn("Unknown or missing source. Skipping automatic OTP resend.");
+          break;
+      }
+      hasSentOtpRef.current = true;
+    };
 
-    if (!email) {
-         setError("Email address is missing. Cannot proceed.");
-         console.error("Email is missing in location state on page load.");
-         return;
-    }
-
-    // If coming from signup, attempt initial registration API call
-    if (source === 'signup' && password && userType && name && username) {
-        console.log("Source is 'signup'. Initiating registration.");
-        handleInitialRegistration();
-    }
-    // If coming from login or forgot-password, attempt initial resend OTP API call
-    else if (source === 'login' || source === 'forgot-password') {
-         console.log(`Source is '${source}'. Initiating OTP resend.`);
-         handleInitialResend();
-    }
-    else if (!source) {
-         console.warn("Source not specified in location state.");
-         // Depending on desired behavior, you might want a default flow or an error here.
-         // For now, let's assume it might be a direct access with email, so we'll still try to resend.
-         console.log("Source is missing, defaulting to initial OTP resend.");
-         handleInitialResend();
-    } else {
-        console.error(`Source is '${source}' but required data is incomplete.`);
-         setError(`Missing required data for the '${source}' flow.`);
-    }
-
-
+    sendOtpOnce();
   }, [email, password, userType, name, username, source, navigate]);
 
 
@@ -357,7 +305,7 @@ function VerifyAccount() {
         flexDirection: "column",
         minHeight: "100vh",
         fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
-        backgroundColor: "#000000",
+        backgroundColor: "#141414",
         color: "#ffffff",
       }}
     >
@@ -375,7 +323,7 @@ function VerifyAccount() {
             padding: "0 1rem",
           }}
         >
-          <h2 style={{ textAlign: "center", fontSize: "2rem", marginBottom: "0.5rem" }}>
+          <h2 style={{ textAlign: "center", fontSize: "2rem",  marginTop: "2rem" }}>
             Verify your account
           </h2>
 
@@ -433,7 +381,7 @@ function VerifyAccount() {
                 border: `1px solid #444`, // Changed to a fixed border color
                 borderRadius: "6px",
                 fontSize: "1rem",
-                backgroundColor: "#1d1d1d",
+                backgroundColor: "#141414",
                 color: "#fff",
               }}
               disabled={!isEmailAvailable || overallLoading}
