@@ -1215,7 +1215,7 @@ function ProductDetails() {
                                   
                               </div> 
                 <div style={{marginTop: '50px'}}>
-                  <p style={{fontSize:"24px",color:"#fff",}}>Related Products</p>
+                  <p style={{fontSize:"24px",color:"#fff",}}>Products</p>
                   <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignContent: "flex-end" }}>
                     <div
                       style={{

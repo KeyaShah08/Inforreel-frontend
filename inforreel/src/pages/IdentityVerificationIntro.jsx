@@ -115,7 +115,7 @@ export default function IdentityVerificationIntro() {
     return (
         <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", fontFamily: "'Source Sans Pro', sans-serif", backgroundColor: "#141414", color: "#fff" }}>
             <Header />
-            <main style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "flex-start", padding: "2rem 1rem",padding: "3rem 1rem",
+            <main style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "flex-start",padding: "3rem 1rem",
 marginTop: "2rem",
  }}>
                 <div style={{ textAlign: "center", maxWidth: "600px", width: "100%" }}>
