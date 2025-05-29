@@ -6,15 +6,21 @@ import Sidebar from '../components/Sidebar';
 import YourCart from '../components/YourCart';
 
 const MyCart = () => {
-  const [currentPage, setCurrentPage] = useState('My Cart');
+  const [currentPage, setCurrentPage] = useState('');
   const navigate = useNavigate();
 
-  // Watch for Home click and navigate to Dashboard page
+  // ✅ Always reset to 'My Cart' on load
   useEffect(() => {
-    if (currentPage === 'Home') {
-      navigate('/dashboard'); // 🔁 redirects to Dashboard page route
+    setCurrentPage('My Cart');
+  }, []);
+
+  const handleSidebarClick = (item) => {
+    if (item === 'Home') {
+      navigate('/dashboard');
+    } else {
+      setCurrentPage(item);
     }
-  }, [currentPage, navigate]);
+  };
 
   return (
     <div
@@ -25,7 +31,7 @@ const MyCart = () => {
         color: 'white',
       }}
     >
-      <Sidebar onNavItemClick={setCurrentPage} activeItem={currentPage} />
+      <Sidebar onNavItemClick={handleSidebarClick} activeItem={currentPage} />
 
       <div
         style={{
@@ -37,16 +43,9 @@ const MyCart = () => {
       >
         <Header1 />
 
-        {/* ✅ Show content based on current page */}
-        {currentPage === 'My Cart' ? (
-          <YourCart />
-        ) : currentPage === 'Global Showroom' ? (
-          <Marketplace />
-        ) : (
-          <div style={{ color: 'white', padding: '40px' }}>
-            <h2>{currentPage} page coming soon...</h2>
-          </div>
-        )}
+        {/* ✅ Show correct section */}
+        {currentPage === 'My Cart' && <YourCart />}
+        {currentPage === 'Global Showroom' && <Marketplace />}
       </div>
     </div>
   );

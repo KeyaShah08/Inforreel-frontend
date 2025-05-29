@@ -935,7 +935,18 @@ function ProductDetails2() {
             justifyContent: 'flex-start',
             cursor: 'pointer'
           }}
-          onClick={() => handleDetailView()}
+          onClick={() =>
+            navigate('/brandvideos1', {
+              state: {
+                video: {
+                  video: item.src,
+                  Name: item.label,
+                  Smallimg: '/gucci.png', // placeholder
+                  description: `${item.label} exclusive brand video`
+                }
+              }
+            })
+          }
         >
           <video
             src={item.src}

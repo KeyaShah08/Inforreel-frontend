@@ -872,7 +872,7 @@ const handleNavClick = (section) => {
       style={{
         position: 'absolute',
         left: 0,
-        top: '195px',
+        top: '50%',
         transform: 'translateY(-50%)',
         background: '#9D9A95',
         border: 'none',
@@ -892,7 +892,7 @@ const handleNavClick = (section) => {
       style={{
         position: 'absolute',
         right: 0,
-        top: '195px',
+        top: '50%',
         transform: 'translateY(-50%)',
         background: '#9D9A95',
         border: 'none',
@@ -982,7 +982,8 @@ const handleNavClick = (section) => {
             flexDirection: 'column',
             alignItems: 'center'
           }}
-          onClick={() => navigate('/brandvideos')}
+        onClick={() => navigate('/brandvideos')}
+
 
         >
           <video

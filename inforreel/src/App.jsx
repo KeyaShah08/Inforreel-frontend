@@ -1,4 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Brandvideos from "./pages/Brandvideos"; // Import the Brandvideos page
+import Brandvideos1 from "./pages/Brandvideos1"; // Import the Brandvideos page
 import BusinessInfo from "./pages/BusinessInfo";
 import BusinessInfoDetails from "./pages/BusinessInfoDetails";
 import BusinessInfoDetails1 from "./pages/BusinessInfoDetails1";
@@ -20,7 +22,6 @@ import UserProfileSetup from "./pages/UserProfileSetup";
 import UserSignup from "./pages/UserSignup";
 import VerifyAccount from "./pages/VerifyAccount";
 import Welcome from "./pages/Welcome";
-
 
 function App() {
   return (
@@ -50,6 +51,9 @@ function App() {
         <Route path="/mycart" element={<MyCart />} /> {/* ✅ Route for MyCart */}
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/thankyou" element={<Thankyou />} />
+        <Route path="/brandvideos" element={<Brandvideos />} />
+        <Route path="/brandvideos1" element={<Brandvideos1 />} />
+
         
 
       </Routes>

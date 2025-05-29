@@ -114,7 +114,7 @@ function ProductDetails() {
 
 
   const handleDetailView = () => {
-    setShowBeautyShowroom(true);
+    
   };
     const handleack = () => {
       setBackView(true);
@@ -897,8 +897,18 @@ function ProductDetails() {
             justifyContent: 'flex-start',
             cursor: 'pointer'
           }}
-          onClick={() => navigate('/brandvideos')}
-        >
+          onClick={() =>
+            navigate('/brandvideos1', {
+              state: {
+                video: {
+                  video: item.src,
+                  Name: item.label,
+                  Smallimg: '/gucci.png', // You can change this per brand
+                  description: `${item.label} exclusive brand video`,
+                },
+              },
+            })
+          }        >
           <video
             src={item.src}
             muted
