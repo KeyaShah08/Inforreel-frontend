@@ -320,7 +320,7 @@ function InfluencerProfileSetup() {
 
 
     try {
-      const response = await fetch("http://34.229.245.56:8000/api/users/profile", {
+      const response = await fetch("http://54.224.59.39:8000/api/users/profile", {
         method: "POST", // Or PUT/PATCH if profile updates use a different method - check API docs!
         headers: {
           // *** IMPORTANT: DO NOT set Content-Type manually for FormData ***

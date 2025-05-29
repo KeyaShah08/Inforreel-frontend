@@ -106,7 +106,7 @@ function InterestSelection() {
     console.log("Token being sent in fetch header:", userToken); // Log the token being used
 
     try {
-      const response = await fetch("http://34.229.245.56:8000/api/users/profile", {
+      const response = await fetch("http://54.224.59.39:8000/api/users/profile", {
         method: "POST",
         headers: {
           // *** IMPORTANT: DO NOT set Content-Type manually for FormData ***

@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 // Define the API endpoint
-const api_url = 'http://34.229.245.56:8000/api/users/profile';
+const api_url = 'http://54.224.59.39:8000/api/users/profile';
 
 
 // --- Static Styles (Moved outside the component) ---

@@ -89,7 +89,7 @@ function InfluencerSignup() {
     console.log("Sending registration data to API:", dataToSend);
 
     try {
-      const response = await fetch("http://34.229.245.56:8000/api/users/register", {
+      const response = await fetch("http://54.224.59.39:8000/api/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
