@@ -26,7 +26,7 @@ function SignIn() {
   };
   const resendOtp = async (email) => {
   try {
-    await fetch("http://54.224.59.39:8000/api/users/resend-otp", {
+    await fetch("http://54.173.98.4:8000/api/users/resend-otp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -74,7 +74,7 @@ function SignIn() {
     // Proceed with API call only if client-side validation passes
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch("http://54.224.59.39:8000/api/users/login", {
+        const response = await fetch("http://54.173.98.4:8000/api/users/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
